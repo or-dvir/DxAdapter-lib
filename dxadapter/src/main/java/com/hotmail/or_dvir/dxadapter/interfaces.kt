@@ -10,6 +10,7 @@ interface IDxItem<VH: RecyclerView.ViewHolder>
     fun getLayoutRes(): Int
     fun createViewHolder(itemView: View): VH
     fun bindViewHolder(holder: VH)
+
     /**
      * here you should cancel any long running operations
      * or expensive resources related to this item and its' views.

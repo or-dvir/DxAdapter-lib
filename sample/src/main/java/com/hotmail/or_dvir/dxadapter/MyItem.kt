@@ -3,7 +3,7 @@ package com.hotmail.or_dvir.dxadapter
 import android.view.View
 import kotlinx.android.synthetic.main.my_item.view.*
 
-class MyItem(val mText: String): IDxItem<SimpleViewHolder>
+class MyItem(val mText: String): DxItem<SimpleViewHolder>()
 {
     override fun createViewHolder(itemView: View) = SimpleViewHolder(itemView)
     override fun getLayoutRes() = R.layout.my_item

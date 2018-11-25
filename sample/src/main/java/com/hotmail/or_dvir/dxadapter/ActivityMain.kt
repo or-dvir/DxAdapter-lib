@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
 {
@@ -22,10 +22,27 @@ class ActivityMain : AppCompatActivity()
             list.add(MyItem(i.toString()))
         }
 
-        val myAdapter =
-            DxAdapter(list).setOnClickListener { view, position, item ->
-                Log.i("aaaaa", "${view.paddingBottom}, $position, ${item.mText}")
+        val myAdapter = DxAdapter(list).apply {
+            setOnClickListener { view, position, item ->
+                toast("clicked ${item.mText}. position $position")
             }
+
+            setOnLongClickListener { view, position, item ->
+
+
+
+                selection background isnt working!!!!!!!!!!!
+                this@apply.select(position)
+
+
+
+
+
+                toast("long clicked ${item.mText}. position $position")
+                true
+            }
+        }
+
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
