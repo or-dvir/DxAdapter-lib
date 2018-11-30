@@ -28,19 +28,13 @@ class ActivityMain : AppCompatActivity()
             }
 
             setOnLongClickListener { view, position, item ->
-
-
-
-                selection background isnt working!!!!!!!!!!!
                 this@apply.select(position)
-
-
-
-
 
                 toast("long clicked ${item.mText}. position $position")
                 true
             }
+
+            setSelectedItemBackgroundColor(R.color.colorPrimary)
         }
 
 

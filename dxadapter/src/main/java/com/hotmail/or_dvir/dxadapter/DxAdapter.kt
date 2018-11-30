@@ -3,9 +3,9 @@ package com.hotmail.or_dvir.dxadapter
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.StateListDrawable
+import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -22,24 +22,15 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
 
     override fun getItemCount(): Int = mItems.size
 
-    override fun onBindViewHolder(holder: VH, position: Int) = mItems[position].bindViewHolder(holder)
-//    override fun onBindViewHolder(holder: VH, position: Int)
-//    {
-//        mItems[position].let { item ->
-//            holder.itemView.background =
-//
-//
-//
-//
-//            item.bindViewHolder(holder)
-//        }
-//
-//
-//
-//
-//
-//        change background color of view depending on selection state!!!
-//    }
+//    override fun onBindViewHolder(holder: VH, position: Int) = mItems[position].bindViewHolder(holder)
+    @CallSuper
+    override fun onBindViewHolder(holder: VH, position: Int)
+    {
+        mItems[position].let { item ->
+            holder.itemView.isSelected = item.mIsSelected
+            item.bindViewHolder(holder)
+        }
+    }
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
@@ -59,7 +50,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     fun select(position: Int)
     {
         mItems[position].let {
-            it.mSelected = true
+            it.mIsSelected = true
             mOnSelectStateChangedListener?.apply {
                 invoke(position, it, true)
             }
@@ -71,7 +62,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     fun deselect(position: Int)
     {
         mItems[position].let {
-            it.mSelected = false
+            it.mIsSelected = false
             mOnSelectStateChangedListener?.apply {
                 invoke(position, it, false)
             }
@@ -120,7 +111,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
         val first = mItems.first()
         val context = parent.context
 
-        val v = LayoutInflater
+        val itemView = LayoutInflater
                 .from(context)
                 .inflate(first.getLayoutRes(), parent, false)
 
@@ -141,24 +132,28 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
 //            addState(intArrayOf(),
 //                     ContextCompat.getDrawable(ctx, getSelectableBackground(ctx)))
 
-            v.background = this
+            itemView.background = this
         }
 
-        val holder = first.createViewHolder(v)
+        val holder = first.createViewHolder(itemView)
 
         //NOTE:
         //we CANNOT have "position" outside of the click listeners because
         //if we do, it will not make a local copy and when clicking the item
         //it would be -1
         mOnClickListener?.apply {
-            v.setOnClickListener {
+            itemView.setOnClickListener {
                 val position = holder.adapterPosition
                 invoke(it, position, mItems[position])
             }
         }
 
         mOnLongClickListener?.apply {
-            v.setOnLongClickListener {
+            itemView.setOnLongClickListener {
+
+                add option for user to auto select items on long click
+                        dont forget to UN-select when needed!!!!!
+
                 val position = holder.adapterPosition
                 invoke(it, position, mItems[position])
             }
