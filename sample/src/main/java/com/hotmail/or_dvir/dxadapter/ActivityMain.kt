@@ -23,18 +23,17 @@ class ActivityMain : AppCompatActivity()
         }
 
         val myAdapter = DxAdapter(list).apply {
-            setOnClickListener { view, position, item ->
+
+            setOnItemClickListener { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
 
-            setOnLongClickListener { view, position, item ->
-                this@apply.select(position)
-
+            setOnItemLongClickListener { view, position, item ->
                 toast("long clicked ${item.mText}. position $position")
                 true
             }
 
-            setSelectedItemBackgroundColor(R.color.colorPrimary)
+            selectedItemBackgroundColorRes = R.color.colorPrimary
         }
 
 

@@ -17,8 +17,36 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     private var mOnClickListener: onItemClickListener<ITEM>? = null
     private var mOnLongClickListener: onItemLongClickListener<ITEM>? = null
     private var mOnSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     @ColorRes
-    private var mSelectedColor: Int? = null
+    var selectedItemBackgroundColorRes: Int? = null
+    /**
+     * default value: TRUE
+     *
+     * if TRUE, long-clicking an item will select it and any subsequent regular-click on any item
+     * will select\deselect the clicked item.
+     *
+     * NOTE: in order for this to work, you must ALSO provide a long-click listener using
+     * [setOnItemLongClickListener].
+     *
+     * if FALSE, you must manage item selection yourself using [select] and [deselect].
+     *
+     * ***also see [triggerClickListenersInSelectionMode]
+     */
+    var defaultItemSelectionBehavior = true
+    /**
+     * default value: FALSE
+     *
+     * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
+     * would also trigger the click listener and long-click listener.
+     *
+     *  if FALSE, those listeners would NOT be triggered in "selection mode".
+     */
+    var triggerClickListenersInSelectionMode = false
 
     override fun getItemCount(): Int = mItems.size
 
@@ -35,17 +63,6 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
     //todo any other important methods i should override??????
-
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    fun setSelectedItemBackgroundColor(@ColorRes colorRes: Int)
-            : DxAdapter<VH, ITEM>
-    {
-        mSelectedColor = colorRes
-        return this
-    }
 
     fun select(position: Int)
     {
@@ -71,6 +88,14 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
         notifyItemChanged(position)
     }
 
+    /**
+     * "selection mode" means at least one item is selected
+     */
+    private fun isInSelectionMode(): Boolean
+    {
+        return mItems.find { it.mIsSelected } != null
+    }
+
     fun setOnSelectedStateChangedListener(listener: onItemSelectStateChangedListener<ITEM>)
             : DxAdapter<VH, ITEM>
     {
@@ -78,14 +103,14 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
         return this
     }
 
-    fun setOnClickListener(listener: onItemClickListener<ITEM>)
+    fun setOnItemClickListener(listener: onItemClickListener<ITEM>)
             : DxAdapter<VH, ITEM>
     {
         mOnClickListener = listener
         return this
     }
 
-    fun setOnLongClickListener(listener: onItemLongClickListener<ITEM>)
+    fun setOnItemLongClickListener(listener: onItemLongClickListener<ITEM>)
             : DxAdapter<VH, ITEM>
     {
         mOnLongClickListener = listener
@@ -119,18 +144,15 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
             //replacement method requires API 23 (lib min is 21)
             @Suppress("DEPRECATION")
             val selectedColorInt =
-                if (mSelectedColor != null)
-                    //for sure mSelectedColor is NOT null because of the "if"
-                    context.resources.getColor(mSelectedColor!!)
+                if (selectedItemBackgroundColorRes != null)
+                    //for sure selectedItemBackgroundColorRes is NOT null because of the "if"
+                    context.resources.getColor(selectedItemBackgroundColorRes!!)
                 else
                     getThemeAccentColorInt(context)
 
             //selected
             addState(intArrayOf(android.R.attr.state_selected),
                      ColorDrawable(selectedColorInt))
-//            //not selected
-//            addState(intArrayOf(),
-//                     ContextCompat.getDrawable(ctx, getSelectableBackground(ctx)))
 
             itemView.background = this
         }
@@ -143,19 +165,73 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
         //it would be -1
         mOnClickListener?.apply {
             itemView.setOnClickListener {
-                val position = holder.adapterPosition
-                invoke(it, position, mItems[position])
+                val clickedPosition = holder.adapterPosition
+                val clickedItem = mItems[clickedPosition]
+
+                //WARNING:
+                //do NOT save the state of isInSelectionMode() into a variable here
+                //because below this line we are changing the selected state of the clicked item
+                //and the variable would not be updates according to the new state
+
+                //todo when documenting this library, notice the order of the calls
+                //todo first selection listener or first click listener????
+
+                val selectionBefore = isInSelectionMode()
+
+                if(defaultItemSelectionBehavior && isInSelectionMode())
+                {
+                    //reverse the selection
+                    if(clickedItem.mIsSelected)
+                        deselect(clickedPosition)
+                    else
+                        select(clickedPosition)
+                }
+
+                val selectionAfter = isInSelectionMode()
+                val deselectedLastItem = selectionBefore && !selectionAfter
+
+                when
+                {
+                    !selectionAfter && !deselectedLastItem -> invoke(it, clickedPosition, clickedItem)
+                    //if we get here, we ARE in "selection mode".
+                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
+                }
             }
         }
 
         mOnLongClickListener?.apply {
             itemView.setOnLongClickListener {
+                val clickedPosition = holder.adapterPosition
+                val clickedItem = mItems[clickedPosition]
 
-                add option for user to auto select items on long click
-                        dont forget to UN-select when needed!!!!!
+                //WARNING:
+                //do NOT save the state of isInSelectionMode() into a variable here
+                //because below this line we are changing the selected state of the clicked item
+                //and the variable would not be updates according to the new state
 
-                val position = holder.adapterPosition
-                invoke(it, position, mItems[position])
+                //todo when documenting this library, notice the order of the calls
+                //todo first selection listener or first long-click listener????
+
+                //long-click should NOT select items if:
+                //1) defaultItemSelectionBehaviour is false
+                //2) the item is already selected (this would trigger unnecessary callbacks and UI updates).
+                //3) at least one item is already selected (we are in "selection mode" where regular clicks
+                //   should select/deselect an item)
+                if (defaultItemSelectionBehavior &&
+                    !clickedItem.mIsSelected &&
+                    !isInSelectionMode())
+                {
+                    select(clickedPosition)
+                }
+
+                when
+                {
+                    !isInSelectionMode() -> invoke(it, clickedPosition, clickedItem)
+                    //if we get here, we ARE in "selection mode".
+                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
+                    //consume the event
+                    else -> true
+                }
             }
         }
 
