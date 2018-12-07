@@ -24,6 +24,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     @ColorRes
     var selectedItemBackgroundColorRes: Int? = null
+
     /**
      * default value: TRUE
      *
@@ -38,19 +39,19 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
      * ***also see [triggerClickListenersInSelectionMode]
      */
     var defaultItemSelectionBehavior = true
+
     /**
      * default value: FALSE
      *
      * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
      * would also trigger the click listener and long-click listener.
      *
-     *  if FALSE, those listeners would NOT be triggered in "selection mode".
+     * if FALSE, those listeners would NOT be triggered in "selection mode".
      */
     var triggerClickListenersInSelectionMode = false
 
     override fun getItemCount(): Int = mItems.size
 
-//    override fun onBindViewHolder(holder: VH, position: Int) = mItems[position].bindViewHolder(holder)
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
     {
@@ -86,6 +87,18 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
         }
 
         notifyItemChanged(position)
+    }
+
+    fun getAllSelectedItems() = mItems.filter { it.mIsSelected }
+    fun getNumSelectedItems() = getAllSelectedItems().size
+    fun getAllSelectedIndices(): List<Int>
+    {
+        return mItems.mapIndexed { index, item ->
+            if (item.mIsSelected)
+                index
+            else
+                null
+        }.filterNotNull()
     }
 
     /**

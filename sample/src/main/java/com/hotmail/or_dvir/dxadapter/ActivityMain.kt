@@ -33,9 +33,28 @@ class ActivityMain : AppCompatActivity()
                 true
             }
 
-            selectedItemBackgroundColorRes = R.color.colorPrimary
-        }
+            setOnSelectedStateChangedListener { position, item, isSelected ->
 
+                val txt =
+                    if (isSelected)
+                        "selected"
+                    else
+                        "deselected"
+                toast("${item.mText} $txt")
+            }
+
+            //default is colorAccent
+            //if colorAccent is not provided in the style "AppTheme",
+            //the primary color is used
+//            selectedItemBackgroundColorRes = R.color.colorPrimary
+
+            //default is true.
+            //however this requires a long-click listener to work
+            //defaultItemSelectionBehavior = false
+
+            //default is false
+            //triggerClickListenersInSelectionMode = true
+        }
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
