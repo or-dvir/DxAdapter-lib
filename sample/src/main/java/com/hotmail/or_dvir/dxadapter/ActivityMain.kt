@@ -33,15 +33,15 @@ class ActivityMain : AppCompatActivity()
                 true
             }
 
-            setOnSelectedStateChangedListener { position, item, isSelected ->
-
-                val txt =
-                    if (isSelected)
-                        "selected"
-                    else
-                        "deselected"
-                toast("${item.mText} $txt")
-            }
+//            setOnSelectedStateChangedListener { position, item, isSelected ->
+//
+//                val txt =
+//                    if (isSelected)
+//                        "selected"
+//                    else
+//                        "deselected"
+//                toast("${item.mText} $txt")
+//            }
 
             //default is colorAccent
             //if colorAccent is not provided in the style "AppTheme",
@@ -60,6 +60,10 @@ class ActivityMain : AppCompatActivity()
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
             adapter = myAdapter
+        }
+
+        button.setOnClickListener {
+            //do something
         }
     }
 }

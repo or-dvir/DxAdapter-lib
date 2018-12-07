@@ -51,6 +51,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     var triggerClickListenersInSelectionMode = false
 
     override fun getItemCount(): Int = mItems.size
+    private fun isInBounds(position: Int) = position in (0 until mItems.size)
 
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
@@ -65,28 +66,72 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
     //todo any other important methods i should override??????
 
-    fun select(position: Int)
+    fun select(vararg items: ITEM) = items.forEach { select(mItems.indexOf(it)) }
+    /**
+     * for indices which are out of bounds - nothing happens
+     */
+    fun select(vararg indices: Int)
     {
-        mItems[position].let {
-            it.mIsSelected = true
-            mOnSelectStateChangedListener?.apply {
-                invoke(position, it, true)
+        indices.forEach { position ->
+            if (isInBounds(position))
+            {
+                mItems[position].let {
+                    it.mIsSelected = true
+                    mOnSelectStateChangedListener?.apply {
+                        invoke(position, it, true)
+                    }
+                }
+
+                notifyItemChanged(position)
             }
         }
+    }
+    /**
+     * does NOT trigger selectedStateChangedListener.
+     * if you DO want to trigger the listener,
+     * use [select] and pass the entire list
+     */
+    fun selectAll()
+    {
+        mItems.forEach {
+            it.mIsSelected = true
+        }
 
-        notifyItemChanged(position)
+        notifyDataSetChanged()
     }
 
-    fun deselect(position: Int)
+    fun deselect(vararg items: ITEM) = items.forEach { deselect(mItems.indexOf(it)) }
+    /**
+     * for indices which are out of bounds - nothing happens
+     */
+    fun deselect(vararg indices: Int)
     {
-        mItems[position].let {
-            it.mIsSelected = false
-            mOnSelectStateChangedListener?.apply {
-                invoke(position, it, false)
+        indices.forEach { position ->
+            if (isInBounds(position))
+            {
+                mItems[position].let {
+                    it.mIsSelected = false
+                    mOnSelectStateChangedListener?.apply {
+                        invoke(position, it, false)
+                    }
+                }
+
+                notifyItemChanged(position)
             }
         }
+    }
+    /**
+     * does NOT trigger selectedStateChangedListener.
+     * if you DO want to trigger the listener,
+     * use [deselect] and pass the entire list
+     */
+    fun deselectAll()
+    {
+        mItems.forEach {
+            it.mIsSelected = false
+        }
 
-        notifyItemChanged(position)
+        notifyDataSetChanged()
     }
 
     fun getAllSelectedItems() = mItems.filter { it.mIsSelected }
@@ -133,7 +178,10 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     override fun onViewRecycled(holder: VH)
     {
         super.onViewRecycled(holder)
-        mItems[holder.adapterPosition].unbindViewHolder(holder)
+
+        val position = holder.adapterPosition
+        if(position != RecyclerView.NO_POSITION)
+            mItems[position].unbindViewHolder(holder)
     }
 
     @ColorInt
