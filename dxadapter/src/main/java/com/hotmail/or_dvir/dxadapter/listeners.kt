@@ -8,3 +8,5 @@ import android.view.View
 typealias onItemLongClickListener<ITEM> = ((view: View, position: Int, item: ITEM) -> Boolean)
 typealias onItemClickListener<ITEM> = ((view: View, position: Int, item: ITEM) -> Unit)
 typealias onItemSelectStateChangedListener<ITEM> = ((position: Int, item: ITEM, isSelected: Boolean) -> Unit)
+
+

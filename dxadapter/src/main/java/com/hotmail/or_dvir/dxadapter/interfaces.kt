@@ -18,3 +18,9 @@ interface IDxItem<VH: RecyclerView.ViewHolder>
      */
     fun unbindViewHolder(holder: VH)
 }
+
+interface IDxRecyclerEdgesListener
+{
+    fun onReachedBottom()
+    fun onReachedTop()
+}
