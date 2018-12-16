@@ -25,7 +25,15 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                             {
                                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int)
                                 {
-                                    if(layoutManager?.find)
+                                    remember that you want to be notified not only when the last/first item is
+                                        partially visible, but also when they are NOT visible anymore.
+
+                                    linearLayoutManager has functions for this!
+                                    GRID LAYOUT MANAGER IS A SUBCLASS OF LINEAR LAYOUT MANAGER!!!!!!!
+
+                                    for staggered grid, it has its own functions (needs separate class)
+
+                                    if(layoutManager?.childcount)
 
                                     if(gridLayoutManager.findLastVisibleItemPosition() ==
                                         gridLayoutManager.itemCount-1){
