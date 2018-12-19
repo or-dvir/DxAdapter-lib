@@ -5,11 +5,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
 {
+    //todo when documenting, note that this library was meant for kotlin and was not tested in java
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -33,15 +36,15 @@ class ActivityMain : AppCompatActivity()
                 true
             }
 
-//            setOnSelectedStateChangedListener { position, item, isSelected ->
-//
-//                val txt =
-//                    if (isSelected)
-//                        "selected"
-//                    else
-//                        "deselected"
-//                toast("${item.mText} $txt")
-//            }
+            setOnSelectedStateChangedListener { position, item, isSelected ->
+
+                val txt =
+                    if (isSelected)
+                        "selected"
+                    else
+                        "deselected"
+                toast("${item.mText} $txt")
+            }
 
             //default is colorAccent
             //if colorAccent is not provided in the style "AppTheme",
@@ -50,16 +53,31 @@ class ActivityMain : AppCompatActivity()
 
             //default is true.
             //however this requires a long-click listener to work
-            //defaultItemSelectionBehavior = false
+//            defaultItemSelectionBehavior = false
 
             //default is false
-            //triggerClickListenersInSelectionMode = true
+//            triggerClickListenersInSelectionMode = true
         }
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
             adapter = myAdapter
+
+            firstItemVisibilityListener = object : OnAdapterItemVisibilityChanged
+            {
+                override fun onVisible() = toast("first yes")
+                override fun onInvisible() = toast("first no")
+            }
+
+            lastItemVisibilityListener = object : OnAdapterItemVisibilityChanged
+            {
+                override fun onVisible() = toast("last yes")
+                override fun onInvisible() = toast("last no")
+            }
+
+            onScrollingDownListener = Pair(500, { fab.hide() })
+            onScrollingUpListener = Pair(500, { fab.show() })
         }
 
         button.setOnClickListener {

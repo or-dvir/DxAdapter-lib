@@ -4,7 +4,7 @@ import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-interface IDxItem<VH: RecyclerView.ViewHolder>
+internal interface IDxItem<VH: RecyclerView.ViewHolder>
 {
     @LayoutRes
     fun getLayoutRes(): Int
@@ -19,8 +19,14 @@ interface IDxItem<VH: RecyclerView.ViewHolder>
     fun unbindViewHolder(holder: VH)
 }
 
-interface IDxRecyclerEdgesListener
+interface OnAdapterItemVisibilityChanged
 {
-    fun onReachedBottom()
-    fun onReachedTop()
+    /**
+     * triggers when this item becomes PARTIALLY visible
+     */
+    fun onVisible(): Any
+    /**
+     * triggers when this item becomes COMPLETELY invisible
+     */
+    fun onInvisible(): Any
 }

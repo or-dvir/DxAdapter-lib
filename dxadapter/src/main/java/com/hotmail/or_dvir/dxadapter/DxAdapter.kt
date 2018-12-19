@@ -14,6 +14,7 @@ import android.view.ViewGroup
 class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mItems: List<ITEM>)
     : RecyclerView.Adapter<VH>()
 {
+    //todo make these public and remove setter methods - this library is meant for kotlin
     private var mOnClickListener: onItemClickListener<ITEM>? = null
     private var mOnLongClickListener: onItemLongClickListener<ITEM>? = null
     private var mOnSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
