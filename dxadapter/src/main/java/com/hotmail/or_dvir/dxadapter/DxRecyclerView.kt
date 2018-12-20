@@ -4,7 +4,6 @@ import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.util.Log
 import kotlin.math.abs
 
 class DxRecyclerView @JvmOverloads constructor(context: Context,
@@ -30,17 +29,23 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     var lastItemVisibilityListener: OnAdapterItemVisibilityChanged? = null
 
     /**
-     * NOTE: this will trigger MANY times while scrolling
+     * NOTE: depending on the sensitivity,
+     * this will trigger MANY times while scrolling.
      *
-     * [Pair.first] = sensitivity of the listener
+     * [Pair.first] = speed sensitivity of the listener.
+     * the larger the number, the faster the user has to scroll for the
+     * listener to trigger
      *
      * [Pair.second] = the listener itself
      */
     var onScrollingDownListener: scrollUpDownPair? = null
     /**
-     * NOTE: this will trigger MANY times while scrolling
+     * NOTE: depending on the sensitivity,
+     * this will trigger MANY times while scrolling.
      *
-     * [Pair.first] = sensitivity of the listener
+     * [Pair.first] = speed sensitivity of the listener.
+     * the larger the number, the faster the user has to scroll for the
+     * listener to trigger
      *
      * [Pair.second] = the listener itself
      */
@@ -50,12 +55,6 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     private var notifiedFirstInvisible = false
     private var notifiedLastVisible = false
     private var notifiedLastInvisible = false
-
-
-    consider this scenario: user keeps holding his finger and moving it up and down,
-    this this causes mTotalDy to increase when dragging in BOTH direction
-    meaning the the fab will be showing/hiding when the user drags up and down...
-    private var mTotalDy = 0
 
     override fun onAttachedToWindow()
     {
@@ -68,26 +67,20 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
         {
             addOnScrollListener(object : OnScrollListener()
             {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int)
-                {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    //stops scrolling - reset the variable
-                    if(newState == SCROLL_STATE_IDLE)
-                        mTotalDy = 0
-                }
-
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int)
                 {
                     super.onScrolled(recyclerView, dx, dy)
 
-                    mTotalDy += abs(dy)
-                    Log.i("aaaaa", "$mTotalDy")
+                    //todo what about HORIZONTAL recycler view? should probably use dx
+
                     when
                     {
-                        //user is dragging up -> list is scrolling down
-                        dy > 0 -> onScrollingDownListener?.let { invokeScrollUpDownListener(it) }
-                        //user is dragging down -> list is scrolling up
-                        dy < 0 -> onScrollingUpListener?.let { invokeScrollUpDownListener(it) }
+                        //user is dragging up, so list is scrolling down.
+                        dy > 0 ->
+                            onScrollingDownListener?.let { invokeScrollUpDownListener(dy, it) }
+                        //user is dragging down, so list is scrolling up.
+                        dy < 0 ->
+                            onScrollingUpListener?.let { invokeScrollUpDownListener(dy, it) }
                     }
 
                     //todo can i save layoutManager as global member so i don't have to cast each time???
@@ -165,14 +158,11 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
         }
     }
 
-    private fun invokeScrollUpDownListener(pair: scrollUpDownPair)
+    private fun invokeScrollUpDownListener(dy: Int, pair: scrollUpDownPair)
     {
-        if(mTotalDy >= pair.first)
-        {
+//        Log.i("aaaaa", "dy= ${abs(dy)}. first= ${pair.first}")
+        if(abs(dy) > pair.first)
             pair.second.invoke()
-            //triggered the listener - reset the variable
-            mTotalDy = 0
-        }
     }
 
     override fun onDetachedFromWindow()

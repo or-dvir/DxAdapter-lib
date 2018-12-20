@@ -76,8 +76,8 @@ class ActivityMain : AppCompatActivity()
                 override fun onInvisible() = toast("last no")
             }
 
-            onScrollingDownListener = Pair(500, { fab.hide() })
-            onScrollingUpListener = Pair(500, { fab.show() })
+            onScrollingDownListener = Pair(50, { fab.hide() })
+            onScrollingUpListener = Pair(50, { fab.show() })
         }
 
         button.setOnClickListener {
