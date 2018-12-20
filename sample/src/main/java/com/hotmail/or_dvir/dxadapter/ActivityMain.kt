@@ -5,13 +5,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
 {
     //todo when documenting, note that this library was meant for kotlin and was not tested in java
+
+    //todo test module with leak canary!!!!!!!
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -27,17 +28,16 @@ class ActivityMain : AppCompatActivity()
 
         val myAdapter = DxAdapter(list).apply {
 
-            setOnItemClickListener { view, position, item ->
+            onClickListener = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
 
-            setOnItemLongClickListener { view, position, item ->
+            onLongClickListener = { view, position, item ->
                 toast("long clicked ${item.mText}. position $position")
                 true
             }
 
-            setOnSelectedStateChangedListener { position, item, isSelected ->
-
+            onSelectStateChangedListener = { position, item, isSelected ->
                 val txt =
                     if (isSelected)
                         "selected"

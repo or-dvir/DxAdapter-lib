@@ -8,6 +8,7 @@ import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
+import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
@@ -15,9 +16,9 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     : RecyclerView.Adapter<VH>()
 {
     //todo make these public and remove setter methods - this library is meant for kotlin
-    private var mOnClickListener: onItemClickListener<ITEM>? = null
-    private var mOnLongClickListener: onItemLongClickListener<ITEM>? = null
-    private var mOnSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+    var onClickListener: onItemClickListener<ITEM>? = null
+    var onLongClickListener: onItemLongClickListener<ITEM>? = null
+    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
 
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
@@ -26,18 +27,42 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
     @ColorRes
     var selectedItemBackgroundColorRes: Int? = null
 
+
+
+
+    add title provider for actionmode
+    /**
+     * if set, selecting an item will start the provided [DxActionModeHelper.actionMode],
+     * and deselecting the last item will finish it.
+     *
+     * NOTE: in order for this to work, you MUST ALSO set [onSelectStateChangedListener].
+     *
+     * if FALSE: you must handle ActionMode yourself
+     */
+    var actionModeHelper: DxActionModeHelper? = null
+
+    when first selecting an item, start action mode.
+    default title is the number of selected items.
+    title updates whenever a new item is selected or deselected (or according to the title provider)
+
+
+
+
+
+
+
+
     /**
      * default value: TRUE
      *
      * if TRUE, long-clicking an item will select it and any subsequent regular-click on any item
      * will select\deselect the clicked item.
      *
-     * NOTE: in order for this to work, you must ALSO provide a long-click listener using
-     * [setOnItemLongClickListener].
+     * NOTE: in order for this to work, you MUST ALSO set [onItemLongClickListener]
      *
      * if FALSE, you must manage item selection yourself using [select] and [deselect].
      *
-     * ***also see [triggerClickListenersInSelectionMode]
+     * @see [triggerClickListenersInSelectionMode]
      */
     var defaultItemSelectionBehavior = true
 
@@ -78,8 +103,9 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
             {
                 mItems[position].let {
                     it.mIsSelected = true
-                    mOnSelectStateChangedListener?.apply {
+                    onSelectStateChangedListener?.apply {
                         invoke(position, it, true)
+                        dsddsgdfsdgsf
                     }
                 }
 
@@ -87,19 +113,19 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
             }
         }
     }
-    /**
-     * does NOT trigger selectedStateChangedListener.
-     * if you DO want to trigger the listener,
-     * use [select] and pass the entire list
-     */
-    fun selectAll()
-    {
-        mItems.forEach {
-            it.mIsSelected = true
-        }
-
-        notifyDataSetChanged()
-    }
+//    /**
+//     * does NOT trigger selectedStateChangedListener.
+//     * if you DO want to trigger the listener,
+//     * use [select] and pass the entire list
+//     */
+//    fun selectAll()
+//    {
+//        mItems.forEach {
+//            it.mIsSelected = true
+//        }
+//
+//        notifyDataSetChanged()
+//    }
 
     fun deselect(vararg items: ITEM) = items.forEach { deselect(mItems.indexOf(it)) }
     /**
@@ -112,8 +138,9 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
             {
                 mItems[position].let {
                     it.mIsSelected = false
-                    mOnSelectStateChangedListener?.apply {
+                    onSelectStateChangedListener?.apply {
                         invoke(position, it, false)
+                        aafafadafdsads
                     }
                 }
 
@@ -121,19 +148,24 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
             }
         }
     }
-    /**
-     * does NOT trigger selectedStateChangedListener.
-     * if you DO want to trigger the listener,
-     * use [deselect] and pass the entire list
-     */
-    fun deselectAll()
-    {
-        mItems.forEach {
-            it.mIsSelected = false
-        }
+//    /**
+//     * does NOT trigger selectedStateChangedListener.
+//     * if you DO want to trigger the listener,
+//     * use [deselect] and pass the entire list
+//     */
+//    fun deselectAll()
+//    {
+//        mItems.forEach {
+//            it.mIsSelected = false
+//        }
+//
+//        notifyDataSetChanged()
+//    }
 
-        notifyDataSetChanged()
-    }
+    /**
+     * "selection mode" means at least one item is selected
+     */
+    private fun isInSelectionMode() = mItems.find { it.mIsSelected } != null
 
     fun getAllSelectedItems() = mItems.filter { it.mIsSelected }
     fun getNumSelectedItems() = getAllSelectedItems().size
@@ -145,35 +177,6 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
             else
                 null
         }.filterNotNull()
-    }
-
-    /**
-     * "selection mode" means at least one item is selected
-     */
-    private fun isInSelectionMode(): Boolean
-    {
-        return mItems.find { it.mIsSelected } != null
-    }
-
-    fun setOnSelectedStateChangedListener(listener: onItemSelectStateChangedListener<ITEM>)
-            : DxAdapter<VH, ITEM>
-    {
-        mOnSelectStateChangedListener = listener
-        return this
-    }
-
-    fun setOnItemClickListener(listener: onItemClickListener<ITEM>)
-            : DxAdapter<VH, ITEM>
-    {
-        mOnClickListener = listener
-        return this
-    }
-
-    fun setOnItemLongClickListener(listener: onItemLongClickListener<ITEM>)
-            : DxAdapter<VH, ITEM>
-    {
-        mOnLongClickListener = listener
-        return this
     }
 
     override fun onViewRecycled(holder: VH)
@@ -225,7 +228,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
         //we CANNOT have "position" outside of the click listeners because
         //if we do, it will not make a local copy and when clicking the item
         //it would be -1
-        mOnClickListener?.apply {
+        onClickListener?.apply {
             itemView.setOnClickListener {
                 val clickedPosition = holder.adapterPosition
                 val clickedItem = mItems[clickedPosition]
@@ -252,6 +255,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
                 val selectionAfter = isInSelectionMode()
                 val deselectedLastItem = selectionBefore && !selectionAfter
 
+                //triggering the click listener
                 when
                 {
                     !selectionAfter && !deselectedLastItem -> invoke(it, clickedPosition, clickedItem)
@@ -261,7 +265,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
             }
         }
 
-        mOnLongClickListener?.apply {
+        onLongClickListener?.apply {
             itemView.setOnLongClickListener {
                 val clickedPosition = holder.adapterPosition
                 val clickedItem = mItems[clickedPosition]
@@ -286,6 +290,7 @@ class DxAdapter<VH : RecyclerView.ViewHolder, ITEM: DxItem<VH>>(private val mIte
                     select(clickedPosition)
                 }
 
+                //triggering the long-click listener
                 when
                 {
                     !isInSelectionMode() -> invoke(it, clickedPosition, clickedItem)

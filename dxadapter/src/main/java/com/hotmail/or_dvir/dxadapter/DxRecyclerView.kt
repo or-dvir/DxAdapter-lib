@@ -9,7 +9,7 @@ import kotlin.math.abs
 class DxRecyclerView @JvmOverloads constructor(context: Context,
                                                attrs: AttributeSet? = null,
                                                defStyle: Int = 0)
-    :RecyclerView(context, attrs, defStyle)
+    : RecyclerView(context, attrs, defStyle)
 {
     //todo test these listeners if the adapter changes during runtime!!!!
 
@@ -56,6 +56,22 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     private var notifiedLastVisible = false
     private var notifiedLastInvisible = false
 
+    private var mLayManLinear: LinearLayoutManager? = null
+    //todo dont forget to add staggered grid layout manager!!!!
+
+    override fun setLayoutManager(layout: LayoutManager?)
+    {
+        super.setLayoutManager(layout)
+
+        layout?.let {
+            when(it)
+            {
+                is LinearLayoutManager -> mLayManLinear = it
+                //todo dont forget to add staggered grid layout manager!!!!
+            }
+        }
+    }
+
     override fun onAttachedToWindow()
     {
         super.onAttachedToWindow()
@@ -85,13 +101,10 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
                     //todo can i save layoutManager as global member so i don't have to cast each time???
                     //todo don't forget about staggered grid!!!!!!!
-                    layoutManager?.apply {
-                        val layMan = this as LinearLayoutManager
-
+                    mLayManLinear?.apply {
                         //todo when documenting, note the order of the callbacks!!!
-
                         firstItemVisibilityListener?.let {
-                            val firstPos = layMan.findFirstVisibleItemPosition()
+                            val firstPos = findFirstVisibleItemPosition()
 
                             //if no items, we can immediately return
                             if (firstPos == NO_POSITION)
@@ -120,7 +133,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                         }
 
                         lastItemVisibilityListener?.let {
-                            val lastPos = layMan.findLastVisibleItemPosition()
+                            val lastPos = findLastVisibleItemPosition()
                             val numItems = adapter?.itemCount
 
                             //if no items or no adapter is attached, we can immediately return
@@ -149,10 +162,6 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                             }
                         }
                     }
-//                                    linearLayoutManager has functions for this!
-//                                    GRID LAYOUT MANAGER IS A SUBCLASS OF LINEAR LAYOUT MANAGER!!!!!!!
-//
-//                                    for staggered grid, it has its own functions (needs separate class)
                 }
             })
         }
@@ -160,7 +169,6 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
     private fun invokeScrollUpDownListener(dy: Int, pair: scrollUpDownPair)
     {
-//        Log.i("aaaaa", "dy= ${abs(dy)}. first= ${pair.first}")
         if(abs(dy) > pair.first)
             pair.second.invoke()
     }

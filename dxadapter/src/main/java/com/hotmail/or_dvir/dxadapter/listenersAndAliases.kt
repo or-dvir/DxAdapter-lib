@@ -11,8 +11,11 @@ internal typealias onItemSelectStateChangedListener<ITEM> = (position: Int, item
 
 internal typealias emptyCallback = () -> Any
 /**
- * first: sensitivity
+ * first: scroll sensitivity to trigger the listener
  * second: the listener itself
  */
 internal typealias scrollUpDownPair = Pair<Int, emptyCallback>
+internal typealias actionModeTitleProvider = () -> String
+
+
 
