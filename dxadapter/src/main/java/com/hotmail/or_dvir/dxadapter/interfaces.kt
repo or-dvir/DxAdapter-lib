@@ -4,7 +4,7 @@ import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-internal interface IDxItem<VH: RecyclerView.ViewHolder>
+internal interface IDxItem<VH: RecyclerViewHolder>
 {
     @LayoutRes
     fun getLayoutRes(): Int

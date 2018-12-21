@@ -11,8 +11,8 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
-class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
-    : RecyclerView.Adapter<SimpleViewHolder>()
+class DxAdapterBACKUP<VH : RecyclerViewHolder, ITEM: DxItem<VH>>(internal val mItems: List<ITEM>)
+    : RecyclerView.Adapter<VH>()
 {
     //todo make these public and remove setter methods - this library is meant for kotlin
     var onClickListener: onItemClickListener<ITEM>? = null
@@ -25,6 +25,44 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     @ColorRes
     var selectedItemBackgroundColorRes: Int? = null
+
+    /**
+     * if set, selecting an item will start "Action Mode",
+     * and deselecting the last item will finish it.
+     *
+     * if not set: you must handle ActionMode yourself
+     *
+     * * in order for this to work, you MUST ALSO set [onSelectStateChangedListener],
+     * AND call [updateActionMode] inside it.
+     *
+     * * if the ActionMode is finished, all items will be deselected WITHOUT triggering
+     * [onSelectStateChangedListener]
+     */
+//    var actionModeHelper: DxActionModeHelper? = null
+
+//    /**
+//     * this function starts/finishes actionMode, and updates its' title.
+//     * it's assumed that this function is called inside [onSelectStateChangedListener].
+//     * if it's called from other places, it may cause bugs.
+//     */
+//    fun updateActionMode(act: AppCompatActivity)
+//    {
+//        actionModeHelper?.apply {
+//
+//            //NOTE:
+//            //at this point we should be AFTER the selected state has already changed.
+//            //i say "should" because we are assuming that this function is called from inside
+//            //onSelectStateChangedListener
+//
+//            when (getNumSelectedItems())
+//            {
+//                1 -> start(act)
+//                0 -> finish()
+//            }
+//
+//            updateTitle()
+//        }
+//    }
 
     /**
      * default value: TRUE
@@ -54,7 +92,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
     private fun isInBounds(position: Int) = position in (0 until mItems.size)
 
     @CallSuper
-    override fun onBindViewHolder(holder: SimpleViewHolder, position: Int)
+    override fun onBindViewHolder(holder: VH, position: Int)
     {
         mItems[position].let { item ->
             holder.itemView.isSelected = item.mIsSelected
@@ -152,7 +190,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         }.filterNotNull()
     }
 
-    override fun onViewRecycled(holder: SimpleViewHolder)
+    override fun onViewRecycled(holder: VH)
     {
         super.onViewRecycled(holder)
 
@@ -169,7 +207,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         return value.data
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
     {
         val first = mItems.first()
         val context = parent.context

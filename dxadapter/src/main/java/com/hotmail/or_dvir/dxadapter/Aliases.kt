@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.support.v7.widget.RecyclerView
 import android.view.View
 
 /**
@@ -10,6 +11,9 @@ internal typealias onItemClickListener<ITEM> = (view: View, position: Int, item:
 internal typealias onItemSelectStateChangedListener<ITEM> = (position: Int, item: ITEM, isSelected: Boolean) -> Unit
 
 internal typealias emptyCallback = () -> Any
+
+internal typealias RecyclerViewHolder = RecyclerView.ViewHolder
+
 /**
  * first: scroll sensitivity to trigger the listener
  * second: the listener itself
