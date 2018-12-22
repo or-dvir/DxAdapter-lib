@@ -17,13 +17,16 @@ class ActivityMain : AppCompatActivity()
 
     //todo test module with leak canary!!!!!!!
 
-    lateinit var actionModeHelper: DxActionModeHelper<MyItem>
+    //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
+    //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.ViewHolder
+
+    private lateinit var actionModeHelper: DxActionModeHelper<MyItem>
 
 
-    BUG:
-    selecting an item (starts action mode)
-    press back (finishes action mode)
-    select item -> action mode does not start!!!
+//    BUG:
+//    selecting an item (starts action mode)
+//    press back (finishes action mode)
+//    select item -> action mode does not start!!!
 
 
     override fun onCreate(savedInstanceState: Bundle?)

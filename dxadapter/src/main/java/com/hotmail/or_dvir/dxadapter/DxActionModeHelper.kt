@@ -5,30 +5,27 @@ import android.support.v7.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 
-//todo add in docs the behavior of this class
-//todo destroy - deselecting items (NOT trigger selection listener)
-//todo item clicked - if the user handled the event, finish action mode (and deselecting all items)
-//todo also add following description
 /**
- * if set, selecting an item will start "Action Mode",
- * and deselecting the last item will finish it.
+ * A helper class that provides default behavior for [ActionMode].
+ * * IMPORTANT: in order for this to work as intended, you MUST provide a selection listener
+ * to your [DxAdapter] AND inside that listener, you MUST call [updateActionMode]
  *
- * if not set: you must handle ActionMode yourself
- *
- * * in order for this to work, you MUST ALSO set [onSelectStateChangedListener],
- * AND call [updateActionMode] inside it.
- *
- * * if the ActionMode is finished, all items will be deselected WITHOUT triggering
- * [onSelectStateChangedListener]
+ * Behavior:
+ * * selecting an item will start ActionMode.
+ * * deselecting the last item will finish ActionMode.
+ * * clicking a menu item will also finish ActionMode, but only if you have consumed/handled the event
+ * in [onActionItemClicked][ActionMode.Callback.onActionItemClicked] (TRUE was returned)
+ * * when ActionMode is finished (for example after pressing the "back" button),
+ * all items will be deselected. IMPORTANT: this does NOT trigger the selection
+ * listener given to [DxAdapter]
  */
-
-
 class DxActionModeHelper<ITEM: DxItem<SimpleViewHolder>>(
     private val adapter: DxAdapter<ITEM>,
     private val titleProvider: actionModeTitleProvider,
     private val callback: ActionMode.Callback)
 {
-    private var actionMode: ActionMode? = null
+    //make this public in case the user wants access to it (for example to call finish())
+    var actionMode: ActionMode? = null
     private val mMyCallback = object : ActionMode.Callback
     {
         override fun onActionItemClicked(mode: ActionMode?, menuItem: MenuItem?): Boolean
@@ -57,12 +54,16 @@ class DxActionModeHelper<ITEM: DxItem<SimpleViewHolder>>(
             }
 
             callback.onDestroyActionMode(mode)
+            //this line should come AFTER calling the users' onDestroyActionMode()
+            //because he might need the actionMode reference for some reason so only after
+            //we make it null
+            actionMode = null
         }
     }
 
     /**
      * this function starts/finishes actionMode, and updates its' title using
-     * the provided [titleProvider].
+     * [titleProvider].
      *
      * it's assumed that this function is called inside [DxAdapter.onSelectStateChangedListener].
      * if it's called from other places, it may cause bugs.
@@ -76,17 +77,8 @@ class DxActionModeHelper<ITEM: DxItem<SimpleViewHolder>>(
 
         when (adapter.getNumSelectedItems())
         {
-            1 ->
-            {
-                if(actionMode == null)
-                    actionMode = act.startSupportActionMode(mMyCallback)
-            }
-
-            0 ->
-            {
-                actionMode?.finish()
-                actionMode = null
-            }
+            1 -> actionMode = actionMode ?: act.startSupportActionMode(mMyCallback)
+            0 -> actionMode?.finish()
         }
 
         actionMode?.title = titleProvider.invoke()
