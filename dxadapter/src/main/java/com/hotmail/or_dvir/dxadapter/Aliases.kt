@@ -10,6 +10,11 @@ internal typealias onItemLongClickListener<ITEM> = (view: View, position: Int, i
 internal typealias onItemClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Unit
 internal typealias onItemSelectStateChangedListener<ITEM> = (position: Int, item: ITEM, isSelected: Boolean) -> Unit
 
+internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,
+                                                 targetItem: ITEM,
+                                                 draggedPosition: Int,
+                                                 targetPosition: Int) -> Unit
+
 internal typealias emptyCallback = () -> Any
 
 internal typealias RecyclerViewHolder = RecyclerView.ViewHolder

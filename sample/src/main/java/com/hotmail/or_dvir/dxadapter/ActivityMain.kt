@@ -6,6 +6,8 @@ import android.support.v7.view.ActionMode
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,13 +24,6 @@ class ActivityMain : AppCompatActivity()
 
     private lateinit var actionModeHelper: DxActionModeHelper<MyItem>
 
-
-//    BUG:
-//    selecting an item (starts action mode)
-//    press back (finishes action mode)
-//    select item -> action mode does not start!!!
-
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -41,7 +36,7 @@ class ActivityMain : AppCompatActivity()
             list.add(MyItem(i.toString()))
         }
 
-        val myAdapter = DxAdapter(list).apply {
+        val mySampleAdapter = DxAdapter(list).apply {
 
             onClickListener = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
@@ -62,7 +57,8 @@ class ActivityMain : AppCompatActivity()
                         "selected"
                     else
                         "deselected"
-                toast("${item.mText} $txt")
+
+                Log.i("sample", "${item.mText} (position $position) $txt")
             }
 
             //default is colorAccent
@@ -78,25 +74,27 @@ class ActivityMain : AppCompatActivity()
 //            triggerClickListenersInSelectionMode = true
         }
 
-        actionModeHelper = DxActionModeHelper(myAdapter, { "${myAdapter.getNumSelectedItems()}" },
+        actionModeHelper = DxActionModeHelper(mySampleAdapter, { "${mySampleAdapter.getNumSelectedItems()}" },
             object : ActionMode.Callback
             {
-                override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean
+                override fun onActionItemClicked(mode: ActionMode?, menuItem: MenuItem?): Boolean
                 {
+                    toast("${menuItem?.title}")
                     return true
                 }
 
-                override fun onCreateActionMode(p0: ActionMode?, p1: Menu?): Boolean
+                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean
                 {
+                    menuInflater.inflate(R.menu.action_mode, menu)
                     return true
                 }
 
-                override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean
+                override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean
                 {
                     return false
                 }
 
-                override fun onDestroyActionMode(p0: ActionMode?)
+                override fun onDestroyActionMode(mode: ActionMode?)
                 {
                 }
             })
@@ -104,18 +102,36 @@ class ActivityMain : AppCompatActivity()
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
-            adapter = myAdapter
+            adapter = mySampleAdapter
+
+            val touchHelper = ItemTouchHelper(
+                DxItemTouchCallback(mySampleAdapter).apply {
+
+                    //option to initiate drag with long-clicking an item
+                    //be aware that if long-click also selects item,
+                    //results may not be as intended (meant to long-click but initiated drag instead)
+                    dragOnLongClick = true
+
+
+                    onItemsMovedListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
+                        Log.i("sample",
+                            "about to switch ${draggedItem.mText} (position $draggedPosition) " +
+                                    "with ${targetItem.mText} (position $targetPosition)"
+                        )
+                    }
+            })
+            touchHelper.attachToRecyclerView(this)
 
             firstItemVisibilityListener = object : OnAdapterItemVisibilityChanged
             {
-                override fun onVisible() = toast("first yes")
-                override fun onInvisible() = toast("first no")
+                override fun onVisible() = Log.i("sample", "first item visible")
+                override fun onInvisible() = Log.i("sample", "first item not visible")
             }
 
             lastItemVisibilityListener = object : OnAdapterItemVisibilityChanged
             {
-                override fun onVisible() = toast("last yes")
-                override fun onInvisible() = toast("last no")
+                override fun onVisible() = Log.i("sample", "last item visible")
+                override fun onInvisible() = Log.i("sample", "last item not visible")
             }
 
             onScrollingDownListener = Pair(50, { fab.hide() })
