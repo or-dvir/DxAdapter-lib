@@ -22,7 +22,10 @@ class ActivityMain : AppCompatActivity()
     //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
     //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.ViewHolder
 
-    private lateinit var actionModeHelper: DxActionModeHelper<MyItem>
+
+    private lateinit var mSampleAdapter: DxAdapter<MyItem>
+    private lateinit var mItemTouchHelper: ItemTouchHelper
+    private lateinit var mActionModeHelper: DxActionModeHelper<MyItem>
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -36,8 +39,7 @@ class ActivityMain : AppCompatActivity()
             list.add(MyItem(i.toString()))
         }
 
-        val mySampleAdapter = DxAdapter(list).apply {
-
+        mSampleAdapter = DxAdapter(list).apply {
             onClickListener = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
@@ -50,7 +52,7 @@ class ActivityMain : AppCompatActivity()
             onSelectStateChangedListener = { position, item, isSelected ->
 
                 //MUST be called in order for DxActionMode to function as intended
-                actionModeHelper.updateActionMode(this@ActivityMain)
+                mActionModeHelper.updateActionMode(this@ActivityMain)
 
                 val txt =
                     if (isSelected)
@@ -60,6 +62,10 @@ class ActivityMain : AppCompatActivity()
 
                 Log.i("sample", "${item.mText} (position $position) $txt")
             }
+
+            dragAndDropWithHandle = Pair(R.id.myItemDragHandle, { holder ->
+                mItemTouchHelper.startDrag(holder)
+            })
 
             //default is colorAccent
             //if colorAccent is not provided in the style "AppTheme",
@@ -74,7 +80,7 @@ class ActivityMain : AppCompatActivity()
 //            triggerClickListenersInSelectionMode = true
         }
 
-        actionModeHelper = DxActionModeHelper(mySampleAdapter, { "${mySampleAdapter.getNumSelectedItems()}" },
+        mActionModeHelper = DxActionModeHelper(mSampleAdapter, { "${mSampleAdapter.getNumSelectedItems()}" },
             object : ActionMode.Callback
             {
                 override fun onActionItemClicked(mode: ActionMode?, menuItem: MenuItem?): Boolean
@@ -99,28 +105,30 @@ class ActivityMain : AppCompatActivity()
                 }
             })
 
+        //if you want to use the drag-and-drop features of this adapter,
+        //you must provide DxItemTouchCallback to ItemTouchHelper.
+        //don't forget to attach it to your RecyclerView!
+        mItemTouchHelper = ItemTouchHelper(
+            DxItemTouchCallback(mSampleAdapter).apply {
+
+                //option to initiate drag with long-clicking an item
+                //be aware that if long-click also selects item,
+                //results may not be as intended (e.g. meant to long-click but initiated drag instead)
+//                    dragOnLongClick = true
+
+                onItemsMovedListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
+                    Log.i("sample",
+                        "about to switch ${draggedItem.mText} (position $draggedPosition) " +
+                                "with ${targetItem.mText} (position $targetPosition)"
+                    )
+                }
+            })
+
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
-            adapter = mySampleAdapter
-
-            val touchHelper = ItemTouchHelper(
-                DxItemTouchCallback(mySampleAdapter).apply {
-
-                    //option to initiate drag with long-clicking an item
-                    //be aware that if long-click also selects item,
-                    //results may not be as intended (meant to long-click but initiated drag instead)
-                    dragOnLongClick = true
-
-
-                    onItemsMovedListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
-                        Log.i("sample",
-                            "about to switch ${draggedItem.mText} (position $draggedPosition) " +
-                                    "with ${targetItem.mText} (position $targetPosition)"
-                        )
-                    }
-            })
-            touchHelper.attachToRecyclerView(this)
+            adapter = mSampleAdapter
+            mItemTouchHelper.attachToRecyclerView(this)
 
             firstItemVisibilityListener = object : OnAdapterItemVisibilityChanged
             {

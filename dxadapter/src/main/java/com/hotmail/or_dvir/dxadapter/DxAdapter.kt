@@ -6,9 +6,13 @@ import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
+import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 
 class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
@@ -50,6 +54,17 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
      */
     var triggerClickListenersInSelectionMode = false
 
+    /**
+     * if you want to use drag and drop using a drag handle,
+     * you MUST set this variable, and inside [startDragListener] call the method [ItemTouchHelper.startDrag]
+     * with the given ViewHolder.
+     *
+     * first: the resource id of the drag handle
+     *
+     * second: a callback to initiate the drag event (must be done by YOU as described above)
+     */
+    var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
+
     override fun getItemCount(): Int = mItems.size
     private fun isInBounds(position: Int) = position in (0 until mItems.size)
 
@@ -57,6 +72,18 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
     override fun onBindViewHolder(holder: SimpleViewHolder, position: Int)
     {
         mItems[position].let { item ->
+            dragAndDropWithHandle?.let {
+                //this line is needed for the compiler
+                holder.itemView.findViewById<View>(it.first).setOnTouchListener { v, event ->
+                    if (event.actionMasked == MotionEvent.ACTION_DOWN)
+                        it.second.invoke(holder)
+
+                    //allow normal processing to continue
+                    false
+                }
+
+            }
+
             holder.itemView.isSelected = item.mIsSelected
             item.bindViewHolder(holder)
         }
