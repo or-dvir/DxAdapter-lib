@@ -99,7 +99,6 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                             onScrollingUpListener?.let { invokeScrollUpDownListener(dy, it) }
                     }
 
-                    //todo can i save layoutManager as global member so i don't have to cast each time???
                     //todo don't forget about staggered grid!!!!!!!
                     mLayManLinear?.apply {
                         //todo when documenting, note the order of the callbacks!!!

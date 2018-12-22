@@ -6,7 +6,6 @@ import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
-import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.TypedValue

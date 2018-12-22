@@ -22,6 +22,12 @@ class ActivityMain : AppCompatActivity()
     //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
     //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.ViewHolder
 
+    //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
+    //todo you have included ALL POSSIBLE OPTIONS in this sample
+
+
+    i stopped here
+    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
 
     private lateinit var mSampleAdapter: DxAdapter<MyItem>
     private lateinit var mItemTouchHelper: ItemTouchHelper
