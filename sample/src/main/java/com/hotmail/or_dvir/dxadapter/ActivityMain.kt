@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
@@ -24,7 +25,6 @@ class ActivityMain : AppCompatActivity()
 
     //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
     //todo you have included ALL POSSIBLE OPTIONS in this sample
-
 
 //    i stopped here
 //    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
@@ -159,5 +159,30 @@ class ActivityMain : AppCompatActivity()
         button.setOnClickListener {
             //do something
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean
+    {
+        return if(item != null && item.itemId == R.id.sampleWithViews)
+        {
+            startActivity<ActivityWithViews>()
+            true
+        }
+
+        else
+            super.onOptionsItemSelected(item)
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean
+    {
+        return if (menu != null)
+        {
+            menuInflater.inflate(R.menu.main_menu, menu)
+            true
+        }
+
+        else
+            super.onCreateOptionsMenu(menu)
     }
 }
