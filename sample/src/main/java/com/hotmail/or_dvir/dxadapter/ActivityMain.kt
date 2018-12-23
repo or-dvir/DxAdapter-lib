@@ -26,8 +26,8 @@ class ActivityMain : AppCompatActivity()
     //todo you have included ALL POSSIBLE OPTIONS in this sample
 
 
-    i stopped here
-    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
+//    i stopped here
+//    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
 
     private lateinit var mSampleAdapter: DxAdapter<MyItem>
     private lateinit var mItemTouchHelper: ItemTouchHelper
@@ -121,6 +121,10 @@ class ActivityMain : AppCompatActivity()
                 //be aware that if long-click also selects item,
                 //results may not be as intended (e.g. meant to long-click but initiated drag instead)
 //                    dragOnLongClick = true
+
+                //if your list is actually a grid, you need to set this value to TRUE
+                //otherwise drag-and-drop will not work as expected
+//                isGridLayoutManager = true
 
                 onItemsMovedListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
                     Log.i("sample",

@@ -24,13 +24,28 @@ class DxItemTouchCallback<ITEM: DxItem<SimpleViewHolder>>(private val adapter: D
     var dragOnLongClick = false
 
     /**
+     * if your list is actually a grid, set this value to TRUE.
+     * otherwise, drag-and-drop will not work as expected
+     */
+    var isGridLayoutManager = false
+
+    /**
      * NOTE: this will trigger JUST BEFORE the items are moved
      */
     var onItemsMovedListener: onItemsMovedListener<ITEM>? = null
 
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
     {
-        val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+        val dragFlags =
+            //enable drag in all directions
+            if (isGridLayoutManager)
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            //only enable drag UP and DOWN
+            else
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN
+
+
+        //todo should i allow swiping when using grid layout??? maybe let the user decide????
 //        val swipeFlags = ItemTouchHelper.START or ItemTouchHelper.END
         val swipeFlags = 0
         return makeMovementFlags(dragFlags, swipeFlags)
@@ -53,6 +68,34 @@ class DxItemTouchCallback<ITEM: DxItem<SimpleViewHolder>>(private val adapter: D
 
         return true
     }
+
+//    //todo check if the background color also works for card view!!!
+//    //todo think about how you can add this feature...
+//    override fun onSelectedChanged(viewHolder: ViewHolder?, actionState: Int)
+//    {
+//        movedItemBackgroundColor?.let { color ->
+//            if(actionState != ItemTouchHelper.ACTION_STATE_IDLE)
+//            {
+//                viewHolder?.itemView?.apply {
+//                    mSavedMovedItemBackgroundColor = background
+//                    setBackgroundColor(color)
+//                }
+//            }
+//        }
+//
+//        super.onSelectedChanged(viewHolder, actionState)
+//    }
+//
+//    override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder)
+//    {
+//        super.clearView(recyclerView, viewHolder)
+//
+//        //only change the background color if the user specifically requested it (movedItemBackgroundColor != null)
+//        //so you don't override whatever background
+//        movedItemBackgroundColor?.let {
+//            viewHolder.itemView.setBackgroundColor(0)
+//        }
+//    }
 
     override fun onSwiped(holder: ViewHolder, direction: Int)
     {

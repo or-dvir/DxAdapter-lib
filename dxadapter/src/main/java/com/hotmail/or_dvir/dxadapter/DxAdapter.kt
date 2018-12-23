@@ -70,21 +70,9 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
     @CallSuper
     override fun onBindViewHolder(holder: SimpleViewHolder, position: Int)
     {
-        mItems[position].let { item ->
-            dragAndDropWithHandle?.let {
-                //this line is needed for the compiler
-                holder.itemView.findViewById<View>(it.first).setOnTouchListener { v, event ->
-                    if (event.actionMasked == MotionEvent.ACTION_DOWN)
-                        it.second.invoke(holder)
-
-                    //allow normal processing to continue
-                    false
-                }
-
-            }
-
-            holder.itemView.isSelected = item.mIsSelected
-            item.bindViewHolder(holder)
+        mItems[position].let {
+            holder.itemView.isSelected = it.mIsSelected
+            it.bindViewHolder(holder)
         }
     }
 
@@ -197,12 +185,12 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder
     {
-        val first = mItems.first()
+        val firstItem = mItems.first()
         val context = parent.context
 
         val itemView = LayoutInflater
                 .from(context)
-                .inflate(first.getLayoutRes(), parent, false)
+                .inflate(firstItem.getLayoutRes(), parent, false)
 
         StateListDrawable().apply {
             //replacement method requires API 23 (lib min is 21)
@@ -221,7 +209,18 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
             itemView.background = this
         }
 
-        val holder = first.createViewHolder(itemView)
+        val holder = firstItem.createViewHolder(itemView)
+
+        dragAndDropWithHandle?.let {
+            //this line is needed for the compiler
+            itemView.findViewById<View>(it.first).setOnTouchListener { v, event ->
+                if (event.actionMasked == MotionEvent.ACTION_DOWN)
+                    it.second.invoke(holder)
+
+                //allow normal processing to continue
+                false
+            }
+        }
 
         //NOTE:
         //we CANNOT have "position" outside of the click listeners because
