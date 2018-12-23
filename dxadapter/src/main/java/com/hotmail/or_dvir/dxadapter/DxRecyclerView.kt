@@ -57,7 +57,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     private var notifiedLastInvisible = false
 
     private var mLayManLinear: LinearLayoutManager? = null
-    //todo dont forget to add staggered grid layout manager!!!!
+    //todo dont forget to add grid and staggered grid layout manager!!!!
 
     override fun setLayoutManager(layout: LayoutManager?)
     {
@@ -67,7 +67,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
             when(it)
             {
                 is LinearLayoutManager -> mLayManLinear = it
-                //todo dont forget to add staggered grid layout manager!!!!
+                //todo dont forget to add grid and staggered grid layout manager!!!!
             }
         }
     }
