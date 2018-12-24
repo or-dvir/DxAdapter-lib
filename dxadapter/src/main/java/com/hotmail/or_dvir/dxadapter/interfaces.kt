@@ -1,7 +1,6 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.view.View
 
 internal interface IDxItem<VH: RecyclerViewHolder>

@@ -2,24 +2,25 @@ package com.hotmail.or_dvir.dxadapter
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
+import org.greenrobot.eventbus.EventBus
 
-class MyItemWithViews: DxItem<SimpleViewHolder>()
+data class MyItemWithViews(var isSwitchOn: Boolean = false,
+                           var isBoxChecked: Boolean = false,
+                           var mText: String = "asdfgsdfg")
+    : DxItem<SimpleViewHolder>()
 {
-    private var isSwitchOn = false
-    private var isBoxChecked = false
-    private var mText = ""
+//    private var isSwitchOn = false
+//    private var isBoxChecked = false
+//    private var mText = ""
 
     override fun createViewHolder(itemView: View) = ViewHolder(itemView)
     override fun getLayoutRes() = R.layout.my_item_with_views
 
     override fun bindViewHolder(holder: SimpleViewHolder)
     {
-        BUG BUG BUG BUG
-                recycler view does not save previous state!!!! (text/isChecked etc...)
-
-
         holder.itemView.apply {
             mySwitch.isChecked = isSwitchOn
             myCheckBox.isChecked = isBoxChecked
@@ -36,29 +37,39 @@ class MyItemWithViews: DxItem<SimpleViewHolder>()
         }
     }
 
-    inner class ViewHolder(itemView: View): SimpleViewHolder(itemView)
+    /*inner*/ class ViewHolder(itemView: View): SimpleViewHolder(itemView)
     {
         init
         {
             itemView.apply {
-                mySwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-                    isSwitchOn = isChecked
+                mySwitch.setOnClickListener{
+                    EventBus.getDefault().post(SwitchEvent(mySwitch.isChecked, adapterPosition))
+//                    isSwitchOn = isChecked
+//                    Log.i("aaaaa", "checkkkkkkkkkkkkkkkkkkkkkkkk $isChecked $adapterPosition")
                 }
+//                mySwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+//                    EventBus.getDefault().post(SwitchEvent(isChecked, adapterPosition))
+////                    isSwitchOn = isChecked
+//                    Log.i("aaaaa", "checkkkkkkkkkkkkkkkkkkkkkkkk $isChecked $adapterPosition")
+//                }
 
-                myCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                    isBoxChecked = isChecked
-                }
-
-                myEditText.addTextChangedListener(object : TextWatcher
-                {
-                    override fun afterTextChanged(s: Editable?)
-                    {
-                        s?.apply { mText = toString() }
-                    }
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-                })
+//                myCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+//                    isBoxChecked = isChecked
+//                }
+//
+//                myEditText.addTextChangedListener(object : TextWatcher
+//                {
+//                    override fun afterTextChanged(s: Editable?)
+//                    {
+//                        s?.apply {
+//                            mText = toString()
+//                            Log.i("aaaaa", "texttttttttttttttttttttttt $mText $adapterPosition")
+//                        }
+//                    }
+//
+//                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//                })
             }
         }
     }

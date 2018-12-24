@@ -8,6 +8,7 @@ import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -74,6 +75,24 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
             holder.itemView.isSelected = it.mIsSelected
             it.bindViewHolder(holder)
         }
+
+        if(position == 0)
+            Log.i("aaaaa", "BINDING ${mItems[0]}")
+    }
+
+    override fun onViewRecycled(holder: SimpleViewHolder)
+    {
+        super.onViewRecycled(holder)
+
+        val position = holder.adapterPosition
+
+        if(position == 0)
+            Log.i("aaaaa", "RECYCLING ${mItems[0]}")
+        if(position == 1)
+            Log.i("aaaaa", "RECYCLING POSITION 1 ${mItems[0]}")
+
+        if(position != RecyclerView.NO_POSITION)
+            mItems[position].unbindViewHolder(holder)
     }
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
@@ -166,15 +185,6 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         }.filterNotNull()
     }
 
-    override fun onViewRecycled(holder: SimpleViewHolder)
-    {
-        super.onViewRecycled(holder)
-
-        val position = holder.adapterPosition
-        if(position != RecyclerView.NO_POSITION)
-            mItems[position].unbindViewHolder(holder)
-    }
-
     @ColorInt
     private fun getThemeAccentColorInt(context: Context): Int
     {
@@ -185,6 +195,18 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder
     {
+        //TODO NOTE:
+        //TODO THE BUG WHERE ITEMS WILL NOT SAVE STATE HAS SOMETHING TO DO WITH
+        //TODO TAKING THE FIRST ITEM IN THE LIST!!!!!
+        //todo check how fast adapter does this!!!
+        //TODO THEORY:
+        //todo could be a COMBINATION of using the first item AND that the viewHolder is
+        //todo an inner class which means it holds a reference to the outer class
+        //todo so the view holder of the first item holds a reference to the data of the first item in the list!!!
+
+        if i remove the saving of the data from the view holder (e.g. with eventbus)
+        then the state is saved!!!!!!
+
         val firstItem = mItems.first()
         val context = parent.context
 
