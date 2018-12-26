@@ -1,25 +1,17 @@
 package com.hotmail.or_dvir.dxadapter
 
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
-import org.greenrobot.eventbus.EventBus
 
 data class MyItemWithViews(var isSwitchOn: Boolean = false,
                            var isBoxChecked: Boolean = false,
                            var mText: String = "asdfgsdfg")
-    : DxItem<SimpleViewHolder>()
+    : DxItem<MyItemWithViews.ViewHolder>()
 {
-//    private var isSwitchOn = false
-//    private var isBoxChecked = false
-//    private var mText = ""
-
     override fun createViewHolder(itemView: View) = ViewHolder(itemView)
     override fun getLayoutRes() = R.layout.my_item_with_views
 
-    override fun bindViewHolder(holder: SimpleViewHolder)
+    override fun bindViewHolder(holder: MyItemWithViews.ViewHolder)
     {
         holder.itemView.apply {
             mySwitch.isChecked = isSwitchOn
@@ -28,7 +20,7 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
         }
     }
 
-    override fun unbindViewHolder(holder: SimpleViewHolder)
+    override fun unbindViewHolder(holder: MyItemWithViews.ViewHolder)
     {
         holder.itemView.apply {
             mySwitch.isChecked = false
@@ -37,6 +29,13 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
         }
     }
 
+    //WARNING!!!!
+    //do NOT make this an inner class!
+    //inner classes store a reference to the outer class and this can cause unexpected behavior
+    //when this ViewHolder is being recycled.
+    //if you need to communicate some changes back to the outer object,
+    //use your favorite method of communicating between different components of the app
+    //for example you can use LocalBroadcastManager, or my personal favorite - EventBus
     /*inner*/ class ViewHolder(itemView: View): SimpleViewHolder(itemView)
     {
         init
@@ -46,8 +45,7 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
             itemView.apply {
                 mySwitch.setOnClickListener {
 //                    EventBus.getDefault().post(SwitchEvent(mySwitch.isChecked, adapterPosition))
-                    (tag as List<MyItemWithViews>)[adapterPosition]
-                    isSwitchOn = mySwitch.isChecked
+//                    isSwitchOn = mySwitch.isChecked
 //                    Log.i("aaaaa", "checkkkkkkkkkkkkkkkkkkkkkkkk $isChecked $adapterPosition")
                 }
 

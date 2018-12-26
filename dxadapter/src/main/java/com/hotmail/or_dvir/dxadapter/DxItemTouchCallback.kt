@@ -61,8 +61,8 @@ class DxItemTouchCallback<ITEM: DxItem<SimpleViewHolder>>(private val adapter: D
         //todo add swap listener here
 
         adapter.apply {
-            onItemsMovedListener?.invoke(adapterItems[dragPos], adapterItems[targetPos], dragPos, targetPos)
-            Collections.swap(adapterItems, dragPos, targetPos)
+            onItemsMovedListener?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
+            Collections.swap(mItems, dragPos, targetPos)
             notifyItemMoved(dragPos, targetPos)
         }
 

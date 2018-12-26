@@ -49,7 +49,7 @@ class DxActionModeHelper<ITEM: DxItem<SimpleViewHolder>>(
             //(if user followed instructions), which will eventually call finish() on the actionMode,
             //which will bring us back here.
             adapter.apply {
-                adapterItems.forEach { it.mIsSelected = false }
+                mItems.forEach { it.mIsSelected = false }
                 notifyDataSetChanged()
             }
 
