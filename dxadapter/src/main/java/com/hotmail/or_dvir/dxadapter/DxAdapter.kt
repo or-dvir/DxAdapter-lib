@@ -15,7 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
-class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
+class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(/*internal*/ val adapterItems: List<ITEM>)
     : RecyclerView.Adapter<SimpleViewHolder>()
 {
     //todo make these public and remove setter methods - this library is meant for kotlin
@@ -65,19 +65,19 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
      */
     var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
-    override fun getItemCount(): Int = mItems.size
-    private fun isInBounds(position: Int) = position in (0 until mItems.size)
+    override fun getItemCount(): Int = adapterItems.size
+    private fun isInBounds(position: Int) = position in (0 until adapterItems.size)
 
     @CallSuper
     override fun onBindViewHolder(holder: SimpleViewHolder, position: Int)
     {
-        mItems[position].let {
+        adapterItems[position].let {
             holder.itemView.isSelected = it.mIsSelected
             it.bindViewHolder(holder)
         }
 
         if(position == 0)
-            Log.i("aaaaa", "BINDING ${mItems[0]}")
+            Log.i("aaaaa", "BINDING ${adapterItems[0]}")
     }
 
     override fun onViewRecycled(holder: SimpleViewHolder)
@@ -87,19 +87,19 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         val position = holder.adapterPosition
 
         if(position == 0)
-            Log.i("aaaaa", "RECYCLING ${mItems[0]}")
+            Log.i("aaaaa", "RECYCLING ${adapterItems[0]}")
         if(position == 1)
-            Log.i("aaaaa", "RECYCLING POSITION 1 ${mItems[0]}")
+            Log.i("aaaaa", "RECYCLING POSITION 1 ${adapterItems[0]}")
 
         if(position != RecyclerView.NO_POSITION)
-            mItems[position].unbindViewHolder(holder)
+            adapterItems[position].unbindViewHolder(holder)
     }
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
     //todo any other important methods i should override??????
 
-    fun select(vararg items: ITEM) = items.forEach { select(mItems.indexOf(it)) }
+    fun select(vararg items: ITEM) = items.forEach { select(adapterItems.indexOf(it)) }
     /**
      * for indices which are out of bounds - nothing happens
      */
@@ -108,7 +108,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         indices.forEach { position ->
             if (isInBounds(position))
             {
-                mItems[position].apply {
+                adapterItems[position].apply {
                     //only select if previously not selected
                     //so we don't trigger onSelectStateChangedListener unnecessarily
                     if(!mIsSelected)
@@ -128,14 +128,14 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
 //     */
 //    fun selectAll()
 //    {
-//        mItems.forEach {
+//        adapterItems.forEach {
 //            it.mIsSelected = true
 //        }
 //
 //        notifyDataSetChanged()
 //    }
 
-    fun deselect(vararg items: ITEM) = items.forEach { deselect(mItems.indexOf(it)) }
+    fun deselect(vararg items: ITEM) = items.forEach { deselect(adapterItems.indexOf(it)) }
     /**
      * for indices which are out of bounds - nothing happens
      */
@@ -144,7 +144,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         indices.forEach { position ->
             if (isInBounds(position))
             {
-                mItems[position].apply {
+                adapterItems[position].apply {
                     //only deselect if previously selected
                     //so we don't trigger onSelectStateChangedListener unnecessarily
                     if(mIsSelected)
@@ -164,20 +164,20 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
 //     */
 //    private fun deselectAll()
 //    {
-//        mItems.forEach { it.mIsSelected = false }
+//        adapterItems.forEach { it.mIsSelected = false }
 //        notifyDataSetChanged()
 //    }
 
     /**
      * "selection mode" means at least one item is selected
      */
-    private fun isInSelectionMode() = mItems.find { it.mIsSelected } != null
+    private fun isInSelectionMode() = adapterItems.find { it.mIsSelected } != null
 
-    fun getAllSelectedItems() = mItems.filter { it.mIsSelected }
+    fun getAllSelectedItems() = adapterItems.filter { it.mIsSelected }
     fun getNumSelectedItems() = getAllSelectedItems().size
     fun getAllSelectedIndices(): List<Int>
     {
-        return mItems.mapIndexed { index, item ->
+        return adapterItems.mapIndexed { index, item ->
             if (item.mIsSelected)
                 index
             else
@@ -204,10 +204,10 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         //todo an inner class which means it holds a reference to the outer class
         //todo so the view holder of the first item holds a reference to the data of the first item in the list!!!
 
-        if i remove the saving of the data from the view holder (e.g. with eventbus)
-        then the state is saved!!!!!!
+//        if i remove the saving of the data from the view holder (e.g. with eventbus)
+//        then the state is saved!!!!!!
 
-        val firstItem = mItems.first()
+        val firstItem = adapterItems.first()
         val context = parent.context
 
         val itemView = LayoutInflater
@@ -231,6 +231,10 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
             itemView.background = this
         }
 
+        /////////////////////////////////////////////////////////////////////
+        itemView.tag = adapterItems
+        /////////////////////////////////////////////////////////////////////
+
         val holder = firstItem.createViewHolder(itemView)
 
         dragAndDropWithHandle?.let {
@@ -251,7 +255,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         onClickListener?.apply {
             itemView.setOnClickListener {
                 val clickedPosition = holder.adapterPosition
-                val clickedItem = mItems[clickedPosition]
+                val clickedItem = adapterItems[clickedPosition]
 
                 //WARNING:
                 //do NOT save the state of isInSelectionMode() into a variable here
@@ -288,7 +292,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         onLongClickListener?.apply {
             itemView.setOnLongClickListener {
                 val clickedPosition = holder.adapterPosition
-                val clickedItem = mItems[clickedPosition]
+                val clickedItem = adapterItems[clickedPosition]
 
                 //WARNING:
                 //do NOT save the state of isInSelectionMode() into a variable here

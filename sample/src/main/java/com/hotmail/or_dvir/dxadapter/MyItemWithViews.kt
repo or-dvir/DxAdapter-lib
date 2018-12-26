@@ -41,22 +41,20 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
     {
         init
         {
+            //NOTE:
+            //not using onCheckedChanged because it is being triggered also when the item gets out of view
             itemView.apply {
-                mySwitch.setOnClickListener{
-                    EventBus.getDefault().post(SwitchEvent(mySwitch.isChecked, adapterPosition))
-//                    isSwitchOn = isChecked
+                mySwitch.setOnClickListener {
+//                    EventBus.getDefault().post(SwitchEvent(mySwitch.isChecked, adapterPosition))
+                    (tag as List<MyItemWithViews>)[adapterPosition]
+                    isSwitchOn = mySwitch.isChecked
 //                    Log.i("aaaaa", "checkkkkkkkkkkkkkkkkkkkkkkkk $isChecked $adapterPosition")
                 }
-//                mySwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-//                    EventBus.getDefault().post(SwitchEvent(isChecked, adapterPosition))
-////                    isSwitchOn = isChecked
-//                    Log.i("aaaaa", "checkkkkkkkkkkkkkkkkkkkkkkkk $isChecked $adapterPosition")
-//                }
 
-//                myCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                myCheckBox.setOnClickListener {
 //                    isBoxChecked = isChecked
-//                }
-//
+                }
+
 //                myEditText.addTextChangedListener(object : TextWatcher
 //                {
 //                    override fun afterTextChanged(s: Editable?)

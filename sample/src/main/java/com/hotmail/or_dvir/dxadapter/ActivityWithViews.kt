@@ -39,7 +39,7 @@ class ActivityWithViews : AppCompatActivity()
     fun test(event: SwitchEvent)
     {
         Log.i("aaaaa", "got event set to ${event.isOn}")
-        mAdapter.mItems[event.position].isSwitchOn = event.isOn
+//        mAdapter.adapterItems[event.position].isSwitchOn = event.isOn
     }
 
     override fun onStart()
