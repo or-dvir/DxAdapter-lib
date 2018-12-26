@@ -14,7 +14,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
-class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
+open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: List<ITEM>)
     : RecyclerView.Adapter<SimpleViewHolder>()
 {
     var onClickListener: onItemClickListener<ITEM>? = null
@@ -221,7 +221,7 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
             itemView.background = this
         }
 
-        val holder = createAdapterViewHolder(parent, viewType)
+        val holder = createAdapterViewHolder(itemView, parent, viewType)
             ?: SimpleViewHolder(itemView)//firstItem.createViewHolder(itemView)
 
 //        val holder = firstItem.createViewHolder(itemView)
@@ -318,5 +318,12 @@ class DxAdapter<ITEM: DxItem<SimpleViewHolder>>(internal val mItems: List<ITEM>)
         return holder
     }
 
-    fun createAdapterViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder? = null
+    /**
+     * override this function if you want a custom ViewHolder (for example if you want to attach
+     * listeners to the individual views of an item).
+     *
+     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
+     * [RecyclerView.ViewHolder.getAdapterPosition]
+     */
+    open fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): SimpleViewHolder? = null
 }

@@ -6,12 +6,13 @@ import kotlinx.android.synthetic.main.my_item_with_views.view.*
 data class MyItemWithViews(var isSwitchOn: Boolean = false,
                            var isBoxChecked: Boolean = false,
                            var mText: String = "asdfgsdfg")
-    : DxItem<MyItemWithViews.ViewHolder>()
+    : DxItem()/*<MyItemWithViews.MyItemWithViewsViewHolder>()*/
 {
-    override fun createViewHolder(itemView: View) = ViewHolder(itemView)
+//    override fun createViewHolder(itemView: View) = MyItemWithViewsViewHolder(itemView)
     override fun getLayoutRes() = R.layout.my_item_with_views
 
-    override fun bindViewHolder(holder: MyItemWithViews.ViewHolder)
+    override fun bindViewHolder(holder: RecyclerViewHolder)
+//    override fun bindViewHolder(holder: MyItemWithViews.MyItemWithViewsViewHolder)
     {
         holder.itemView.apply {
             mySwitch.isChecked = isSwitchOn
@@ -20,7 +21,8 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
         }
     }
 
-    override fun unbindViewHolder(holder: MyItemWithViews.ViewHolder)
+    override fun unbindViewHolder(holder: RecyclerViewHolder)
+//    override fun unbindViewHolder(holder: MyItemWithViews.MyItemWithViewsViewHolder)
     {
         holder.itemView.apply {
             mySwitch.isChecked = false
@@ -32,11 +34,11 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
     //WARNING!!!!
     //do NOT make this an inner class!
     //inner classes store a reference to the outer class and this can cause unexpected behavior
-    //when this ViewHolder is being recycled.
+    //when this MyItemWithViewsViewHolder is being recycled.
     //if you need to communicate some changes back to the outer object,
     //use your favorite method of communicating between different components of the app
     //for example you can use LocalBroadcastManager, or my personal favorite - EventBus
-    /*inner*/ class ViewHolder(itemView: View): SimpleViewHolder(itemView)
+    class ViewHolder(itemView: View): SimpleViewHolder(itemView)
     {
         init
         {

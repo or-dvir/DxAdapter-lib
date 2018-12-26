@@ -18,7 +18,7 @@ internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,
 internal typealias emptyCallback = () -> Any
 internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 
-internal typealias RecyclerViewHolder = RecyclerView.ViewHolder
+typealias RecyclerViewHolder = RecyclerView.ViewHolder
 
 /**
  * first: scroll sensitivity to trigger the listener

@@ -21,7 +21,7 @@ class ActivityMain : AppCompatActivity()
     //todo test module with leak canary!!!!!!!
 
     //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
-    //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.ViewHolder
+    //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.MyItemWithViewsViewHolder
 
     //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
     //todo you have included ALL POSSIBLE OPTIONS in this sample
