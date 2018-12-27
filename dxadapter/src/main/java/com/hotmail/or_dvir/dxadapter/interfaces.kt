@@ -7,7 +7,7 @@ internal interface IDxItem/*<VH: RecyclerViewHolder>*/
 {
     @LayoutRes
     fun getLayoutRes(): Int
-//    fun createViewHolder(itemView: View): VH
+//    fun createViewHolder(itemView: View): RecyclerViewHolder//VH
     fun bindViewHolder(holder: RecyclerViewHolder)
 //    fun bindViewHolder(holder: VH)
 

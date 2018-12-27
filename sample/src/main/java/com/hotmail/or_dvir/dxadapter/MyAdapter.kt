@@ -12,6 +12,15 @@ class MyAdapter(val mItems: List<MyItemWithViews>): DxAdapter<MyItemWithViews>(m
                                          parent: ViewGroup,
                                          viewType: Int) = MyItemWithViewsViewHolder(itemView)
 
+    override fun onBindViewHolder(holder: SimpleViewHolder, position: Int)
+    {
+        super.onBindViewHolder(holder, position)
+
+        print("")
+    }
+
+
+
     inner class MyItemWithViewsViewHolder(itemView: View): SimpleViewHolder(itemView)
     {
         init
@@ -33,9 +42,7 @@ class MyAdapter(val mItems: List<MyItemWithViews>): DxAdapter<MyItemWithViews>(m
                 {
                     override fun afterTextChanged(s: Editable?)
                     {
-                        s?.apply {
-                            item.mText = toString()
-                        }
+                        s?.apply { item.mText = toString() }
                     }
 
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
