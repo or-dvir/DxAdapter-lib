@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
 import java.util.*
 
-class DxItemTouchCallback<ITEM: DxItem/*<SimpleViewHolder>*/>(private val adapter: DxAdapter<ITEM>)
+class DxItemTouchCallback<ITEM: DxItem<*>>(private val adapter: DxAdapter<ITEM>)
     : ItemTouchHelper.Callback()
 {
     //todo test drag and drop and callbacks with grid layout manager!!!!

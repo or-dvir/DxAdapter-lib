@@ -26,7 +26,7 @@ class ActivityWithViews : AppCompatActivity()
             list.add(MyItemWithViews())
         }
 
-        mAdapter = MyAdapter(list)
+//        mAdapter = MyAdapter(list)
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityWithViews, DividerItemDecoration.VERTICAL))

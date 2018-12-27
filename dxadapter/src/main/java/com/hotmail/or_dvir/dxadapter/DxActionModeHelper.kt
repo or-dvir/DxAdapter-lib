@@ -19,7 +19,7 @@ import android.view.MenuItem
  * all items will be deselected. IMPORTANT: this does NOT trigger the selection
  * listener given to [DxAdapter]
  */
-class DxActionModeHelper<ITEM: DxItem/*<SimpleViewHolder>*/>(
+class DxActionModeHelper<ITEM: DxItem<*>>(
     private val adapter: DxAdapter<ITEM>,
     private val titleProvider: actionModeTitleProvider,
     private val callback: ActionMode.Callback)

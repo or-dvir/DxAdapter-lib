@@ -185,6 +185,14 @@ class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
         return value.data
     }
 
+    /**
+     * @return the LAYOUT ID of the item
+     */
+    override fun getItemViewType(position: Int) = mItems[position].getLayoutRes()
+
+    /**
+     * @param viewType the LAYOUT ID to inflate
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder
     {
         //TODO NOTE:
@@ -204,7 +212,7 @@ class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
 
         val itemView = LayoutInflater
                 .from(context)
-                .inflate(getLayoutRes(parent, viewType), parent, false)
+                .inflate(viewType, parent, false)
 
         StateListDrawable().apply {
             //replacement method requires API 23 (lib min is 21)
@@ -223,7 +231,7 @@ class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
             itemView.background = this
         }
 
-        val holder = createAdapterViewHolder(itemView, parent, viewType)
+        val holder = item.createViewHolder(itemView)//, parent, viewType)
 
         dragAndDropWithHandle?.let {
             //this line is needed for the compiler
