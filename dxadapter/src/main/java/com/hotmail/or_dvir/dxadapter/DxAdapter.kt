@@ -6,6 +6,7 @@ import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
+import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.TypedValue
@@ -14,8 +15,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
-open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: List<ITEM>)
-    : RecyclerView.Adapter<SimpleViewHolder>()
+abstract class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: List<ITEM>)
+    : RecyclerView.Adapter<RecyclerViewHolder>()
 {
     var onClickListener: onItemClickListener<ITEM>? = null
     var onLongClickListener: onItemLongClickListener<ITEM>? = null
@@ -67,22 +68,23 @@ open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: Li
     private fun isInBounds(position: Int) = position in (0 until mItems.size)
 
     @CallSuper
-    override fun onBindViewHolder(holder: SimpleViewHolder, position: Int)
+    override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int)
     {
         mItems[position].let {
             holder.itemView.isSelected = it.mIsSelected
-            it.bindViewHolder(holder)
+//            it.bindViewHolder(holder)
         }
     }
 
-    override fun onViewRecycled(holder: SimpleViewHolder)
+    @CallSuper
+    override fun onViewRecycled(holder: RecyclerViewHolder)
     {
         super.onViewRecycled(holder)
 
-        holder.adapterPosition.let {
-            if (it != RecyclerView.NO_POSITION)
-                mItems[it].unbindViewHolder(holder)
-        }
+//        holder.adapterPosition.let {
+//            if (it != RecyclerView.NO_POSITION)
+//                mItems[it].unbindViewHolder(holder)
+//        }
     }
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
@@ -183,7 +185,7 @@ open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: Li
         return value.data
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder
     {
         //TODO NOTE:
         //TODO THE BUG WHERE ITEMS WILL NOT SAVE STATE HAS SOMETHING TO DO WITH
@@ -197,12 +199,12 @@ open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: Li
 //        if i remove the saving of the data from the view holder (e.g. with eventbus)
 //        then the state is saved!!!!!!
 
-        val firstItem = mItems.first()
+//        val firstItem = mItems.first()
         val context = parent.context
 
         val itemView = LayoutInflater
                 .from(context)
-                .inflate(firstItem.getLayoutRes(), parent, false)
+                .inflate(getLayoutRes(parent, viewType), parent, false)
 
         StateListDrawable().apply {
             //replacement method requires API 23 (lib min is 21)
@@ -222,7 +224,7 @@ open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: Li
         }
 
         val holder = createAdapterViewHolder(itemView, parent, viewType)
-            ?: SimpleViewHolder(itemView)//firstItem.createViewHolder(itemView)
+            //?: SimpleViewHolder(itemView)//firstItem.createViewHolder(itemView)
 
 //        val holder = firstItem.createViewHolder(itemView)
 
@@ -318,6 +320,9 @@ open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: Li
         return holder
     }
 
+    @LayoutRes
+    abstract fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
+
     /**
      * override this function if you want a custom ViewHolder (for example if you want to attach
      * listeners to the individual views of an item).
@@ -325,5 +330,5 @@ open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: Li
      * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
      * [RecyclerView.ViewHolder.getAdapterPosition]
      */
-    open fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): SimpleViewHolder? = null
+    abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): RecyclerViewHolder//? = null
 }

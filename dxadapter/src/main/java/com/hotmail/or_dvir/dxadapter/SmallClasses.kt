@@ -9,4 +9,4 @@ open class SimpleViewHolder(itemView: View): RecyclerViewHolder(itemView)
 /////////////////////////////////////////////////////////////////////
 
 abstract class DxItem/*<VH: RecyclerViewHolder>*/(internal var mIsSelected: Boolean = false)
-    : IDxItem/*<VH>*/
+    //: IDxItem/*<VH>*/
