@@ -3,22 +3,20 @@ package com.hotmail.or_dvir.dxadapter
 import android.support.annotation.LayoutRes
 import android.view.View
 
-/*internal interface IDxItem*//*<VH: RecyclerViewHolder>*//*
+internal interface IDxItem<VH: RecyclerViewHolder>
 {
     @LayoutRes
     fun getLayoutRes(): Int
-//    fun createViewHolder(itemView: View): RecyclerViewHolder//VH
-    fun bindViewHolder(holder: RecyclerViewHolder)
-//    fun bindViewHolder(holder: VH)
+    fun createViewHolder(itemView: View): VH
+    fun bindViewHolder(holder: VH)
 
-    *//**
+    /**
      * here you should cancel any long running operations
      * or expensive resources related to this item and its' views.
      * e.g. loading images from the internet, performing long calculations, clearing image views
-     *//*
-    fun unbindViewHolder(holder: RecyclerViewHolder)
-//    fun unbindViewHolder(holder: VH)
-}*/
+     */
+    fun unbindViewHolder(holder: VH)
+}
 
 interface OnAdapterItemVisibilityChanged
 {

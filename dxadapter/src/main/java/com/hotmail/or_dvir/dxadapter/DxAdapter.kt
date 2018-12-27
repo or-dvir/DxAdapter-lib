@@ -15,7 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
-abstract class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: List<ITEM>)
+class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
     : RecyclerView.Adapter<RecyclerViewHolder>()
 {
     var onClickListener: onItemClickListener<ITEM>? = null
@@ -224,9 +224,6 @@ abstract class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems
         }
 
         val holder = createAdapterViewHolder(itemView, parent, viewType)
-            //?: SimpleViewHolder(itemView)//firstItem.createViewHolder(itemView)
-
-//        val holder = firstItem.createViewHolder(itemView)
 
         dragAndDropWithHandle?.let {
             //this line is needed for the compiler
@@ -320,15 +317,15 @@ abstract class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems
         return holder
     }
 
-    @LayoutRes
-    abstract fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
-
-    /**
-     * override this function if you want a custom ViewHolder (for example if you want to attach
-     * listeners to the individual views of an item).
-     *
-     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
-     * [RecyclerView.ViewHolder.getAdapterPosition]
-     */
-    abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): RecyclerViewHolder//? = null
+//    @LayoutRes
+//    abstract fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
+//
+//    /**
+//     * override this function if you want a custom ViewHolder (for example if you want to attach
+//     * listeners to the individual views of an item).
+//     *
+//     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
+//     * [RecyclerView.ViewHolder.getAdapterPosition]
+//     */
+//    fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): RecyclerViewHolder//? = null
 }

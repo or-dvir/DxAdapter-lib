@@ -45,8 +45,8 @@ class ActivityMain : AppCompatActivity()
             list.add(MyItem(i.toString()))
         }
 
-        mSampleAdapter = MyAdapter(list).apply {
-//        mSampleAdapter = DxAdapter(list).apply {
+//        mSampleAdapter = MyAdapter(list).apply {
+        mSampleAdapter = DxAdapter(list).apply {
             onClickListener = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
