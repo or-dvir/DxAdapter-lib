@@ -203,7 +203,6 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
      * @param viewType the LAYOUT ID to inflate
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder
     {
         //TODO NOTE:
         //TODO THE BUG WHERE ITEMS WILL NOT SAVE STATE HAS SOMETHING TO DO WITH

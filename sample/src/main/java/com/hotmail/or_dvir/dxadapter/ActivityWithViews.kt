@@ -12,7 +12,7 @@ import org.greenrobot.eventbus.Subscribe
 
 class ActivityWithViews : AppCompatActivity()
 {
-    lateinit var mAdapter: DxAdapter<MyItemWithViews>
+    lateinit var mAdapter: DxAdapter<MyItemWithViews, *>
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -26,7 +26,7 @@ class ActivityWithViews : AppCompatActivity()
             list.add(MyItemWithViews())
         }
 
-//        mAdapter = MyAdapter(list)
+        mAdapter = DxAdapter(list)
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityWithViews, DividerItemDecoration.VERTICAL))

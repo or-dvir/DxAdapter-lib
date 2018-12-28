@@ -4,11 +4,11 @@ import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.view.View
 
-internal interface IDxItem<VH: RecyclerViewHolder>
+internal interface IDxItem</*ITEM: DxItem<VH>, */VH: RecyclerViewHolder>
 {
     @LayoutRes
     fun getLayoutRes(): Int
-    fun createViewHolder(itemView: View): VH
+    fun createViewHolder(/*item: ITEM, */itemView: View): VH
     fun bindViewHolder(holder: VH)
     /**
      * create a files called "ids.xml" inside your res/values folder
