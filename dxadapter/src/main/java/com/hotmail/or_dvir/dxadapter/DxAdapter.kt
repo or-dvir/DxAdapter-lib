@@ -68,7 +68,13 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
 
     init
     {
-        mItems.forEach { mItemTypes.put(it.getItemType(), it) }
+        mItems.forEach {
+            mItemTypes.apply {
+                val type = it.getItemType()
+                if (get(type) == null)
+                    put(type, it)
+            }
+        }
     }
 
     override fun getItemCount(): Int = mItems.size
@@ -76,7 +82,6 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
 
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
-//    override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int)
     {
         mItems[position].let {
             holder.itemView.isSelected = it.mIsSelected
@@ -86,7 +91,6 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
 
     @CallSuper
     override fun onViewRecycled(holder: VH)
-//    override fun onViewRecycled(holder: RecyclerViewHolder)
     {
         super.onViewRecycled(holder)
 
@@ -122,19 +126,6 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
             }
         }
     }
-//    /**
-//     * does NOT trigger selectedStateChangedListener.
-//     * if you DO want to trigger the listener,
-//     * use [select] and pass the entire list
-//     */
-//    fun selectAll()
-//    {
-//        mItems.forEach {
-//            it.mIsSelected = true
-//        }
-//
-//        notifyDataSetChanged()
-//    }
 
     fun deselect(vararg items: ITEM) = items.forEach { deselect(mItems.indexOf(it)) }
     /**
@@ -158,16 +149,6 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
             }
         }
     }
-//    /**
-//     * does NOT trigger selectedStateChangedListener.
-//     * if you DO want to trigger the listener,
-//     * use [deselect] and pass the entire list
-//     */
-//    private fun deselectAll()
-//    {
-//        mItems.forEach { it.mIsSelected = false }
-//        notifyDataSetChanged()
-//    }
 
     /**
      * "selection mode" means at least one item is selected
@@ -204,15 +185,6 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
     {
-        //TODO NOTE:
-        //TODO THE BUG WHERE ITEMS WILL NOT SAVE STATE HAS SOMETHING TO DO WITH
-        //TODO TAKING THE FIRST ITEM IN THE LIST!!!!!
-        //todo check how fast adapter does this!!!
-        //TODO THEORY:
-        //todo could be a COMBINATION of using the first item AND that the viewHolder is
-        //todo an inner class which means it holds a reference to the outer class
-        //todo so the view holder of the first item holds a reference to the data of the first item in the list!!!
-
         val context = parent.context
 
         val itemView = LayoutInflater
@@ -236,7 +208,7 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
             itemView.background = this
         }
 
-        val holder = mItemTypes[viewType].createViewHolder(itemView)//, parent, viewType)
+        val holder = mItemTypes[viewType].createViewHolder(itemView)
 
         dragAndDropWithHandle?.let {
             //this line is needed for the compiler
@@ -329,16 +301,4 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
 
         return holder
     }
-
-//    @LayoutRes
-//    abstract fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
-//
-//    /**
-//     * override this function if you want a custom ViewHolder (for example if you want to attach
-//     * listeners to the individual views of an item).
-//     *
-//     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
-//     * [RecyclerView.ViewHolder.getAdapterPosition]
-//     */
-//    fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): RecyclerViewHolder//? = null
 }

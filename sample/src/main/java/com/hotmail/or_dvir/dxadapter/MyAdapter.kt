@@ -48,7 +48,7 @@
 ////        cancel long running operations
 //    }
 //
-//    inner class MyItemWithViewsViewHolder(itemView: View) : RecyclerViewHolder(itemView)
+//    inner class MyItemWithViewsViewHolder(itemView: View): RecyclerViewHolder(itemView)
 //    {
 //        val button: Button
 //        val switch: Switch

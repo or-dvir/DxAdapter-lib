@@ -11,7 +11,7 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
     : DxItem<MyItemWithViews.ViewHolder>()
 {
     override fun getItemType() = R.id.itemType_MyItemWithViews
-    override fun createViewHolder(itemView: View) = ViewHolder(this, itemView)
+    override fun createViewHolder(itemView: View) = ViewHolder(/*this, */itemView)
     override fun getLayoutRes() = R.layout.my_item_with_views
 
     override fun bindViewHolder(holder: ViewHolder)
@@ -36,7 +36,7 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
     //do NOT make this an inner class!
     //inner classes store a reference to the outer class and this can cause unexpected behavior
     //when this item is being recycled.
-    class ViewHolder(val model: MyItemWithViews, itemView: View): RecyclerViewHolder(itemView)
+    class ViewHolder(/*val model: MyItemWithViews,*/ itemView: View): RecyclerViewHolder(itemView)
     {
         val button = itemView.myButton
         val switch = itemView.mySwitch
@@ -48,11 +48,11 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
             //NOTE:
             //not using onCheckedChanged because it is being triggered also when the item gets out of view
             switch.setOnClickListener {
-                model.isSwitchOn = switch.isChecked
+                /*model.*/isSwitchOn = switch.isChecked
             }
 
             checkBox.setOnClickListener {
-                model.isBoxChecked = checkBox.isChecked
+                /*model.*/isBoxChecked = checkBox.isChecked
             }
 
             editText.addTextChangedListener(object : TextWatcher
@@ -60,7 +60,7 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
                 override fun afterTextChanged(s: Editable?)
                 {
                     s?.apply {
-                        model.mText = toString()
+                        /*model.*/mText = toString()
                     }
                 }
 
