@@ -12,25 +12,8 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
                            var mText: String = "asdfgsdfg")
     : DxItem<MyItemWithViews.ViewHolder>()
 {
-    override fun createViewHolder(itemView: View): ViewHolder
-    {
-        itemView.apply {
-
-            myButton.setOnClickListener {
-                mText
-            }
-
-
-            return ViewHolder(
-                this,
-                myButton,
-                mySwitch,
-                myCheckBox,
-                myEditText
-            )
-        }
-    }
-
+    override fun getItemType() = R.id.itemType_MyItemWithViews
+    override fun createViewHolder(itemView: View) = ViewHolder(itemView)
     override fun getLayoutRes() = R.layout.my_item_with_views
 
     override fun bindViewHolder(holder: ViewHolder)
@@ -58,13 +41,12 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
     //inner classes store a reference to the outer class and this can cause unexpected behavior
     //when this MyItemWithViewsViewHolder is being recycled.
     //if you need to communicate some changes back to the outer object,
-    class ViewHolder(itemView: View,
-                     button: Button,
-                     switch: Switch,
-                     checkBox: CheckBox,
-                     editText: EditText): RecyclerViewHolder(itemView)
+    class ViewHolder(itemView: View): RecyclerViewHolder(itemView)
     {
-
+        val button = itemView.myButton
+        val switch = itemView.mySwitch
+        val checkBox = itemView.myCheckBox
+        val editText = itemView.myEditText
 
 
 //        init

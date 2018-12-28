@@ -29,7 +29,7 @@ class ActivityMain : AppCompatActivity()
 //    i stopped here
 //    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
 
-    private lateinit var mSampleAdapter: DxAdapter<MyItem>
+    private lateinit var mSampleAdapter: DxAdapter<MyItem, *>
     private lateinit var mItemTouchHelper: ItemTouchHelper
     private lateinit var mActionModeHelper: DxActionModeHelper<MyItem>
 
@@ -77,7 +77,7 @@ class ActivityMain : AppCompatActivity()
             //default is colorAccent
             //if colorAccent is not provided in the style "AppTheme",
             //the primary color is used
-//            selectedItemBackgroundColorRes = R.color.colorPrimary
+//            selectedItemBackgroundColorRes = android.R.color.holo_blue_bright
 
             //default is true.
             //however this requires a long-click listener to work

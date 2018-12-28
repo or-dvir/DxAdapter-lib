@@ -6,21 +6,23 @@ import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
-import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.SparseArray
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
-class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
-    : RecyclerView.Adapter<RecyclerViewHolder>()
+class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: List<ITEM>)
+    : RecyclerView.Adapter<VH>()
 {
     var onClickListener: onItemClickListener<ITEM>? = null
     var onLongClickListener: onItemLongClickListener<ITEM>? = null
     var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+
+    private val mItemTypes = SparseArray<DxItem<VH>>()
 
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
@@ -64,27 +66,34 @@ class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
      */
     var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
+    init
+    {
+        mItems.forEach { mItemTypes.put(it.getItemType(), it) }
+    }
+
     override fun getItemCount(): Int = mItems.size
     private fun isInBounds(position: Int) = position in (0 until mItems.size)
 
     @CallSuper
-    override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int)
+    override fun onBindViewHolder(holder: VH, position: Int)
+//    override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int)
     {
         mItems[position].let {
             holder.itemView.isSelected = it.mIsSelected
-//            it.bindViewHolder(holder)
+            it.bindViewHolder(holder)
         }
     }
 
     @CallSuper
-    override fun onViewRecycled(holder: RecyclerViewHolder)
+    override fun onViewRecycled(holder: VH)
+//    override fun onViewRecycled(holder: RecyclerViewHolder)
     {
         super.onViewRecycled(holder)
 
-//        holder.adapterPosition.let {
-//            if (it != RecyclerView.NO_POSITION)
-//                mItems[it].unbindViewHolder(holder)
-//        }
+        holder.adapterPosition.let {
+            if (it != RecyclerView.NO_POSITION)
+                mItems[it].unbindViewHolder(holder)
+        }
     }
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
@@ -188,12 +197,13 @@ class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
     /**
      * @return the LAYOUT ID of the item
      */
-    override fun getItemViewType(position: Int) = mItems[position].getLayoutRes()
+    override fun getItemViewType(position: Int) = mItems[position].getItemType()
 
     /**
      * @param viewType the LAYOUT ID to inflate
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder
     {
         //TODO NOTE:
         //TODO THE BUG WHERE ITEMS WILL NOT SAVE STATE HAS SOMETHING TO DO WITH
@@ -204,15 +214,11 @@ class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
         //todo an inner class which means it holds a reference to the outer class
         //todo so the view holder of the first item holds a reference to the data of the first item in the list!!!
 
-//        if i remove the saving of the data from the view holder (e.g. with eventbus)
-//        then the state is saved!!!!!!
-
-//        val firstItem = mItems.first()
         val context = parent.context
 
         val itemView = LayoutInflater
                 .from(context)
-                .inflate(viewType, parent, false)
+                .inflate(mItemTypes[viewType].getLayoutRes(), parent, false)
 
         StateListDrawable().apply {
             //replacement method requires API 23 (lib min is 21)
@@ -231,7 +237,7 @@ class DxAdapter<ITEM: DxItem<*>>(internal val mItems: List<ITEM>)
             itemView.background = this
         }
 
-        val holder = item.createViewHolder(itemView)//, parent, viewType)
+        val holder = mItemTypes[viewType].createViewHolder(itemView)//, parent, viewType)
 
         dragAndDropWithHandle?.let {
             //this line is needed for the compiler

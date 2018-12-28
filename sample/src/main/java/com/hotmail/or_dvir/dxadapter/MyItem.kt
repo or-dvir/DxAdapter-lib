@@ -5,8 +5,8 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.my_item.view.*
 
 class MyItem(val mText: String): DxItem<MyItem.ViewHolder>()
-//class MyItem(val mText: String): DxItem<SimpleViewHolder>()
 {
+    override fun getItemType() = R.id.itemType_MyItem
     override fun getLayoutRes() = R.layout.my_item
     override fun createViewHolder(itemView: View) = ViewHolder(itemView)
 //    override fun createViewHolder(itemView: View) = SimpleViewHolder(itemView)

@@ -1,7 +1,5 @@
 package com.hotmail.or_dvir.dxadapter
 
-import android.view.View
-
 //open class SimpleViewHolder(itemView: View): RecyclerViewHolder(itemView)
 
 /////////////////////////////////////////////////////////////////////
