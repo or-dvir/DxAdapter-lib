@@ -45,7 +45,10 @@ class ActivityMain : AppCompatActivity()
             list.add(MyItem(i.toString()))
         }
 
+<<<<<<< HEAD
 //        mSampleAdapter = MyAdapter(list).apply {
+=======
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
         mSampleAdapter = DxAdapter(list).apply {
             onClickListener = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")

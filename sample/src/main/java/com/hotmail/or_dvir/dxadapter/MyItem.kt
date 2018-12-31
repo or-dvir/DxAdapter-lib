@@ -10,10 +10,17 @@ class MyItem(val mText: String): DxItem<MyItem.ViewHolder>()
     override fun getLayoutRes() = R.layout.my_item
     override fun createViewHolder(itemView: View) = ViewHolder(itemView)
 //    override fun createViewHolder(itemView: View) = SimpleViewHolder(itemView)
+<<<<<<< HEAD
 
     override fun bindViewHolder(holder: ViewHolder) { holder.tv.text = mText }
     override fun unbindViewHolder(holder: ViewHolder) { holder.itemView.tv.text = "" }
 //    override fun bindViewHolder(holder: SimpleViewHolder) { holder.itemView.tv.text = mText }
+=======
+    override fun getLayoutRes() = R.layout.my_item
+    override fun bindViewHolder(holder: RecyclerViewHolder) { holder.itemView.tv.text = mText }
+//    override fun bindViewHolder(holder: SimpleViewHolder) { holder.itemView.tv.text = mText }
+    override fun unbindViewHolder(holder: RecyclerViewHolder) { holder.itemView.tv.text = "" }
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
 //    override fun unbindViewHolder(holder: SimpleViewHolder) { holder.itemView.tv.text = "" }
 
     class ViewHolder(itemView: View): RecyclerViewHolder(itemView)

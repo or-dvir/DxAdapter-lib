@@ -15,8 +15,13 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
+<<<<<<< HEAD
 class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItems: List<ITEM>)
     : RecyclerView.Adapter<VH>()
+=======
+open class DxAdapter<ITEM: DxItem/*<SimpleViewHolder>*/>(internal val mItems: List<ITEM>)
+    : RecyclerView.Adapter<SimpleViewHolder>()
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
 {
     var onClickListener: onItemClickListener<ITEM>? = null
     var onLongClickListener: onItemLongClickListener<ITEM>? = null
@@ -81,7 +86,11 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItem
     private fun isInBounds(position: Int) = position in (0 until mItems.size)
 
     @CallSuper
+<<<<<<< HEAD
     override fun onBindViewHolder(holder: VH, position: Int)
+=======
+    override fun onBindViewHolder(holder: SimpleViewHolder, position: Int)
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
     {
         mItems[position].let {
             holder.itemView.isSelected = it.mIsSelected
@@ -89,8 +98,12 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItem
         }
     }
 
+<<<<<<< HEAD
     @CallSuper
     override fun onViewRecycled(holder: VH)
+=======
+    override fun onViewRecycled(holder: SimpleViewHolder)
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
     {
         super.onViewRecycled(holder)
 
@@ -175,6 +188,7 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItem
         return value.data
     }
 
+<<<<<<< HEAD
     /**
      * @return the LAYOUT ID of the item
      */
@@ -185,11 +199,32 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItem
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
     {
+=======
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder
+    {
+        //TODO NOTE:
+        //TODO THE BUG WHERE ITEMS WILL NOT SAVE STATE HAS SOMETHING TO DO WITH
+        //TODO TAKING THE FIRST ITEM IN THE LIST!!!!!
+        //todo check how fast adapter does this!!!
+        //TODO THEORY:
+        //todo could be a COMBINATION of using the first item AND that the viewHolder is
+        //todo an inner class which means it holds a reference to the outer class
+        //todo so the view holder of the first item holds a reference to the data of the first item in the list!!!
+
+//        if i remove the saving of the data from the view holder (e.g. with eventbus)
+//        then the state is saved!!!!!!
+
+        val firstItem = mItems.first()
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
         val context = parent.context
 
         val itemView = LayoutInflater
                 .from(context)
+<<<<<<< HEAD
                 .inflate(mItemTypes[viewType].getLayoutRes(), parent, false)
+=======
+                .inflate(firstItem.getLayoutRes(), parent, false)
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
 
         StateListDrawable().apply {
             //replacement method requires API 23 (lib min is 21)
@@ -208,8 +243,15 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItem
             itemView.background = this
         }
 
+<<<<<<< HEAD
         itemView.tag = this
         val holder = mItemTypes[viewType].createViewHolder(itemView)
+=======
+        val holder = createAdapterViewHolder(itemView, parent, viewType)
+            ?: SimpleViewHolder(itemView)//firstItem.createViewHolder(itemView)
+
+//        val holder = firstItem.createViewHolder(itemView)
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
 
         dragAndDropWithHandle?.let {
             //this line is needed for the compiler
@@ -302,4 +344,16 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItem
 
         return holder
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * override this function if you want a custom ViewHolder (for example if you want to attach
+     * listeners to the individual views of an item).
+     *
+     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
+     * [RecyclerView.ViewHolder.getAdapterPosition]
+     */
+    open fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): SimpleViewHolder? = null
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
 }

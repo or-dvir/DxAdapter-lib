@@ -4,7 +4,11 @@ import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.view.View
 
+<<<<<<< HEAD
 internal interface IDxItem</*ITEM: DxItem<VH>, */VH: RecyclerViewHolder>
+=======
+internal interface IDxItem/*<VH: RecyclerViewHolder>*/
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
 {
     @LayoutRes
     fun getLayoutRes(): Int
@@ -24,7 +28,12 @@ internal interface IDxItem</*ITEM: DxItem<VH>, */VH: RecyclerViewHolder>
      * or expensive resources related to this item and its' views.
      * e.g. loading images from the internet, performing long calculations, clearing image views
      */
+<<<<<<< HEAD
     fun unbindViewHolder(holder: VH)
+=======
+    fun unbindViewHolder(holder: RecyclerViewHolder)
+//    fun unbindViewHolder(holder: VH)
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
 }
 
 interface OnAdapterItemVisibilityChanged

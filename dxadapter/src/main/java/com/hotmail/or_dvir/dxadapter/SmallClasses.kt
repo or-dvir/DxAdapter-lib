@@ -6,5 +6,10 @@ package com.hotmail.or_dvir.dxadapter
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
+<<<<<<< HEAD
 abstract class DxItem<VH: RecyclerViewHolder>(internal var mIsSelected: Boolean = false)
     : IDxItem<VH>
+=======
+abstract class DxItem/*<VH: RecyclerViewHolder>*/(internal var mIsSelected: Boolean = false)
+    : IDxItem/*<VH>*/
+>>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
