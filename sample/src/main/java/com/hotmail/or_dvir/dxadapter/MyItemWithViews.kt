@@ -2,6 +2,7 @@ package com.hotmail.or_dvir.dxadapter
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
 
@@ -45,31 +46,56 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
 
         init
         {
+            val adapter = itemView.tag as DxAdapter<*, *>
+
+            button.setOnClickListener {
+                val item = adapter.mItems[adapterPosition] as MyItemWithViews
+                item.mText = "button!"
+                adapter.notifyItemChanged(adapterPosition)
+            }
+
             //NOTE:
             //not using onCheckedChanged because it is being triggered also when the item gets out of view
             switch.setOnClickListener {
-                /*model.*/isSwitchOn = switch.isChecked
+                val item = adapter.mItems[adapterPosition] as MyItemWithViews
+                item.isSwitchOn = switch.isChecked
             }
 
             checkBox.setOnClickListener {
-                /*model.*/isBoxChecked = checkBox.isChecked
+                val item = adapter.mItems[adapterPosition] as MyItemWithViews
+                item.isBoxChecked = checkBox.isChecked
             }
 
             editText.addTextChangedListener(object : TextWatcher
             {
                 override fun afterTextChanged(s: Editable?)
                 {
-                    s?.apply {
-                        /*model.*/mText = toString()
-                    }
+                    if(adapterPosition == 0)
+                        Log.i("textwatcher", "after ${s?.toString()}")
+                    val item = adapter.mItems[adapterPosition] as MyItemWithViews
+//                    s?.apply {
+//                        item.mText = toString()
+//                    }
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)
                 {
+                    if(adapterPosition == 0)
+                        Log.i("textwatcher", "before ${s?.toString()}")
+                    val item = adapter.mItems[adapterPosition] as MyItemWithViews
+                    s?.apply {
+                        item.mText = toString()
+                    }
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
                 {
+                    if(adapterPosition == 0)
+                        Log.i("textwatcher", "on ${s?.toString()}")
+                    val item = adapter.mItems[adapterPosition] as MyItemWithViews
+//                    s?.apply {
+//                        item.mText = toString()
+//                    }
                 }
             })
         }

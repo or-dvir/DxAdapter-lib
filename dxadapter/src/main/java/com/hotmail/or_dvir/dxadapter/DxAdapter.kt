@@ -15,7 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
-class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: List<ITEM>)
+class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(/*internal*/ val mItems: List<ITEM>)
     : RecyclerView.Adapter<VH>()
 {
     var onClickListener: onItemClickListener<ITEM>? = null
@@ -208,6 +208,7 @@ class DxAdapter<ITEM: DxItem<VH>, VH: RecyclerViewHolder>(internal val mItems: L
             itemView.background = this
         }
 
+        itemView.tag = this
         val holder = mItemTypes[viewType].createViewHolder(itemView)
 
         dragAndDropWithHandle?.let {
