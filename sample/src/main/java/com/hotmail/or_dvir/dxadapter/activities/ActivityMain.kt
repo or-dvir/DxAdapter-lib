@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.dxadapter
+package com.hotmail.or_dvir.dxadapter.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -10,6 +10,9 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import com.hotmail.or_dvir.dxadapter.*
+import com.hotmail.or_dvir.dxadapter.adapters.MyAdapter
+import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
@@ -21,7 +24,7 @@ class ActivityMain : AppCompatActivity()
     //todo test module with leak canary!!!!!!!
 
     //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
-    //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.MyItemWithViewsViewHolder
+    //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.ViewHolder
 
     //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
     //todo you have included ALL POSSIBLE OPTIONS in this sample
@@ -29,7 +32,7 @@ class ActivityMain : AppCompatActivity()
 //    i stopped here
 //    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
 
-    private lateinit var mSampleAdapter: DxAdapter<MyItem, *>
+    private lateinit var mSampleAdapter: MyAdapter
     private lateinit var mItemTouchHelper: ItemTouchHelper
     private lateinit var mActionModeHelper: DxActionModeHelper<MyItem>
 
@@ -45,11 +48,7 @@ class ActivityMain : AppCompatActivity()
             list.add(MyItem(i.toString()))
         }
 
-<<<<<<< HEAD
-//        mSampleAdapter = MyAdapter(list).apply {
-=======
->>>>>>> parent of 4b34bfe... almost finished experimenting with abstract adapter
-        mSampleAdapter = DxAdapter(list).apply {
+        mSampleAdapter = MyAdapter(list).apply {
             onClickListener = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
@@ -73,6 +72,9 @@ class ActivityMain : AppCompatActivity()
                 Log.i("sample", "${item.mText} (position $position) $txt")
             }
 
+            //todo what if i mix items in the adapter, and each has different handle?!
+            //todo make a method "getHandleId()"???? keep it like this and force the user
+            //todo so use the same id for all handles????
             dragAndDropWithHandle = Pair(R.id.myItemDragHandle, { holder ->
                 mItemTouchHelper.startDrag(holder)
             })
@@ -90,7 +92,8 @@ class ActivityMain : AppCompatActivity()
 //            triggerClickListenersInSelectionMode = true
         }
 
-        mActionModeHelper = DxActionModeHelper(mSampleAdapter, { "${mSampleAdapter.getNumSelectedItems()}" },
+        mActionModeHelper = DxActionModeHelper(mSampleAdapter,
+            { "${mSampleAdapter.getNumSelectedItems()}" },
             object : ActionMode.Callback
             {
                 override fun onActionItemClicked(mode: ActionMode?, menuItem: MenuItem?): Boolean
@@ -161,7 +164,7 @@ class ActivityMain : AppCompatActivity()
         }
 
         button.setOnClickListener {
-            //do something
+            //todo do something
         }
     }
 

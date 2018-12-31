@@ -15,7 +15,6 @@ internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,
                                                  draggedPosition: Int,
                                                  targetPosition: Int) -> Unit
 
-internal typealias emptyCallback = () -> Any
 internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 
 typealias RecyclerViewHolder = RecyclerView.ViewHolder
@@ -25,7 +24,7 @@ typealias RecyclerViewHolder = RecyclerView.ViewHolder
  *
  * second: the listener itself
  */
-internal typealias scrollUpDownPair = Pair<Int, emptyCallback>
+internal typealias scrollUpDownPair = Pair<Int, () -> Any>
 internal typealias actionModeTitleProvider = () -> String
 
 
