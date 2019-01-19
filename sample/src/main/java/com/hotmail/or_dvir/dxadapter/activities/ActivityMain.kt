@@ -29,6 +29,8 @@ class ActivityMain : AppCompatActivity()
     //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
     //todo you have included ALL POSSIBLE OPTIONS in this sample
 
+    //todo have different activities for different features? if you put all in 1 activity it might confuse the user
+
 //    i stopped here
 //    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
 
@@ -123,6 +125,11 @@ class ActivityMain : AppCompatActivity()
         //don't forget to attach it to your RecyclerView!
         mItemTouchHelper = ItemTouchHelper(
             DxItemTouchCallback(mSampleAdapter).apply {
+
+                swipeToDismiss = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+                    { dismissedItem, dismissedPosition ->
+                        toast("removed ${dismissedItem.mText} (position $dismissedPosition)")
+                    })
 
                 //option to initiate drag with long-clicking an item
                 //be aware that if long-click also selects item,

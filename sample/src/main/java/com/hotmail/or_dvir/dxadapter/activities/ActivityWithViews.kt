@@ -6,11 +6,10 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
+import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterWithViews
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithViews
-import com.hotmail.or_dvir.dxadapter.R
 import kotlinx.android.synthetic.main.activity_with_views.*
 
 class ActivityWithViews : AppCompatActivity()

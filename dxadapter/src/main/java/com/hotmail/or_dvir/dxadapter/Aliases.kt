@@ -15,6 +15,9 @@ internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,
                                                  draggedPosition: Int,
                                                  targetPosition: Int) -> Unit
 
+internal typealias onItemDismissedListener<ITEM> = (dismissedItem: ITEM,
+                                                    dismissedPosition: Int) -> Unit
+
 internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 
 typealias RecyclerViewHolder = RecyclerView.ViewHolder

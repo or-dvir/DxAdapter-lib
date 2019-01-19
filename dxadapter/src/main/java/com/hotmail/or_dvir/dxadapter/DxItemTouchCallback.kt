@@ -34,6 +34,14 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
      */
     var onItemsMovedListener: onItemsMovedListener<ITEM>? = null
 
+    /**
+     * first: the direction of allowed swiping. MUST be [ItemTouchHelper.LEFT],
+     * [ItemTouchHelper.RIGHT], or both.
+     *
+     * second: a callback which will trigger JUST BEFORE the item is dismissed and deleted from the adapter.
+     */
+    var swipeToDismiss: Pair<Int, onItemDismissedListener<ITEM>>? = null
+
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
     {
         val dragFlags =
@@ -44,11 +52,8 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
             else
                 ItemTouchHelper.UP or ItemTouchHelper.DOWN
 
-
         //todo should i allow swiping when using grid layout??? maybe let the user decide????
-//        val swipeFlags = ItemTouchHelper.START or ItemTouchHelper.END
-        val swipeFlags = 0
-        return makeMovementFlags(dragFlags, swipeFlags)
+        return makeMovementFlags(dragFlags, swipeToDismiss?.first ?: 0)
     }
 
     override fun onMove(recycler: RecyclerView,
@@ -58,8 +63,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         val dragPos = dragged.adapterPosition
         val targetPos = target.adapterPosition
 
-        //todo add swap listener here
-
+        //todo move drag-and-drop and swipe listeners from adapter to here. it makes more sense
         adapter.apply {
             onItemsMovedListener?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
             Collections.swap(mItems, dragPos, targetPos)
@@ -99,10 +103,19 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
 
     override fun onSwiped(holder: ViewHolder, direction: Int)
     {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        adapter.apply {
+            holder.adapterPosition.let {
+                swipeToDismiss?.second?.invoke(mItems[it], it)
+                mItems.removeAt(it)
+                notifyItemRemoved(it)
+            }
+        }
     }
 
     //todo when adding drag-handle feature, make this function always return false
     //todo i.e. only 1 method of dragging items
     override fun isLongPressDragEnabled() = dragOnLongClick
+
+    //todo allow swiping with a handle!!! similar to drag and drop with a handle - look online for examples
+    override fun isItemViewSwipeEnabled() = swipeToDismiss?.first != null
 }

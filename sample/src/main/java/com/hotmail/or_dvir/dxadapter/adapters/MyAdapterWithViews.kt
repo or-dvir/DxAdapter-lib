@@ -14,7 +14,8 @@ import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
 
-class MyAdapterWithViews(val mItems: List<MyItemWithViews>): DxAdapter<MyItemWithViews, MyAdapterWithViews.ViewHolder>(mItems)
+class MyAdapterWithViews(val mItems: MutableList<MyItemWithViews>)
+    : DxAdapter<MyItemWithViews, MyAdapterWithViews.ViewHolder>(mItems)
 {
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemWithViews)
     {
@@ -46,6 +47,13 @@ class MyAdapterWithViews(val mItems: List<MyItemWithViews>): DxAdapter<MyItemWit
                                          parent: ViewGroup,
                                          viewType: Int) = ViewHolder(itemView)
 
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+
     inner class ViewHolder(itemView: View) : RecyclerViewHolder(itemView)
     {
         val switch: Switch = itemView.mySwitch
@@ -65,7 +73,8 @@ class MyAdapterWithViews(val mItems: List<MyItemWithViews>): DxAdapter<MyItemWit
             switch.setOnClickListener {
                 mItems[adapterPosition].isSwitchOn = switch.isChecked
             }
-
+            //NOTE:
+            //not using onCheckedChanged because it is being triggered also when the item gets out of view
             checkBox.setOnClickListener {
                 mItems[adapterPosition].isBoxChecked = checkBox.isChecked
             }

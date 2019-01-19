@@ -9,7 +9,7 @@ import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
 import kotlinx.android.synthetic.main.my_item.view.*
 
-class MyAdapter(mItems: List<MyItem>): DxAdapter<MyItem, MyAdapter.ViewHolder>(mItems)
+class MyAdapter(mItems: MutableList<MyItem>): DxAdapter<MyItem, MyAdapter.ViewHolder>(mItems)
 {
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItem)
     {

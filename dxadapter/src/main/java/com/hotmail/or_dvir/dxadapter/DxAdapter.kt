@@ -3,17 +3,19 @@ package com.hotmail.or_dvir.dxadapter
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.StateListDrawable
-import android.support.annotation.*
+import android.support.annotation.CallSuper
+import android.support.annotation.ColorInt
+import android.support.annotation.ColorRes
+import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.SparseArray
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
-abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mItems: List<ITEM>)
+abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH/*RecyclerViewHolder*/>()
 {
     var onClickListener: onItemClickListener<ITEM>? = null
@@ -92,8 +94,6 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
         }
     }
 
-    abstract fun bindViewHolder(holder: VH, position: Int, item: ITEM)
-
     @CallSuper
     override fun onViewRecycled(holder: VH)
     {
@@ -104,8 +104,6 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
                 /*mItems[it].*/unbindViewHolder(holder, it, mItems[it])
         }
     }
-    abstract fun unbindViewHolder(holder: VH, position: Int, item: ITEM)
-
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
@@ -181,9 +179,6 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
         context.theme.resolveAttribute(android.R.attr.colorAccent, value, true)
         return value.data
     }
-
-    @LayoutRes
-    abstract fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
     {
@@ -326,4 +321,9 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
      * [RecyclerView.ViewHolder.getAdapterPosition]
      */
     abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): VH
+
+    @LayoutRes
+    abstract fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
+    abstract fun bindViewHolder(holder: VH, position: Int, item: ITEM)
+    abstract fun unbindViewHolder(holder: VH, position: Int, item: ITEM)
 }
