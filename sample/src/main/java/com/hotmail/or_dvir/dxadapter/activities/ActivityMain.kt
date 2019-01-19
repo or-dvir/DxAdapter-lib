@@ -38,6 +38,9 @@ class ActivityMain : AppCompatActivity()
     private lateinit var mItemTouchHelper: ItemTouchHelper
     private lateinit var mActionModeHelper: DxActionModeHelper<MyItem>
 
+    //todo how to add ripple effect when clicking?!?!!??!?!?
+    //todo its possible that it is overridden when applying custom background in the adapter (for selections)
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -125,6 +128,17 @@ class ActivityMain : AppCompatActivity()
         //don't forget to attach it to your RecyclerView!
         mItemTouchHelper = ItemTouchHelper(
             DxItemTouchCallback(mSampleAdapter).apply {
+
+                //NOTE:
+                //drawing text will only work if there is a background set to the same side!
+                //todo is this what i want???? does this make sense???
+
+                swipeBackgroundColorRight = android.R.color.holo_orange_light
+                swipeBackgroundTextRight = Triple("right swipe", 60f, android.R.color.white)
+
+                swipeBackgroundColorLeft = android.R.color.holo_red_light
+                swipeBackgroundTextLeft = Triple("left swipe", 60f, android.R.color.white)
+
 
                 swipeToDismiss = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                     { dismissedItem, dismissedPosition ->

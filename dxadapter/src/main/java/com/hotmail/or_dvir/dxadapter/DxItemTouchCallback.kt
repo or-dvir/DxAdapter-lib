@@ -1,5 +1,9 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.drawable.ColorDrawable
+import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -42,6 +46,75 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
      */
     var swipeToDismiss: Pair<Int, onItemDismissedListener<ITEM>>? = null
 
+    private var mTextPaint: Paint? = null
+    private var mSwipeBackgroundColorDrawable: ColorDrawable? = null
+
+    /**
+     * sets the text to be displayed when an item is swiped to the right
+     *
+     * first: the text to display
+     *
+     * second: the text size in pixels
+     *
+     * third: the resource id of the color of the text (MUST be @ColorRes)
+     */
+    var swipeBackgroundTextRight: Triple<String, Float, Int>? = null
+        set(value)
+        {
+            field = value
+            setSwipeText()
+        }
+
+    /**
+     * sets the text to be displayed when an item is swiped to the left
+     *
+     * first: the text to display
+     *
+     * second: the text size in pixels
+     *
+     * third: the resource id of the color of the text (MUST be @ColorRes)
+     */
+    var swipeBackgroundTextLeft: Triple<String, Float, Int>? = null
+        set(value)
+        {
+            field = value
+            setSwipeText()
+        }
+
+    /**
+     * set this variable if you'd like to color the background of the swiped item when it is swiped
+     * to the right.
+     */
+    @ColorRes
+    var swipeBackgroundColorRight: Int? = null
+        set(value)
+        {
+            field = value
+            setSwipeBackgroundColor()
+        }
+
+    /**
+     * set this variable if you'd like to color the background of the swiped item when it is swiped
+     * to the left.
+     */
+    @ColorRes
+    var swipeBackgroundColorLeft: Int? = null
+        set(value)
+        {
+            field = value
+            setSwipeBackgroundColor()
+        }
+
+    private fun setSwipeText()
+    {
+        mTextPaint = Paint()
+    }
+
+    private fun setSwipeBackgroundColor()
+    {
+        mSwipeBackgroundColorDrawable = ColorDrawable()
+    }
+
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
     {
         val dragFlags =
@@ -73,33 +146,88 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         return true
     }
 
-//    //todo check if the background color also works for card view!!!
-//    //todo think about how you can add this feature...
-//    override fun onSelectedChanged(viewHolder: ViewHolder?, actionState: Int)
-//    {
-//        movedItemBackgroundColor?.let { color ->
-//            if(actionState != ItemTouchHelper.ACTION_STATE_IDLE)
-//            {
-//                viewHolder?.itemView?.apply {
-//                    mSavedMovedItemBackgroundColor = background
-//                    setBackgroundColor(color)
-//                }
-//            }
-//        }
-//
-//        super.onSelectedChanged(viewHolder, actionState)
-//    }
-//
-//    override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder)
-//    {
-//        super.clearView(recyclerView, viewHolder)
-//
-//        //only change the background color if the user specifically requested it (movedItemBackgroundColor != null)
-//        //so you don't override whatever background
-//        movedItemBackgroundColor?.let {
-//            viewHolder.itemView.setBackgroundColor(0)
-//        }
-//    }
+    override fun onChildDraw(c: Canvas,
+                             recyclerView: RecyclerView,
+                             viewHolder: ViewHolder,
+                             dX: Float,
+                             dY: Float,
+                             actionState: Int,
+                             isCurrentlyActive: Boolean)
+    {
+        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
+        {
+            var backgroundText = ""
+            val itemView = viewHolder.itemView
+            val resources = itemView.resources
+
+            when
+            {
+                //Swiping right
+                dX > 0 ->
+                {
+                    swipeBackgroundColorRight?.let {
+                        mSwipeBackgroundColorDrawable?.apply {
+                            color = resources.getColor(it)
+                            setBounds(itemView.left,
+                                      itemView.top,
+                                      itemView.left + dX.toInt(),
+                                      itemView.bottom)
+                        }
+                    }
+
+                    swipeBackgroundTextRight?.apply {
+                        backgroundText = first
+                        mTextPaint?.let {
+                            it.textSize = second
+                            it.color = resources.getColor(third)
+                            it.textAlign = Paint.Align.RIGHT
+                        }
+                    }
+                }
+
+                //Swiping left
+                dX < 0 ->
+                {
+                    swipeBackgroundColorLeft?.let {
+                        mSwipeBackgroundColorDrawable?.apply {
+                            //for sure swipeBackgroundColorRight is NOT null because of the if statement above
+                            color = resources.getColor(it)
+                            setBounds(itemView.right + dX.toInt(),
+                                      itemView.top,
+                                      itemView.right,
+                                      itemView.bottom)
+                        }
+                    }
+
+                    swipeBackgroundTextLeft?.apply {
+                        backgroundText = first
+                        mTextPaint?.let {
+                            it.textSize = second
+                            it.color = resources.getColor(third)
+                            it.textAlign = Paint.Align.LEFT
+                        }
+                    }
+                }
+            }
+
+            //NOTE:
+            //this MUST come AFTER the above "when" statement
+            mSwipeBackgroundColorDrawable?.apply {
+                //NOTE:
+                //drawing background MUST come BEFORE drawing the text
+                draw(c)
+                mTextPaint?.let {
+                    c.drawText(backgroundText,
+                               bounds.exactCenterX(),
+                                //todo the text is not in the centered vertically!!!!!!
+                               bounds.exactCenterY(),
+                               it)
+                }
+            }
+        }
+
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+    }
 
     override fun onSwiped(holder: ViewHolder, direction: Int)
     {
