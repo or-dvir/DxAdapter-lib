@@ -143,6 +143,8 @@ class ActivityMain : AppCompatActivity()
                 swipeToDismiss = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                     { dismissedItem, dismissedPosition ->
                         toast("removed ${dismissedItem.mText} (position $dismissedPosition)")
+                        //todo test this method by moving this item to somewhere else
+                        //todo for example "move to archive"
                     })
 
                 //option to initiate drag with long-clicking an item

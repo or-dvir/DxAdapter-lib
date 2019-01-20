@@ -28,6 +28,21 @@ typealias RecyclerViewHolder = RecyclerView.ViewHolder
  * second: the listener itself
  */
 internal typealias scrollUpDownPair = Pair<Int, () -> Any>
+
+
+
+/**
+ * first: the text to display
+ *
+ * second: the text size in pixels
+ *
+ * third: the resource id of the color of the text (MUST be @ColorRes)
+ */
+internal typealias swipeBackgroundText = Triple<String, Float, Int>
+
+
+
+
 internal typealias actionModeTitleProvider = () -> String
 
 

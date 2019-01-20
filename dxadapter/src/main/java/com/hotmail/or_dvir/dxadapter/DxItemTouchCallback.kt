@@ -2,14 +2,16 @@ package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import java.util.*
 
-class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private val adapter: DxAdapter<ITEM, */*VH*/>)
+class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private val mAdapter: DxAdapter<ITEM, */*VH*/>)
     : ItemTouchHelper.Callback()
 {
     //todo test drag and drop and callbacks with grid layout manager!!!!
@@ -47,18 +49,15 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
     var swipeToDismiss: Pair<Int, onItemDismissedListener<ITEM>>? = null
 
     private var mTextPaint: Paint? = null
+    private var mTextRect: Rect? = null
     private var mSwipeBackgroundColorDrawable: ColorDrawable? = null
 
     /**
-     * sets the text to be displayed when an item is swiped to the right
+     * sets the text to be displayed when an item is swiped to the right.
      *
-     * first: the text to display
-     *
-     * second: the text size in pixels
-     *
-     * third: the resource id of the color of the text (MUST be @ColorRes)
+     * see [swipeBackgroundText] for details
      */
-    var swipeBackgroundTextRight: Triple<String, Float, Int>? = null
+    var swipeBackgroundTextRight: swipeBackgroundText? = null
         set(value)
         {
             field = value
@@ -66,15 +65,11 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         }
 
     /**
-     * sets the text to be displayed when an item is swiped to the left
+     * sets the text to be displayed when an item is swiped to the left.
      *
-     * first: the text to display
-     *
-     * second: the text size in pixels
-     *
-     * third: the resource id of the color of the text (MUST be @ColorRes)
+     * see [swipeBackgroundText] for details
      */
-    var swipeBackgroundTextLeft: Triple<String, Float, Int>? = null
+    var swipeBackgroundTextLeft: swipeBackgroundText? = null
         set(value)
         {
             field = value
@@ -108,6 +103,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
     private fun setSwipeText()
     {
         mTextPaint = Paint()
+        mTextRect = Rect()
     }
 
     private fun setSwipeBackgroundColor()
@@ -136,8 +132,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         val dragPos = dragged.adapterPosition
         val targetPos = target.adapterPosition
 
-        //todo move drag-and-drop and swipe listeners from adapter to here. it makes more sense
-        adapter.apply {
+        mAdapter.apply {
             onItemsMovedListener?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
             Collections.swap(mItems, dragPos, targetPos)
             notifyItemMoved(dragPos, targetPos)
@@ -159,12 +154,10 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
             var backgroundText = ""
             val itemView = viewHolder.itemView
             val resources = itemView.resources
+            val swipingRight = dX > 0
 
-            when
+            if (swipingRight)
             {
-                //Swiping right
-                dX > 0 ->
-                {
                     swipeBackgroundColorRight?.let {
                         mSwipeBackgroundColorDrawable?.apply {
                             color = resources.getColor(it)
@@ -183,29 +176,28 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                             it.textAlign = Paint.Align.RIGHT
                         }
                     }
+            }
+
+            //Swiping left
+            else
+            {
+                swipeBackgroundColorLeft?.let {
+                    mSwipeBackgroundColorDrawable?.apply {
+                        //for sure swipeBackgroundColorRight is NOT null because of the if statement above
+                        color = resources.getColor(it)
+                        setBounds(itemView.right + dX.toInt(),
+                                  itemView.top,
+                                  itemView.right,
+                                  itemView.bottom)
+                    }
                 }
 
-                //Swiping left
-                dX < 0 ->
-                {
-                    swipeBackgroundColorLeft?.let {
-                        mSwipeBackgroundColorDrawable?.apply {
-                            //for sure swipeBackgroundColorRight is NOT null because of the if statement above
-                            color = resources.getColor(it)
-                            setBounds(itemView.right + dX.toInt(),
-                                      itemView.top,
-                                      itemView.right,
-                                      itemView.bottom)
-                        }
-                    }
-
-                    swipeBackgroundTextLeft?.apply {
-                        backgroundText = first
-                        mTextPaint?.let {
-                            it.textSize = second
-                            it.color = resources.getColor(third)
-                            it.textAlign = Paint.Align.LEFT
-                        }
+                swipeBackgroundTextLeft?.apply {
+                    backgroundText = first
+                    mTextPaint?.let {
+                        it.textSize = second
+                        it.color = resources.getColor(third)
+                        it.textAlign = Paint.Align.LEFT
                     }
                 }
             }
@@ -217,10 +209,17 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                 //drawing background MUST come BEFORE drawing the text
                 draw(c)
                 mTextPaint?.let {
+                    var halfTextWidth = (mTextRect!!.width()/2f)
+                    //if swiping left, make the width negative because we need to SUBTRACT it
+                    //when drawing the text
+                    if (!swipingRight)
+                        halfTextWidth *= -1
+
+                    it.getTextBounds(backgroundText, 0, backgroundText.length, mTextRect)
                     c.drawText(backgroundText,
-                               bounds.exactCenterX(),
-                                //todo the text is not in the centered vertically!!!!!!
-                               bounds.exactCenterY(),
+                               bounds.exactCenterX() + halfTextWidth,
+                               //not sure why i have to divide by 4 and not 2...
+                               bounds.exactCenterY() + (mTextRect!!.height()/4f),
                                it)
                 }
             }
@@ -231,7 +230,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
 
     override fun onSwiped(holder: ViewHolder, direction: Int)
     {
-        adapter.apply {
+        mAdapter.apply {
             holder.adapterPosition.let {
                 swipeToDismiss?.second?.invoke(mItems[it], it)
                 mItems.removeAt(it)
@@ -240,9 +239,14 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         }
     }
 
-    //todo when adding drag-handle feature, make this function always return false
-    //todo i.e. only 1 method of dragging items
-    override fun isLongPressDragEnabled() = dragOnLongClick
+    override fun isLongPressDragEnabled(): Boolean
+    {
+        //todo when documenting, make a note of this!!!
+        return if (mAdapter.dragAndDropWithHandle != null)
+            false
+        else
+            dragOnLongClick
+    }
 
     //todo allow swiping with a handle!!! similar to drag and drop with a handle - look online for examples
     override fun isItemViewSwipeEnabled() = swipeToDismiss?.first != null
