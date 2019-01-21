@@ -38,8 +38,7 @@ class ActivityMain : AppCompatActivity()
     private lateinit var mItemTouchHelper: ItemTouchHelper
     private lateinit var mActionModeHelper: DxActionModeHelper<MyItem>
 
-    //todo how to add ripple effect when clicking?!?!!??!?!?
-    //todo its possible that it is overridden when applying custom background in the adapter (for selections)
+    //todo ripple effect is being overridden when applying stateListDrawable to our item
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -84,10 +83,9 @@ class ActivityMain : AppCompatActivity()
                 mItemTouchHelper.startDrag(holder)
             })
 
-            //default is colorAccent
-            //if colorAccent is not provided in the style "AppTheme",
-            //the primary color is used
-//            selectedItemBackgroundColorRes = android.R.color.holo_blue_bright
+            //default is accent color (if not provided, primary color is used).
+            //note: this must be @ColorInt
+//            selectedItemBackgroundColor = resources.getColor(android.R.color.holo_blue_dark)
 
             //default is true.
             //however this requires a long-click listener to work

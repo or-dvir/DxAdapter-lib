@@ -1,12 +1,15 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
 import android.support.annotation.LayoutRes
+import android.support.v4.graphics.drawable.DrawableCompat
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.TypedValue
@@ -28,8 +31,8 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    @ColorRes
-    var selectedItemBackgroundColorRes: Int? = null
+    @ColorInt
+    var selectedItemBackgroundColor: Int? = null
 
     /**
      * default value: TRUE
@@ -37,7 +40,7 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
      * if TRUE, long-clicking an item will select it and any subsequent regular-click on any item
      * will select\deselect the clicked item.
      *
-     * NOTE: in order for this to work, you MUST ALSO set [onItemLongClickListener]
+     * NOTE: in order for this to work, you MUST ALSO set [onLongClickListener]
      *
      * if FALSE, you must manage item selection yourself using [select] and [deselect].
      *
@@ -88,9 +91,11 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
     {
-        mItems[position].let {
-            holder.itemView.isSelected = it.mIsSelected
-            /*it.*/bindViewHolder(holder, position, mItems[position])
+        mItems[position].let { item ->
+            holder.itemView.let {
+                it.isSelected = item.mIsSelected
+                /*item.*/bindViewHolder(holder, position, item)
+            }
         }
     }
 
@@ -101,7 +106,9 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
 
         holder.adapterPosition.let {
             if (it != RecyclerView.NO_POSITION)
+            {
                 /*mItems[it].*/unbindViewHolder(holder, it, mItems[it])
+            }
         }
     }
 
@@ -182,45 +189,29 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
     {
-        //TODO NOTE:
-        //TODO THE BUG WHERE ITEMS WILL NOT SAVE STATE HAS SOMETHING TO DO WITH
-        //TODO TAKING THE FIRST ITEM IN THE LIST!!!!!
-        //todo check how fast adapter does this!!!
-        //TODO THEORY:
-        //todo could be a COMBINATION of using the first item AND that the viewHolder is
-        //todo an inner class which means it holds a reference to the outer class
-        //todo so the view holder of the first item holds a reference to the data of the first item in the list!!!
-
-//        if i remove the saving of the data from the view holder (e.g. with eventbus)
-//        then the state is saved!!!!!!
-
-//        val firstItem = mItems.first()
         val context = parent.context
 
         val itemView = LayoutInflater
                 .from(context)
                 .inflate(getLayoutRes(parent, viewType), parent, false)
 
-        StateListDrawable().apply {
-            //replacement method requires API 23 (lib min is 21)
-            @Suppress("DEPRECATION")
-            val selectedColorInt =
-                if (selectedItemBackgroundColorRes != null)
-                    //for sure selectedItemBackgroundColorRes is NOT null because of the "if"
-                    context.resources.getColor(selectedItemBackgroundColorRes!!)
-                else
-                    getThemeAccentColorInt(context)
-
-            //selected
-            addState(intArrayOf(android.R.attr.state_selected),
-                     ColorDrawable(selectedColorInt))
-
-            itemView.background = this
+        //only change the background if user chose default behavior.
+        //this is to prevent overriding users' custom background (if set)
+        if(defaultItemSelectionBehavior)
+        {
+            //todo when documenting, mention that the background will be overridden.
+            //todo if user has custom background, he should NOT use defaultItemSelectionBehavior
+            //todo but then must handle other things by himself.
+            StateListDrawable().apply {
+                //selected
+                addState(intArrayOf(android.R.attr.state_selected),
+                         ColorDrawable(selectedItemBackgroundColor ?: getThemeAccentColorInt(context)))
+                itemView.background = this
+            }
         }
 
         val holder = createAdapterViewHolder(itemView, parent, viewType)
 
-//        val holder = firstItem.createViewHolder(itemView)
         dragAndDropWithHandle?.let {
             //this line is needed for the compiler
             itemView.findViewById<View>(it.first).setOnTouchListener { v, event ->
@@ -287,7 +278,7 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
                 //todo first selection listener or first long-click listener????
 
                 //long-click should NOT select items if:
-                //1) defaultItemSelectionBehaviour is false
+                //1) defaultItemSelectionBehavior is false
                 //2) the item is already selected (this would trigger unnecessary callbacks and UI updates).
                 //3) at least one item is already selected (we are in "selection mode" where regular clicks
                 //   should select/deselect an item)

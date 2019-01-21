@@ -8,7 +8,6 @@ import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import java.util.*
 
 class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private val mAdapter: DxAdapter<ITEM, */*VH*/>)

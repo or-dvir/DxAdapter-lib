@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.support.annotation.CallSuper
 import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.view.View
