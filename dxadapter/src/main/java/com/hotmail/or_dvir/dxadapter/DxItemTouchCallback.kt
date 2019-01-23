@@ -237,6 +237,16 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
             }
         }
     }
+    
+    override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int
+    {
+        if (swipeBack)
+        {
+            swipeBack = false
+            return 0
+        }
+        return super.convertToAbsoluteDirection(flags, layoutDirection)
+    }
 
     override fun isLongPressDragEnabled(): Boolean
     {
