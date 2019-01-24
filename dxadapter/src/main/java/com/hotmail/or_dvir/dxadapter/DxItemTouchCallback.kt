@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
@@ -8,11 +9,25 @@ import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
+import android.view.MotionEvent
 import java.util.*
+
 
 class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private val mAdapter: DxAdapter<ITEM, */*VH*/>)
     : ItemTouchHelper.Callback()
 {
+
+    private var mmmmmSwipeBack = false
+    private var buttonShowedState = ButtonsState.GONE
+    private val mButtonWidth = 300f
+    internal enum class ButtonsState
+    {
+        GONE,
+        LEFT_VISIBLE,
+        RIGHT_VISIBLE
+    }
+
     //todo test drag and drop and callbacks with grid layout manager!!!!
 
     /**
@@ -40,12 +55,18 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
     var onItemsMovedListener: onItemsMovedListener<ITEM>? = null
 
     /**
-     * first: the direction of allowed swiping. MUST be [ItemTouchHelper.LEFT],
-     * [ItemTouchHelper.RIGHT], or both.
+     * FIRST: the direction of allowed swiping. one or more of:
+     * [LEFT][ItemTouchHelper.LEFT], [RIGHT][ItemTouchHelper.RIGHT],
+     * [START][ItemTouchHelper.START], [END][ItemTouchHelper.END].
      *
-     * second: a callback which will trigger JUST BEFORE the item is dismissed and deleted from the adapter.
+     * NOTE: the directions you give here will affect the "direction" parameter for the callback.
+     * for example, if you provide [START][ItemTouchHelper.START] and [END][ItemTouchHelper.END],
+     * the callback will also return [START][ItemTouchHelper.START] and [END][ItemTouchHelper.END] and NOT
+     * [LEFT][ItemTouchHelper.LEFT] and [RIGHT][ItemTouchHelper.RIGHT]
+     *
+     * SECOND: a callback which will trigger JUST BEFORE the item is dismissed and deleted from the adapter.
      */
-    var swipeToDismiss: Pair<Int, onItemDismissedListener<ITEM>>? = null
+    var onItemSwiped: Pair<Int, onItemDismissedListener<ITEM>>? = null
 
     private var mTextPaint: Paint? = null
     private var mTextRect: Rect? = null
@@ -121,7 +142,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                 ItemTouchHelper.UP or ItemTouchHelper.DOWN
 
         //todo should i allow swiping when using grid layout??? maybe let the user decide????
-        return makeMovementFlags(dragFlags, swipeToDismiss?.first ?: 0)
+        return makeMovementFlags(dragFlags, onItemSwiped?.first ?: 0)
     }
 
     override fun onMove(recycler: RecyclerView,
@@ -143,38 +164,69 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
     override fun onChildDraw(c: Canvas,
                              recyclerView: RecyclerView,
                              viewHolder: ViewHolder,
-                             dX: Float,
-                             dY: Float,
+                             dx: Float,
+                             dy: Float,
                              actionState: Int,
                              isCurrentlyActive: Boolean)
     {
-        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
+//        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
+//        {
+//            val itemView = viewHolder.itemView
+//            val swipingRight = dX > 0
+//
+//            if (!swipingRight)
+//            {
+//                itemView.translationX = dX / 5
+//            }
+//        }
+//        else
+//            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+
+
+//        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
+//        {
+//            setTouchListener(recyclerView, dX)
+//        }
+
+        ////////////////////////////////////////////////
+        var translationX = dx
+        ////////////////////////////////////////////////
+
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
         {
             var backgroundText = ""
             val itemView = viewHolder.itemView
             val resources = itemView.resources
-            val swipingRight = dX > 0
+            val swipingRight = dx > 0
 
             if (swipingRight)
             {
-                    swipeBackgroundColorRight?.let {
-                        mSwipeBackgroundColorDrawable?.apply {
-                            color = resources.getColor(it)
-                            setBounds(itemView.left,
-                                      itemView.top,
-                                      itemView.left + dX.toInt(),
-                                      itemView.bottom)
-                        }
-                    }
+                /////////////////////////////////////////////////////////////////////
+                if(translationX >= mButtonWidth)
+                {
+                    translationX = mButtonWidth
+                    itemView.translationX = translationX
+                }
+                /////////////////////////////////////////////////////////////////////
 
-                    swipeBackgroundTextRight?.apply {
-                        backgroundText = first
-                        mTextPaint?.let {
-                            it.textSize = second
-                            it.color = resources.getColor(third)
-                            it.textAlign = Paint.Align.RIGHT
-                        }
+                swipeBackgroundColorRight?.let {
+                    mSwipeBackgroundColorDrawable?.apply {
+                        color = resources.getColor(it)
+                        setBounds(itemView.left,
+                                  itemView.top,
+                                  itemView.left + dx.toInt(),
+                                  itemView.bottom)
                     }
+                }
+
+                swipeBackgroundTextRight?.apply {
+                    backgroundText = first
+                    mTextPaint?.let {
+                        it.textSize = second
+                        it.color = resources.getColor(third)
+                        it.textAlign = Paint.Align.RIGHT
+                    }
+                }
             }
 
             //Swiping left
@@ -184,7 +236,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                     mSwipeBackgroundColorDrawable?.apply {
                         //for sure swipeBackgroundColorRight is NOT null because of the if statement above
                         color = resources.getColor(it)
-                        setBounds(itemView.right + dX.toInt(),
+                        setBounds(itemView.right + dx.toInt(),
                                   itemView.top,
                                   itemView.right,
                                   itemView.bottom)
@@ -208,7 +260,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                 //drawing background MUST come BEFORE drawing the text
                 draw(c)
                 mTextPaint?.let {
-                    var halfTextWidth = (mTextRect!!.width()/2f)
+                    var halfTextWidth = (mTextRect!!.width() / 2f)
                     //if swiping left, make the width negative because we need to SUBTRACT it
                     //when drawing the text
                     if (!swipingRight)
@@ -217,35 +269,78 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                     it.getTextBounds(backgroundText, 0, backgroundText.length, mTextRect)
                     c.drawText(backgroundText,
                                bounds.exactCenterX() + halfTextWidth,
-                               //not sure why i have to divide by 4 and not 2...
-                               bounds.exactCenterY() + (mTextRect!!.height()/4f),
+                        //not sure why i have to divide by 4 and not 2...
+                               bounds.exactCenterY() + (mTextRect!!.height() / 4f),
                                it)
                 }
             }
         }
 
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        super.onChildDraw(c, recyclerView, viewHolder, translationX, dy, actionState, isCurrentlyActive)
+//        super.onChildDraw(c, recyclerView, viewHolder, dx, dy, actionState, isCurrentlyActive)
     }
+
+    override fun getSwipeThreshold(viewHolder: ViewHolder): Float
+    {
+        //default is 0.5f
+        return 0.99f
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setTouchListener(
+//        c: Canvas,
+        recyclerView: RecyclerView,
+//        viewHolder: RecyclerViewHolder,
+        dX: Float//,
+//        dY: Float,
+//        actionState: Int,
+//        isCurrentlyActive: Boolean
+    )
+    {
+        recyclerView.setOnTouchListener { v, event ->
+            mmmmmSwipeBack = event.action.let {
+                it == MotionEvent.ACTION_CANCEL ||
+                it == MotionEvent.ACTION_UP
+            }
+
+            if (mmmmmSwipeBack)
+            {
+                if (dX < -mButtonWidth)
+                    buttonShowedState = ButtonsState.RIGHT_VISIBLE
+                else if (dX > mButtonWidth)
+                    buttonShowedState = ButtonsState.LEFT_VISIBLE
+
+                if (buttonShowedState != ButtonsState.GONE)
+                {
+//                    setTouchDownListener(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+//                    setItemsClickable(recyclerView, false);
+                }
+            }
+
+
+
+            false
+        }
+    }
+
+//    override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int
+//    {
+//        return if (mmmmmSwipeBack)
+//        {
+//            mmmmmSwipeBack = false
+//            0
+//        }
+//        else
+//            super.convertToAbsoluteDirection(flags, layoutDirection)
+//    }
 
     override fun onSwiped(holder: ViewHolder, direction: Int)
     {
         mAdapter.apply {
             holder.adapterPosition.let {
-                swipeToDismiss?.second?.invoke(mItems[it], it)
-                mItems.removeAt(it)
-                notifyItemRemoved(it)
+                onItemSwiped?.second?.invoke(mItems[it], it, direction)
             }
         }
-    }
-    
-    override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int
-    {
-        if (swipeBack)
-        {
-            swipeBack = false
-            return 0
-        }
-        return super.convertToAbsoluteDirection(flags, layoutDirection)
     }
 
     override fun isLongPressDragEnabled(): Boolean
@@ -258,5 +353,5 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
     }
 
     //todo allow swiping with a handle!!! similar to drag and drop with a handle - look online for examples
-    override fun isItemViewSwipeEnabled() = swipeToDismiss?.first != null
+    override fun isItemViewSwipeEnabled() = onItemSwiped?.first != null
 }

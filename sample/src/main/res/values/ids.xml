@@ -3,4 +3,5 @@
 <resources>
     <item name="itemType_MyItem" type="id" />
     <item name="itemType_MyItemWithViews" type="id" />
+    <item name="itemType_MyItemWithImage" type="id" />
 </resources>

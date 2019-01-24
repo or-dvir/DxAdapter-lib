@@ -24,7 +24,7 @@ class ActivityMain : AppCompatActivity()
     //todo test module with leak canary!!!!!!!
 
     //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
-    //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.ViewHolder
+    //todo if the user wants their own view holder they should extend SimpleViewHolder and NOT RecyclerView.DefaultViewHolder
 
     //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
     //todo you have included ALL POSSIBLE OPTIONS in this sample
@@ -45,14 +45,14 @@ class ActivityMain : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val list = mutableListOf<MyItem>()
+        val myListItems = mutableListOf<MyItem>()
 
         for(i in 1..100)
         {
-            list.add(MyItem(i.toString()))
+            myListItems.add(MyItem(i.toString()))
         }
 
-        mSampleAdapter = MyAdapter(list).apply {
+        mSampleAdapter = MyAdapter(myListItems).apply {
             onClickListener = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
@@ -138,11 +138,39 @@ class ActivityMain : AppCompatActivity()
                 swipeBackgroundTextLeft = Triple("left swipe", 60f, android.R.color.white)
 
 
-                swipeToDismiss = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-                    { dismissedItem, dismissedPosition ->
-                        toast("removed ${dismissedItem.mText} (position $dismissedPosition)")
-                        //todo test this method by moving this item to somewhere else
-                        //todo for example "move to archive"
+                //IMPORTANT NOTE:
+                //the direction you provide in the first element of the Pair
+                //determine the "direction" parameter of the callback. for example:
+                //if you provide ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT
+                //like below, then the "direction" parameter of the
+                //listener will ALSO be either ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT.
+                //however if you check for ItemTouchHelper.START in the listener, it will not work
+                onItemSwiped = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+                                    { item, position, direction ->
+
+                        //todo do what you want here. for example:
+
+//                        if(direction == ItemTouchHelper.START)
+//                        {
+//                            //this will NEVER trigger because we did not provide
+//                            //ItemTouchHelper.START as a valid swipe direction
+//                        }
+
+                        //delete item on left swipe
+                        if(direction == ItemTouchHelper.LEFT)
+                        {
+                            myListItems.removeAt(position)
+                            mSampleAdapter.notifyItemRemoved(position)
+                            toast("removed ${item.mText} (position $position)")
+                        }
+
+                        //rename item on right swipe:
+                        if(direction == ItemTouchHelper.RIGHT)
+                        {
+                            item.mText = "new name ${position + 1}"
+                            //don't forget to restore the item, or you will be left with empty space
+                            mSampleAdapter.notifyItemChanged(position)
+                        }
                     })
 
                 //option to initiate drag with long-clicking an item
@@ -191,12 +219,16 @@ class ActivityMain : AppCompatActivity()
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean
     {
-        return if(item != null && item.itemId == R.id.sampleWithViews)
+        return if(item != null && item.itemId == R.id.innerViewsSample)
         {
-            startActivity<ActivityWithViews>()
+            startActivity<ActivityInnerViews>()
             true
         }
-
+        else if(item != null && item.itemId == R.id.multiTypeSample)
+        {
+            startActivity<ActivityMultiType>()
+            true
+        }
         else
             super.onOptionsItemSelected(item)
 

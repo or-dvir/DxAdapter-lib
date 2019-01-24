@@ -80,11 +80,7 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
 //        }
 //    }
 
-//    override fun getItemViewType(position: Int): Int
-//    {
-//        return super.getItemViewType(position)
-//    }
-
+    override fun getItemViewType(position: Int) = mItems[position].getViewType()
     override fun getItemCount(): Int = mItems.size
     private fun isInBounds(position: Int) = position in (0 until mItems.size)
 

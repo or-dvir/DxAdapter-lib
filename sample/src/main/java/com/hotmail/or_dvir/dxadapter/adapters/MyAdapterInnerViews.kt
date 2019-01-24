@@ -14,8 +14,8 @@ import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
 
-class MyAdapterWithViews(val mItems: MutableList<MyItemWithViews>)
-    : DxAdapter<MyItemWithViews, MyAdapterWithViews.ViewHolder>(mItems)
+class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
+    : DxAdapter<MyItemWithViews, MyAdapterInnerViews.ViewHolder>(mItems)
 {
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemWithViews)
     {
@@ -38,22 +38,21 @@ class MyAdapterWithViews(val mItems: MutableList<MyItemWithViews>)
     override fun getLayoutRes(parent: ViewGroup, viewType: Int) =
         R.layout.my_item_with_views
 
-    override fun getItemViewType(position: Int): Int
-    {
-        return super.getItemViewType(position)
-    }
-
     override fun createAdapterViewHolder(itemView: View,
                                          parent: ViewGroup,
                                          viewType: Int) = ViewHolder(itemView)
 
-    /////////////////////////////////////////////////
-    /////////////////////////////////////////////////
-    /////////////////////////////////////////////////
-    /////////////////////////////////////////////////
-    /////////////////////////////////////////////////
-    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
 
+    //made the class inner so i can have easy access to item properties
+    //to be used inside the listeners
     inner class ViewHolder(itemView: View) : RecyclerViewHolder(itemView)
     {
         val switch: Switch = itemView.mySwitch

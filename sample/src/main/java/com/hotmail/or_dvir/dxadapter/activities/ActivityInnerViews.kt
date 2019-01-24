@@ -8,19 +8,19 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
 import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterWithViews
+import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterInnerViews
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithViews
-import kotlinx.android.synthetic.main.activity_with_views.*
+import kotlinx.android.synthetic.main.activity_inner_views.*
 
-class ActivityWithViews : AppCompatActivity()
+class ActivityInnerViews : AppCompatActivity()
 {
-    lateinit var mAdapter: MyAdapterWithViews
+    lateinit var mAdapter: MyAdapterInnerViews
     lateinit var mItemTouchHelper: ItemTouchHelper
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_with_views)
+        setContentView(R.layout.activity_inner_views)
 
         val list = mutableListOf<MyItemWithViews>()
 
@@ -29,7 +29,7 @@ class ActivityWithViews : AppCompatActivity()
             list.add(MyItemWithViews())
         }
 
-        mAdapter = MyAdapterWithViews(list).apply {
+        mAdapter = MyAdapterInnerViews(list).apply {
             dragAndDropWithHandle = Pair(R.id.myItemDragHandle, { holder ->
                 mItemTouchHelper.startDrag(holder)
             })
@@ -38,8 +38,8 @@ class ActivityWithViews : AppCompatActivity()
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(mAdapter))
 
         rv.apply {
-            addItemDecoration(DividerItemDecoration(this@ActivityWithViews, DividerItemDecoration.VERTICAL))
-            layoutManager = LinearLayoutManager(this@ActivityWithViews, RecyclerView.VERTICAL, false)
+            addItemDecoration(DividerItemDecoration(this@ActivityInnerViews, DividerItemDecoration.VERTICAL))
+            layoutManager = LinearLayoutManager(this@ActivityInnerViews, RecyclerView.VERTICAL, false)
             adapter = mAdapter
             mItemTouchHelper.attachToRecyclerView(this)
         }

@@ -1,14 +1,16 @@
 package com.hotmail.or_dvir.dxadapter.models
 
 import com.hotmail.or_dvir.dxadapter.DxItem
+import com.hotmail.or_dvir.dxadapter.R
 
 data class MyItemWithViews(var isSwitchOn: Boolean = false,
                            var isBoxChecked: Boolean = false,
                            var mText: String = "")
-    : DxItem/*<MyItemWithViews.ViewHolder>*/()
+    : DxItem/*<MyItemWithViews.DefaultViewHolder>*/()
 {
+    override fun getViewType() = R.id.itemType_MyItemWithViews
 //    override fun getItemType() = R.id.itemType_MyItemWithViews
-//    override fun createViewHolder(itemView: View) = ViewHolder(/*this, */itemView)
+//    override fun createViewHolder(itemView: View) = DefaultViewHolder(/*this, */itemView)
 //    override fun getLayoutRes() = R.layout.my_item_with_views
 
 //    override fun bindViewHolder(holder: RecyclerViewHolder)
@@ -32,10 +34,10 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
 //    //WARNING!!!!
 //    //do NOT make this an inner class!
 //    //inner classes store a reference to the outer class and this can cause unexpected behavior
-//    //when this ViewHolder is being recycled.
+//    //when this DefaultViewHolder is being recycled.
 //    //if you need to communicate some changes back to the outer object,
 //    //ljhgvkgtgvjlkdsfgblkgsdflngsdlfnsgdlfnkljsgdfnjklgsfnkljnkjnkj
-//    class ViewHolder(itemView: View,
+//    class DefaultViewHolder(itemView: View,
 //                     button: Button,
 //                     switch: Switch,
 //                     checkBox: CheckBox,

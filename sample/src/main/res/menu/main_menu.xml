@@ -3,8 +3,13 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/sampleWithViews"
-        android:title="sample with views"
+        android:id="@+id/innerViewsSample"
+        android:title="inner views sample"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/multiTypeSample"
+        android:title="multi-type sample"
         app:showAsAction="never"/>
 
 </menu>
