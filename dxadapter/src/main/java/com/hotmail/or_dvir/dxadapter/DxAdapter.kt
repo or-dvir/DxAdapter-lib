@@ -1,15 +1,11 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.annotation.LayoutRes
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.TypedValue
@@ -17,12 +13,15 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.R
-import android.support.annotation.NonNull
 
 abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH/*RecyclerViewHolder*/>()
 {
+
+    //todo do i really need to restrict the adapter to DxItem?!?!?!??!?!
+    //todo if all i need is the function "getViewType()" then there is no reason
+    //todo to limit the user to extend from DxItem!!!!!!!!!!!!!!!!!!!!!
+
     var onClickListener: onItemClickListener<ITEM>? = null
     var onLongClickListener: onItemLongClickListener<ITEM>? = null
     var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null

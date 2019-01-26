@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+    <item name="itemType_MyHeader" type="id" />
     <item name="itemType_MyItem" type="id" />
     <item name="itemType_MyItemWithViews" type="id" />
     <item name="itemType_MyItemWithImage" type="id" />
