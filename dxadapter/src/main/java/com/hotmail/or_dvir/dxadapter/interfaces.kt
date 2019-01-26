@@ -1,14 +1,12 @@
 package com.hotmail.or_dvir.dxadapter
 
-import android.support.annotation.CallSuper
-import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.view.View
 
 //internal interface IDxItem/*<VH: RecyclerViewHolder>*/
 //{
 //    @LayoutRes
-//    fun getLayoutRes(): Int
+//    fun getItemLayoutRes(): Int
 //    fun createViewHolder(/*item: ITEM, */itemView: View): VH
 //    fun bindViewHolder(holder: VH)
 //    /**
@@ -31,32 +29,30 @@ import android.view.View
 
 interface IDxStickyHeader
 {
-    /**
-     * @param position the adapter position of the item for which we need to find its' header
-     * @return the adapter position of the header which "hosts" the item at [position].
-     */
-    fun getHeaderPositionFromItemPosition(position: Int): Int
+//    /**
+//     * @param position the adapter position of the item for which we need to find its' header
+//     * @return the adapter position of the header which "hosts" the item at [position].
+//     */
+//    fun getHeaderPositionFromItemPosition(position: Int): Int
 
     /**
      * @return the resource id of the header layout for the given position
      */
+    //todo in order to allow multiple types of headers, add position parameter!!!
+    //todo note that this might require some changes in the adapter!!!
     @LayoutRes
-    fun getHeaderLayout(headerPosition: Int): Int
+    fun getHeaderLayoutRes(/*headerPosition: Int*/): Int
 
     /**
-     * @param header Header to set the data on.
-     * @param headerPosition Position of the header item in the adapter.
+     * binds data to the STICKY header view (NOT the header item in the adapter).
+     * @param headerAdapterPosition position of the header item IN THE ADAPTER (use this to get data to bind from the adapter).
      */
-    //todo change this documentation!!!
-    fun bindHeaderData(header: View, headerPosition: Int)
+    fun bindStickyHeader(stickyHeader: View, headerAdapterPosition: Int)
 
     /**
-     * This method gets called by [DxStickyHeaderItemDecoration] to verify whether the item represents a header.
-     * @param itemPosition int.
-     * @return true, if item at the specified adapter's position represents a header.
+     * @return whether or not the item [adapterPosition] represents a header
      */
-    //todo change this documentation!!!
-    fun isHeader(itemPosition: Int): Boolean
+    fun isHeader(adapterPosition: Int): Boolean
 }
 
 interface IOnAdapterItemVisibilityChanged

@@ -41,7 +41,7 @@ class MyMultiTypeAdapter(mItems: MutableList<DxItem>)
         }
     }
 
-    override fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
+    override fun getItemLayoutRes(parent: ViewGroup, viewType: Int): Int
     {
         return when (viewType)
         {

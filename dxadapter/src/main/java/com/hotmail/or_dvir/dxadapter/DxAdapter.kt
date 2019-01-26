@@ -190,7 +190,7 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
 
         val itemView = LayoutInflater
                 .from(context)
-                .inflate(getLayoutRes(parent, viewType), parent, false)
+                .inflate(getItemLayoutRes(parent, viewType), parent, false)
 
         //only change the background if user chose default behavior.
         //this is to prevent overriding users' custom background (if set)
@@ -301,17 +301,16 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
         return holder
     }
 
-    /**
-     * override this function if you want a custom ViewHolder (for example if you want to attach
-     * listeners to the individual views of an item).
-     *
-     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
-     * [RecyclerView.ViewHolder.getAdapterPosition]
-     */
+//    /**
+//     * override this function if you want a custom ViewHolder (for example if you want to attach
+//     * listeners to the individual views of an item).
+//     *
+//     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
+//     * [RecyclerView.ViewHolder.getAdapterPosition]
+//     */
     abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): VH
-
     @LayoutRes
-    abstract fun getLayoutRes(parent: ViewGroup, viewType: Int): Int
+    abstract fun getItemLayoutRes(parent: ViewGroup, viewType: Int): Int
     abstract fun bindViewHolder(holder: VH, position: Int, item: ITEM)
     abstract fun unbindViewHolder(holder: VH, position: Int, item: ITEM)
 }

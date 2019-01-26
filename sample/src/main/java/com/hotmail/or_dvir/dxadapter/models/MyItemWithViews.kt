@@ -11,7 +11,7 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
     override fun getViewType() = R.id.itemType_MyItemWithViews
 //    override fun getItemType() = R.id.itemType_MyItemWithViews
 //    override fun createViewHolder(itemView: View) = DefaultViewHolder(/*this, */itemView)
-//    override fun getLayoutRes() = R.layout.my_item_with_views
+//    override fun getItemLayoutRes() = R.layout.my_item_with_views
 
 //    override fun bindViewHolder(holder: RecyclerViewHolder)
 //    {

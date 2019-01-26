@@ -35,7 +35,7 @@ class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
         }
     }
 
-    override fun getLayoutRes(parent: ViewGroup, viewType: Int) =
+    override fun getItemLayoutRes(parent: ViewGroup, viewType: Int) =
         R.layout.my_item_with_views
 
     override fun createAdapterViewHolder(itemView: View,

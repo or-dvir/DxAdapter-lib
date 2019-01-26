@@ -217,32 +217,22 @@ class ActivityMain : AppCompatActivity()
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
     {
-        return if(item != null && item.itemId == R.id.innerViewsSample)
+        when (item.itemId)
         {
-            startActivity<ActivityInnerViews>()
-            true
+            R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
+            R.id.multiTypeSample -> startActivity<ActivityMultiType>()
+            R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
+            else -> super.onOptionsItemSelected(item)
         }
-        else if(item != null && item.itemId == R.id.multiTypeSample)
-        {
-            startActivity<ActivityMultiType>()
-            true
-        }
-        else
-            super.onOptionsItemSelected(item)
 
+        return true
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean
+    override fun onCreateOptionsMenu(menu: Menu): Boolean
     {
-        return if (menu != null)
-        {
-            menuInflater.inflate(R.menu.main_menu, menu)
-            true
-        }
-
-        else
-            super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
     }
 }

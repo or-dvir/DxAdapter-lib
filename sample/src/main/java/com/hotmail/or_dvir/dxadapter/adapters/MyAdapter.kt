@@ -21,7 +21,7 @@ class MyAdapter(mItems: MutableList<MyItem>): DxAdapter<MyItem, MyAdapter.ViewHo
         holder.tv.text = ""
     }
 
-    override fun getLayoutRes(parent: ViewGroup, viewType: Int) = R.layout.my_item
+    override fun getItemLayoutRes(parent: ViewGroup, viewType: Int) = R.layout.my_item
     override fun createAdapterViewHolder(itemView: View,
                                          parent: ViewGroup,
                                          viewType: Int) =

@@ -12,4 +12,9 @@
         android:title="multi-type sample"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/stickyHeaderSample"
+        android:title="sticky header sample"
+        app:showAsAction="never"/>
+
 </menu>

@@ -1,20 +1,21 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Canvas
-import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-abstract class DxStickyHeaderItemDecoration(/*recyclerView: RecyclerView,
-                                   private val mHeaderListener: IDxStickyHeader*/)
+/*abstract */class DxStickyHeaderItemDecoration(/*recyclerView: RecyclerView,*/
+                                   private val mHeaderListener: IDxStickyHeader)
     : RecyclerView.ItemDecoration()
 {
     private var mStickyHeaderHeight: Int = 0
 
     //todo make the headers NOT interactable!!!!!
     //todo DO NOT LET THE USER DRAG THEM OR SLIDE THEM OR CLICK THEM OR ANYTHING ELSE!!!!
+    //todo when disabling drag, make sure though that the user CAN drag items from one "header group" to another and
+    //todo that the items in the adapter actually switch!!!!!
 
 //    init
 //    {
@@ -55,7 +56,7 @@ abstract class DxStickyHeaderItemDecoration(/*recyclerView: RecyclerView,
 
         val childInContact = getChildInContact(recyclerView, currentHeader.bottom) ?: return
 
-        if (/*mHeaderListener.*/isHeader(recyclerView.getChildAdapterPosition(childInContact)))
+        if (mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
         {
             moveAndDrawHeader(c,
                               currentHeader,
@@ -70,7 +71,7 @@ abstract class DxStickyHeaderItemDecoration(/*recyclerView: RecyclerView,
     }
 
     private fun getHeaderPositionFromItemPosition(position: Int) =
-        (position downTo 0).firstOrNull { isHeader(it) } ?: 0
+        (position downTo 0).firstOrNull { mHeaderListener.isHeader(it) } ?: 0
 
     private fun getHeaderViewForItemPosition(itemPosition: Int, recyclerView: RecyclerView): View
     {
@@ -80,11 +81,11 @@ abstract class DxStickyHeaderItemDecoration(/*recyclerView: RecyclerView,
         //todo can i make this generic???? like i did with DxAdapter????
         //todo meaning that the user should implement a viewholder for the header etc...
         val header = LayoutInflater.from(recyclerView.context)
-            .inflate(/*mHeaderListener.*/getHeaderLayout(headerPosition),
+            .inflate(mHeaderListener.getHeaderLayoutRes(/*headerPosition*/),
                      recyclerView,
                      false)
 
-        /*mHeaderListener.*/bindHeaderData(header, headerPosition)
+        mHeaderListener.bindStickyHeader(header, headerPosition)
         return header
     }
 
@@ -153,8 +154,8 @@ abstract class DxStickyHeaderItemDecoration(/*recyclerView: RecyclerView,
         view.layout(0, 0, view.measuredWidth, /*mStickyHeaderHeight = */view.measuredHeight)
     }
 
-    abstract fun isHeader(itemPosition: Int): Boolean
-    abstract fun bindHeaderData(header: View, headerPosition: Int)
-    @LayoutRes
-    abstract fun getHeaderLayout(headerPosition: Int): Int
+//    abstract fun isHeader(itemPosition: Int): Boolean
+//    abstract fun bindStickyHeader(header: View, headerPosition: Int)
+//    @LayoutRes
+//    abstract fun getHeaderLayoutRes(headerPosition: Int): Int
 }
