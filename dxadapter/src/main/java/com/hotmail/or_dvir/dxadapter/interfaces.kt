@@ -38,10 +38,10 @@ interface IDxStickyHeader
     fun getHeaderPositionFromItemPosition(position: Int): Int
 
     /**
-     * @return the resource id of the header layout
+     * @return the resource id of the header layout for the given position
      */
     @LayoutRes
-    fun getHeaderLayout(): Int
+    fun getHeaderLayout(headerPosition: Int): Int
 
     /**
      * @param header Header to set the data on.

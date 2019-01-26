@@ -73,7 +73,7 @@ class DxStickyHeaderItemDecoration(recyclerView: RecyclerView,
         //todo can i make this generic???? like i did with DxAdapter????
         //todo meaning that the user should implement a viewholder for the header etc...
         val header = LayoutInflater.from(recyclerView.context)
-            .inflate(mHeaderListener.getHeaderLayout(/*headerPosition*/),
+            .inflate(mHeaderListener.getHeaderLayout(headerPosition),
                      recyclerView,
                      false)
 
