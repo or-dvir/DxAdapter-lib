@@ -196,13 +196,13 @@ class ActivityMain : AppCompatActivity()
             adapter = mSampleAdapter
             mItemTouchHelper.attachToRecyclerView(this)
 
-            firstItemVisibilityListener = object : OnAdapterItemVisibilityChanged
+            firstItemVisibilityListenerI = object : IOnAdapterItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "first item visible")
                 override fun onInvisible() = Log.i("sample", "first item not visible")
             }
 
-            lastItemVisibilityListener = object : OnAdapterItemVisibilityChanged
+            lastItemVisibilityListenerI = object : IOnAdapterItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "last item visible")
                 override fun onInvisible() = Log.i("sample", "last item not visible")

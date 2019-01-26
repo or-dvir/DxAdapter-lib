@@ -17,6 +17,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.R
+import android.support.annotation.NonNull
 
 abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH/*RecyclerViewHolder*/>()

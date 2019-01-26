@@ -29,7 +29,37 @@ import android.view.View
 ////    fun unbindViewHolder(holder: VH)
 //}
 
-interface OnAdapterItemVisibilityChanged
+interface IDxStickyHeader
+{
+    /**
+     * @param position the adapter position of the item for which we need to find its' header
+     * @return the adapter position of the header which "hosts" the item at [position].
+     */
+    fun getHeaderPositionFromItemPosition(position: Int): Int
+
+    /**
+     * @return the resource id of the header layout
+     */
+    @LayoutRes
+    fun getHeaderLayout(): Int
+
+    /**
+     * @param header Header to set the data on.
+     * @param headerPosition Position of the header item in the adapter.
+     */
+    //todo change this documentation!!!
+    fun bindHeaderData(header: View, headerPosition: Int)
+
+    /**
+     * This method gets called by [DxStickyHeaderItemDecoration] to verify whether the item represents a header.
+     * @param itemPosition int.
+     * @return true, if item at the specified adapter's position represents a header.
+     */
+    //todo change this documentation!!!
+    fun isHeader(itemPosition: Int): Boolean
+}
+
+interface IOnAdapterItemVisibilityChanged
 {
     /**
      * triggers when this item becomes PARTIALLY visible

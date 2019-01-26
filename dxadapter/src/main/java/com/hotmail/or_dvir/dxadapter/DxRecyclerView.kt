@@ -14,19 +14,19 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     //todo test these listeners if the adapter changes during runtime!!!!
 
     /**
-     * * [OnAdapterItemVisibilityChanged.onVisible] will trigger immediately as the [DxRecyclerView] loads
+     * * [IOnAdapterItemVisibilityChanged.onVisible] will trigger immediately as the [DxRecyclerView] loads
      * (assuming the adapter contains at least 1 item).
-     * * if your entire list fits inside the screen, [OnAdapterItemVisibilityChanged.onInvisible] will NEVER trigger.
+     * * if your entire list fits inside the screen, [IOnAdapterItemVisibilityChanged.onInvisible] will NEVER trigger.
      */
-    var firstItemVisibilityListener: OnAdapterItemVisibilityChanged? = null
+    var firstItemVisibilityListenerI: IOnAdapterItemVisibilityChanged? = null
     /**
-     * * [OnAdapterItemVisibilityChanged.onInvisible] will trigger immediately as the [DxRecyclerView] loads
+     * * [IOnAdapterItemVisibilityChanged.onInvisible] will trigger immediately as the [DxRecyclerView] loads
      * (assuming it does NOT fit inside the screen).
-     * * if your entire list fits inside the screen, [OnAdapterItemVisibilityChanged.onVisible]
+     * * if your entire list fits inside the screen, [IOnAdapterItemVisibilityChanged.onVisible]
      * will trigger immediately as the [DxRecyclerView] loads,
-     * and [OnAdapterItemVisibilityChanged.onInvisible] will NEVER trigger.
+     * and [IOnAdapterItemVisibilityChanged.onInvisible] will NEVER trigger.
      */
-    var lastItemVisibilityListener: OnAdapterItemVisibilityChanged? = null
+    var lastItemVisibilityListenerI: IOnAdapterItemVisibilityChanged? = null
 
     /**
      * NOTE: depending on the sensitivity,
@@ -78,8 +78,8 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
         //no need to waste runtime on ScrollListener if
         //no callbacks have been set
-        if (firstItemVisibilityListener != null ||
-            lastItemVisibilityListener  != null)
+        if (firstItemVisibilityListenerI != null ||
+            lastItemVisibilityListenerI  != null)
         {
             addOnScrollListener(object : OnScrollListener()
             {
@@ -102,7 +102,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                     //todo don't forget about staggered grid!!!!!!!
                     mLayManLinear?.apply {
                         //todo when documenting, note the order of the callbacks!!!
-                        firstItemVisibilityListener?.let {
+                        firstItemVisibilityListenerI?.let {
                             val firstPos = findFirstVisibleItemPosition()
 
                             //if no items, we can immediately return
@@ -131,7 +131,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                             }
                         }
 
-                        lastItemVisibilityListener?.let {
+                        lastItemVisibilityListenerI?.let {
                             val lastPos = findLastVisibleItemPosition()
                             val numItems = adapter?.itemCount
 
