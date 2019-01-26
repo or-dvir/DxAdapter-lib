@@ -20,10 +20,14 @@ class ActivityStickyHeader : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sticky_header)
 
+        //todo if we have a header as the first item, make sure it's not blocking anything else!!!!
+
         //used DxItem for convenience. use any type you want as long as
         //its shared between all list items
         val list = mutableListOf<DxItem>()
         var headerCounter = 1
+
+//        list.add(MyHeader("Header test"))
 
         for(i in 1..100)
         {

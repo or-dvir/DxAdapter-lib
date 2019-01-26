@@ -12,6 +12,9 @@ import android.view.ViewGroup
 {
     private var mStickyHeaderHeight: Int = 0
 
+    //todo make the headers positions CONSTANTS!!!!
+    //todo so that if the list is sorted, the headers remain constant!!!
+    //TODO should headers show up on "filter"?
     //todo make the headers NOT interactable!!!!!
     //todo DO NOT LET THE USER DRAG THEM OR SLIDE THEM OR CLICK THEM OR ANYTHING ELSE!!!!
     //todo when disabling drag, make sure though that the user CAN drag items from one "header group" to another and
@@ -51,7 +54,8 @@ import android.view.ViewGroup
         if (topChildPosition == RecyclerView.NO_POSITION)
             return
 
-        val currentHeader = getHeaderViewForItemPosition(topChildPosition, recyclerView)
+        val currentHeader = getHeaderViewForItemPosition(topChildPosition, recyclerView) ?: return
+
         fixLayoutSize(recyclerView, currentHeader)
 
         val childInContact = getChildInContact(recyclerView, currentHeader.bottom) ?: return
@@ -71,11 +75,12 @@ import android.view.ViewGroup
     }
 
     private fun getHeaderPositionFromItemPosition(position: Int) =
-        (position downTo 0).firstOrNull { mHeaderListener.isHeader(it) } ?: 0
+        (position downTo 0).firstOrNull { mHeaderListener.isHeader(it) }
 
-    private fun getHeaderViewForItemPosition(itemPosition: Int, recyclerView: RecyclerView): View
+    private fun getHeaderViewForItemPosition(itemPosition: Int, recyclerView: RecyclerView): View?
     {
-        val headerPosition = /*mHeaderListener.*/getHeaderPositionFromItemPosition(itemPosition)
+        val headerPosition =
+                /*mHeaderListener.*/getHeaderPositionFromItemPosition(itemPosition) ?: return null
 
         //todo is this really needed or it's enough the way it is???????
         //todo can i make this generic???? like i did with DxAdapter????
