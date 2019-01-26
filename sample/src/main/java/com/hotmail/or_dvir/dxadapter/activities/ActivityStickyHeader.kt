@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.widget.Adapter
 import com.hotmail.or_dvir.dxadapter.DxItem
 import com.hotmail.or_dvir.dxadapter.DxStickyHeaderItemDecoration
 import com.hotmail.or_dvir.dxadapter.R
@@ -20,14 +21,10 @@ class ActivityStickyHeader : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sticky_header)
 
-        //todo if we have a header as the first item, make sure it's not blocking anything else!!!!
-
         //used DxItem for convenience. use any type you want as long as
         //its shared between all list items
         val list = mutableListOf<DxItem>()
         var headerCounter = 1
-
-//        list.add(MyHeader("Header test"))
 
         for(i in 1..100)
         {
@@ -40,7 +37,21 @@ class ActivityStickyHeader : AppCompatActivity()
                 list.add(MyItem(i.toString()))
         }
 
-        val stickyHeaderAdapter = MyHeaderAdapter(list)
+        val stickyHeaderAdapter = MyHeaderAdapter(list).apply {
+
+            sometimes when you select many items on and off, a sticky header flickers!!!
+
+            make it such that click listeners are NOT required for defaultItemSelectionBehavior to work!!!!
+
+            onLongClickListener = { view, position, item ->
+                //need this so that defaultItemSelectionBehavior will work
+                true
+            }
+
+            onClickListener = { view, position, item ->
+                //need this so that defaultItemSelectionBehavior will work
+            }
+        }
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityStickyHeader, DividerItemDecoration.VERTICAL))

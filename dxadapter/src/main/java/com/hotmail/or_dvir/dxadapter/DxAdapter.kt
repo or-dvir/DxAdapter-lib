@@ -196,13 +196,16 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
         //this is to prevent overriding users' custom background (if set)
         if(defaultItemSelectionBehavior)
         {
-            //todo when documenting, mention that the background will be overridden.
-            //todo if user has custom background, he should NOT use defaultItemSelectionBehavior
+            //todo when documenting, mention that the background will be overridden when item is "selected",
+            //todo meaning that it will change the background to the selected color.
+            //todo if user has custom selection background that is NOT a color, he should NOT use defaultItemSelectionBehavior
             //todo but then must handle other things by himself.
             StateListDrawable().apply {
                 //selected
                 addState(intArrayOf(android.R.attr.state_selected),
                          ColorDrawable(selectedItemBackgroundColor ?: getThemeAccentColorInt(context)))
+                //not selected
+                addState(intArrayOf(-android.R.attr.state_selected), itemView.background)
                 itemView.background = this
             }
         }

@@ -9,18 +9,6 @@ import android.view.ViewGroup
 class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
     : RecyclerView.ItemDecoration()
 {
-    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
-    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
-    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
-    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
-    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
-    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
-    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
-    //TODO headers flicker everytime another item passes them
-    //TODO headers arent showing background until they are sticky
-
-
-
     //todo make the headers positions CONSTANTS!!!!
     //todo so that if the list is sorted, the headers remain constant!!!
     //TODO should headers show up on "filter"?
@@ -40,11 +28,7 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
             return
 
         val currentHeader = getHeaderViewForItemPosition(topChildPosition, recyclerView) ?: return
-
         fixLayoutSize(recyclerView, currentHeader)
-
-
-
 
         val childInContact = getChildInContact(recyclerView, currentHeader.bottom)
 
