@@ -6,11 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-/*abstract */class DxStickyHeaderItemDecoration(/*recyclerView: RecyclerView,*/
-                                   private val mHeaderListener: IDxStickyHeader)
+class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
     : RecyclerView.ItemDecoration()
 {
-    private var mStickyHeaderHeight: Int = 0
+    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
+    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
+    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
+    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
+    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
+    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
+    //todo BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!! BUGS!!!!!
+    //TODO headers flicker everytime another item passes them
+    //TODO headers arent showing background until they are sticky
+
+
 
     //todo make the headers positions CONSTANTS!!!!
     //todo so that if the list is sorted, the headers remain constant!!!
@@ -19,30 +28,6 @@ import android.view.ViewGroup
     //todo DO NOT LET THE USER DRAG THEM OR SLIDE THEM OR CLICK THEM OR ANYTHING ELSE!!!!
     //todo when disabling drag, make sure though that the user CAN drag items from one "header group" to another and
     //todo that the items in the adapter actually switch!!!!!
-
-//    init
-//    {
-//        // On Sticky Header Click
-//        recyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener
-//                                            {
-//                                                override fun onInterceptTouchEvent(recyclerView: RecyclerView,
-//                                                                                   motionEvent: MotionEvent): Boolean
-//                                                {
-//                                                    return motionEvent.y <= mStickyHeaderHeight
-//                                                }
-//
-//                                                override fun onTouchEvent(recyclerView: RecyclerView,
-//                                                                          motionEvent: MotionEvent)
-//                                                {
-//
-//                                                }
-//
-//                                                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean)
-//                                                {
-//
-//                                                }
-//                                            })
-//    }
 
     override fun onDrawOver(c: Canvas, recyclerView: RecyclerView, state: RecyclerView.State)
     {
@@ -58,20 +43,32 @@ import android.view.ViewGroup
 
         fixLayoutSize(recyclerView, currentHeader)
 
-        val childInContact = getChildInContact(recyclerView, currentHeader.bottom) ?: return
 
-        if (mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
+
+
+        val childInContact = getChildInContact(recyclerView, currentHeader.bottom)
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        //this is original code!!! but it causes flicker is you already have DividerItemDecoration
+//        val childInContact = getChildInContact(recyclerView, currentHeader.bottom) ?: return
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        //this is original code!!! there was no null check for childInContact because it returned from the
+        //line above
+//        if (mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        if (childInContact != null &&
+            mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
         {
             moveAndDrawHeader(c,
                               currentHeader,
                               0f,
                               childInContact.top.toFloat() - currentHeader.height)
-//            moveHeader(c, currentHeader, childInContact)
             return
         }
 
         moveAndDrawHeader(c, currentHeader, 0f, 0f)
-//        drawHeader(c, currentHeader)
     }
 
     private fun getHeaderPositionFromItemPosition(position: Int) =
@@ -79,8 +76,9 @@ import android.view.ViewGroup
 
     private fun getHeaderViewForItemPosition(itemPosition: Int, recyclerView: RecyclerView): View?
     {
-        val headerPosition =
-                /*mHeaderListener.*/getHeaderPositionFromItemPosition(itemPosition) ?: return null
+        val headerPosition = getHeaderPositionFromItemPosition(itemPosition) ?: return null
+
+        //todo how can i improve this??? do not inflate every time!!!!
 
         //todo is this really needed or it's enough the way it is???????
         //todo can i make this generic???? like i did with DxAdapter????
@@ -105,22 +103,6 @@ import android.view.ViewGroup
         c.restore()
     }
 
-//    private fun drawHeader(c: Canvas, header: View)
-//    {
-//        c.save()
-//        c.translate(0f, 0f)
-//        header.draw(c)
-//        c.restore()
-//    }
-
-//    private fun moveHeader(c: Canvas, currentHeader: View, nextHeader: View)
-//    {
-//        c.save()
-//        c.translate(0f, nextHeader.top.toFloat() - currentHeader.height)
-//        currentHeader.draw(c)
-//        c.restore()
-//    }
-
     private fun getChildInContact(recyclerView: RecyclerView, contactPoint: Int): View?
     {
         var child: View
@@ -130,13 +112,9 @@ import android.view.ViewGroup
             child = recyclerView.getChildAt(i)
 
             if (child.bottom > contactPoint)
-            {
                 //This child overlaps the contactPoint
                 if (child.top <= contactPoint)
-                {
                     return child
-                }
-            }
         }
 
         return null
@@ -158,9 +136,4 @@ import android.view.ViewGroup
         view.measure(childWidthSpec, childHeightSpec)
         view.layout(0, 0, view.measuredWidth, /*mStickyHeaderHeight = */view.measuredHeight)
     }
-
-//    abstract fun isHeader(itemPosition: Int): Boolean
-//    abstract fun bindStickyHeader(header: View, headerPosition: Int)
-//    @LayoutRes
-//    abstract fun getHeaderLayoutRes(headerPosition: Int): Int
 }

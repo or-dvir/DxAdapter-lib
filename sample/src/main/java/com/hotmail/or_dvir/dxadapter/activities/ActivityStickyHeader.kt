@@ -44,11 +44,7 @@ class ActivityStickyHeader : AppCompatActivity()
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityStickyHeader, DividerItemDecoration.VERTICAL))
-
-
             addItemDecoration(DxStickyHeaderItemDecoration(stickyHeaderAdapter))
-
-
 
             layoutManager = LinearLayoutManager(this@ActivityStickyHeader, RecyclerView.VERTICAL, false)
             adapter = stickyHeaderAdapter
