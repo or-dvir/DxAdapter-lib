@@ -41,8 +41,6 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
      * if TRUE, long-clicking an item will select it and any subsequent regular-click on any item
      * will select\deselect the clicked item.
      *
-     * NOTE: in order for this to work, you MUST ALSO set [onLongClickListener]
-     *
      * if FALSE, you must manage item selection yourself using [select] and [deselect].
      *
      * @see [triggerClickListenersInSelectionMode]
@@ -224,82 +222,159 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
         }
 
         //NOTE:
-        //we CANNOT have "position" outside of the click listeners because
+        //we CANNOT have "clickedPosition" outside of the click listeners because
         //if we do, it will not make a local copy and when clicking the item
         //it would be -1
-        onClickListener?.apply {
-            itemView.setOnClickListener {
-                val clickedPosition = holder.adapterPosition
-                val clickedItem = mItems[clickedPosition]
+        itemView.setOnClickListener { view ->
+            val clickedPosition = holder.adapterPosition
+            val clickedItem = mItems[clickedPosition]
 
-                //WARNING:
-                //do NOT save the state of isInSelectionMode() into a variable here
-                //because below this line we are changing the selected state of the clicked item
-                //and the variable would not be updates according to the new state
+            //todo when documenting this library, notice the order of the calls
+            //todo first selection listener or first click listener????
+            //todo example: if first selection, then click listener is AFTER the item has been selected/deselected
 
-                //todo when documenting this library, notice the order of the calls
-                //todo first selection listener or first click listener????
+            val selectionModeBefore = isInSelectionMode()
 
-                val selectionBefore = isInSelectionMode()
-
-                if(defaultItemSelectionBehavior && isInSelectionMode())
-                {
-                    //reverse the selection
-                    if(clickedItem.mIsSelected)
-                        deselect(clickedPosition)
-                    else
-                        select(clickedPosition)
-                }
-
-                val selectionAfter = isInSelectionMode()
-                val deselectedLastItem = selectionBefore && !selectionAfter
-
-                //triggering the click listener
-                when
-                {
-                    !selectionAfter && !deselectedLastItem -> invoke(it, clickedPosition, clickedItem)
-                    //if we get here, we ARE in "selection mode".
-                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
-                }
-            }
-        }
-
-        onLongClickListener?.apply {
-            itemView.setOnLongClickListener {
-                val clickedPosition = holder.adapterPosition
-                val clickedItem = mItems[clickedPosition]
-
-                //WARNING:
-                //do NOT save the state of isInSelectionMode() into a variable here
-                //because below this line we are changing the selected state of the clicked item
-                //and the variable would not be updates according to the new state
-
-                //todo when documenting this library, notice the order of the calls
-                //todo first selection listener or first long-click listener????
-
-                //long-click should NOT select items if:
-                //1) defaultItemSelectionBehavior is false
-                //2) the item is already selected (this would trigger unnecessary callbacks and UI updates).
-                //3) at least one item is already selected (we are in "selection mode" where regular clicks
-                //   should select/deselect an item)
-                if (defaultItemSelectionBehavior &&
-                    !clickedItem.mIsSelected &&
-                    !isInSelectionMode())
-                {
+            //change selection state only if user asked for default behavior AND
+            //we are already in selection mode (because default selection mode start with a LONG-click)
+            if(defaultItemSelectionBehavior && selectionModeBefore)
+            {
+                //reverse the selection
+                if(clickedItem.mIsSelected)
+                    deselect(clickedPosition)
+                else
                     select(clickedPosition)
-                }
-
-                //triggering the long-click listener
-                when
-                {
-                    !isInSelectionMode() -> invoke(it, clickedPosition, clickedItem)
-                    //if we get here, we ARE in "selection mode".
-                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
-                    //consume the event
-                    else -> true
-                }
             }
+
+            //if we were NOT in selection mode before -> regular click -> trigger the listener.
+            //if we WERE in selection mode before and the user
+            //requested it (right operand of the "OR" condition) -> trigger the listener.
+            if(!selectionModeBefore || triggerClickListenersInSelectionMode)
+                onClickListener?.invoke(view, clickedPosition, clickedItem)
+
         }
+
+/////////////////////////////////ORIGINAL REGULAR CLICK LISTENER CODE START/////////////////////////////////
+        //NOTE:
+        //we CANNOT have "clickedPosition" outside of the click listeners because
+        //if we do, it will not make a local copy and when clicking the item
+        //it would be -1
+//        onClickListener?.apply {
+//            itemView.setOnClickListener {
+//                val clickedPosition = holder.adapterPosition
+//                val clickedItem = mItems[clickedPosition]
+//
+//                //WARNING:
+//                //do NOT save the state of isInSelectionMode() into a variable here
+//                //because below this line we are changing the selected state of the clicked item
+//                //and the variable would not be updates according to the new state
+//
+//                //todo when documenting this library, notice the order of the calls
+//                //todo first selection listener or first click listener????
+//
+//                val selectionBefore = isInSelectionMode()
+//
+//                if(defaultItemSelectionBehavior && selectionBefore)
+//                {
+//                    //reverse the selection
+//                    if(clickedItem.mIsSelected)
+//                        deselect(clickedPosition)
+//                    else
+//                        select(clickedPosition)
+//                }
+//
+//                val selectionAfter = isInSelectionMode()
+//                val deselectedLastItem = selectionBefore && !selectionAfter
+//
+//                //triggering the click listener
+//                when
+//                {
+//                    !selectionAfter && !deselectedLastItem -> invoke(it, clickedPosition, clickedItem)
+//                    //if we get here, we ARE in "selection mode".
+//                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
+//                }
+//            }
+//        }
+/////////////////////////////////ORIGINAL REGULAR CLICK LISTENER CODE END/////////////////////////////////
+
+
+
+        itemView.setOnLongClickListener { view ->
+            val clickedPosition = holder.adapterPosition
+            val clickedItem = mItems[clickedPosition]
+
+            //WARNING:
+            //do NOT save the state of isInSelectionMode() into a variable here
+            //because below we are changing the selected state of the clicked item
+            //and the variable would not be updates according to the new state
+
+            //todo when documenting this library, notice the order of the calls
+            //todo first selection listener or first long-click listener????
+
+            //only select an item on long-click if defaultItemSelectionBehavior AND
+            //we are not already in selection mode (if we ARE already in selection mode,
+            //selection is handled by REGULAR clicks)
+            if (defaultItemSelectionBehavior &&
+//                !clickedItem.mIsSelected &&
+                !isInSelectionMode())
+            {
+                select(clickedPosition)
+            }
+
+            onLongClickListener?.let {
+                //if we are NOT in selection mode -> regular long-click -> trigger the listener.
+                //if we ARE in selection mode and the user
+                //requested it (right operand of the "OR" condition) -> trigger the listener.
+                if (!isInSelectionMode() || triggerClickListenersInSelectionMode)
+                    it.invoke(view, clickedPosition, clickedItem)
+
+                //in any other case we need a boolean return value
+                else
+                    true
+            } ?: true
+        }
+
+
+
+
+/////////////////////////////////ORIGINAL LONG CLICK LISTENER CODE START/////////////////////////////////
+//        onLongClickListener?.apply {
+//            itemView.setOnLongClickListener {
+//                val clickedPosition = holder.adapterPosition
+//                val clickedItem = mItems[clickedPosition]
+//
+//                //WARNING:
+//                //do NOT save the state of isInSelectionMode() into a variable here
+//                //because below this line we are changing the selected state of the clicked item
+//                //and the variable would not be updates according to the new state
+//
+//                //todo when documenting this library, notice the order of the calls
+//                //todo first selection listener or first long-click listener????
+//
+//                //long-click should NOT select items if:
+//                //1) defaultItemSelectionBehavior is false
+//                //2) the item is already selected (this would trigger unnecessary callbacks and UI updates).
+//                //3) at least one item is already selected (we are in "selection mode" where regular clicks
+//                //   should select/deselect an item)
+//                if (defaultItemSelectionBehavior &&
+//                    !clickedItem.mIsSelected &&
+//                    !isInSelectionMode())
+//                {
+//                    select(clickedPosition)
+//                }
+//
+//                //triggering the long-click listener
+//                when
+//                {
+//                    !isInSelectionMode() -> invoke(it, clickedPosition, clickedItem)
+//                    //if we get here, we ARE in "selection mode".
+//                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
+//                    //consume the event
+//                    else -> true
+//                }
+//            }
+//        }
+/////////////////////////////////ORIGINAL LONG CLICK LISTENER CODE END/////////////////////////////////
 
         return holder
     }

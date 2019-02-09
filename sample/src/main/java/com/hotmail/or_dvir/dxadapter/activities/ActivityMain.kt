@@ -31,6 +31,8 @@ class ActivityMain : AppCompatActivity()
 
     //todo have different activities for different features? if you put all in 1 activity it might confuse the user
 
+    //todo test the code WITHOUT default click behavior!!!
+
 //    i stopped here
 //    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
 
