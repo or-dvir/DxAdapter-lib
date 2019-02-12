@@ -36,7 +36,7 @@ class ActivityStickyHeader : AppCompatActivity()
                 list.add(MyItem(i.toString()))
         }
 
-        sometimes when you select many items on and off, a sticky header flickers!!!
+        //todo sometimes when you select many items on and off, a sticky header flickers!!!
         val stickyHeaderAdapter = MyHeaderAdapter(list)
 
         rv.apply {

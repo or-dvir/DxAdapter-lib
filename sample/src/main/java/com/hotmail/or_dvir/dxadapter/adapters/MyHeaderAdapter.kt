@@ -22,21 +22,8 @@ class MyHeaderAdapter(private val mItems: MutableList<DxItem>)
         tv.text = myHeader.mText
     }
 
-    override fun bindStickyHeader(stickyHeader: View, headerAdapterPosition: Int)
-    {
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        //todo cannot cast MyItem into MyHeader
-        Log.i("aaaaa", "$headerAdapterPosition")
+    override fun bindStickyHeader(stickyHeader: View, headerAdapterPosition: Int) =
         bindHeader(stickyHeader.tv, mItems[headerAdapterPosition] as MyHeader)
-    }
 
     override fun isHeader(adapterPosition: Int) =
         mItems[adapterPosition].getViewType() == R.id.itemType_MyHeader

@@ -1,6 +1,7 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +22,7 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
     {
         super.onDrawOver(c, recyclerView, state)
 
-        val topChild = recyclerView.getChildAt(0) ?: return
+        val topChild = recyclerView.layoutManager?.getChildAt(0) ?: return
 
         val topChildPosition = recyclerView.getChildAdapterPosition(topChild)
         if (topChildPosition == RecyclerView.NO_POSITION)
@@ -30,20 +31,9 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
         val currentHeader = getHeaderViewForItemPosition(topChildPosition, recyclerView) ?: return
         fixLayoutSize(recyclerView, currentHeader)
 
-        val childInContact = getChildInContact(recyclerView, currentHeader.bottom)
+        val childInContact = getChildInContact(recyclerView, currentHeader.bottom) ?: return
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        //this is original code!!! but it causes flicker is you already have DividerItemDecoration
-//        val childInContact = getChildInContact(recyclerView, currentHeader.bottom) ?: return
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        //this is original code!!! there was no null check for childInContact because it returned from the
-        //line above
-//        if (mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        if (childInContact != null &&
-            mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
+        if (mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
         {
             moveAndDrawHeader(c,
                               currentHeader,
@@ -90,18 +80,37 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
     private fun getChildInContact(recyclerView: RecyclerView, contactPoint: Int): View?
     {
         var child: View
+        val viewRect = Rect()
 
         for (i in 0 until recyclerView.childCount)
         {
             child = recyclerView.getChildAt(i)
+            recyclerView.getDecoratedBoundsWithMargins(child, viewRect)
+            if(viewRect.contains(child.left, contactPoint))
+                return child
 
-            if (child.bottom > contactPoint)
-                //This child overlaps the contactPoint
-                if (child.top <= contactPoint)
-                    return child
+//            if (child.bottom > contactPoint)
+//                //This child overlaps the contactPoint
+//                if (child.top <= contactPoint)
+//                    return child
         }
 
         return null
+
+        //original code!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        var child: View
+//
+//        for (i in 0 until recyclerView.childCount)
+//        {
+//            child = recyclerView.getChildAt(i)
+//
+//            if (child.bottom > contactPoint)
+//                if (child.top <= contactPoint)
+//                //This child overlaps the contactPoint
+//                    return child
+//        }
+//
+//        return null
     }
 
     private fun fixLayoutSize(parent: ViewGroup, view: View)
