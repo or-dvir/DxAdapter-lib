@@ -8,9 +8,13 @@ abstract class DxItem/*<VH: RecyclerViewHolder>*/(internal var mIsSelected: Bool
 {
     //todo think about a way to maybe convert everything (including "mIsSelected"!) to interfaces
     //todo or aliases so that the user does NOT have to inherit from this class
+
     /**
      * to prevent bugs, it is recommended that you return an @idRes Int here
      */
     abstract fun getViewType(): Int
-    abstract fun isDraggable(): Boolean
+
+    //todo when documenting, explain that these can be overridden to change behavior
+    open fun isDraggable() = true
+    open fun isSelectable() = true
 }

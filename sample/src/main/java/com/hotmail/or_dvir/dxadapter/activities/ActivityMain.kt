@@ -69,6 +69,8 @@ class ActivityMain : AppCompatActivity()
 
             onSelectStateChangedListener = { position, item, isSelected ->
 
+                //todo can i do anything that would NOT make the user make this call????
+                //todo could be confusing if they forget... (and also just annoying to call this every time)
                 //MUST be called in order for DxActionMode to function as intended
                 mActionModeHelper.updateActionMode(this@ActivityMain)
 
@@ -100,31 +102,35 @@ class ActivityMain : AppCompatActivity()
 //            triggerClickListenersInSelectionMode = true
         }
 
-        mActionModeHelper = DxActionModeHelper(mSampleAdapter,
-            { "${mSampleAdapter.getNumSelectedItems()}" },
-            object : ActionMode.Callback
-            {
-                override fun onActionItemClicked(mode: ActionMode?, menuItem: MenuItem?): Boolean
-                {
-                    toast("${menuItem?.title}")
-                    return true
-                }
+        mActionModeHelper =
+            DxActionModeHelper(mSampleAdapter,
+                               { "${mSampleAdapter.getNumSelectedItems()}" },
+                               object : ActionMode.Callback
+                               {
+                                   override fun onActionItemClicked(mode: ActionMode?,
+                                                                    menuItem: MenuItem?): Boolean
+                                   {
+                                       toast("${menuItem?.title}")
+                                       return true
+                                   }
 
-                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean
-                {
-                    menuInflater.inflate(R.menu.action_mode, menu)
-                    return true
-                }
+                                   override fun onCreateActionMode(mode: ActionMode?,
+                                                                   menu: Menu?): Boolean
+                                   {
+                                       menuInflater.inflate(R.menu.action_mode, menu)
+                                       return true
+                                   }
 
-                override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean
-                {
-                    return false
-                }
+                                   override fun onPrepareActionMode(mode: ActionMode?,
+                                                                    menu: Menu?): Boolean
+                                   {
+                                       return false
+                                   }
 
-                override fun onDestroyActionMode(mode: ActionMode?)
-                {
-                }
-            })
+                                   override fun onDestroyActionMode(mode: ActionMode?)
+                                   {
+                                   }
+                               })
 
         //if you want to use the drag-and-drop features of this adapter,
         //you must provide DxItemTouchCallback to ItemTouchHelper.

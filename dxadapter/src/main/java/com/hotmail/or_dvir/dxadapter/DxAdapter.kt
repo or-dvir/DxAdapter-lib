@@ -123,7 +123,7 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
                 mItems[position].apply {
                     //only select if previously not selected
                     //so we don't trigger onSelectStateChangedListener unnecessarily
-                    if(!mIsSelected)
+                    if(isSelectable() && !mIsSelected)
                     {
                         mIsSelected = true
                         onSelectStateChangedListener?.invoke(position, this, true)
@@ -146,7 +146,7 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
                 mItems[position].apply {
                     //only deselect if previously selected
                     //so we don't trigger onSelectStateChangedListener unnecessarily
-                    if(mIsSelected)
+                    if(isSelectable() && mIsSelected)
                     {
                         mIsSelected = false
                         onSelectStateChangedListener?.invoke(position, this, false)

@@ -2,19 +2,19 @@ package com.hotmail.or_dvir.dxadapter.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.view.ActionMode
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
-import com.hotmail.or_dvir.dxadapter.DxItem
-import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
-import com.hotmail.or_dvir.dxadapter.DxStickyHeaderItemDecoration
-import com.hotmail.or_dvir.dxadapter.R
+import android.view.Menu
+import android.view.MenuItem
+import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyHeaderAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.activity_multi_type.*
+import org.jetbrains.anko.toast
 
 class ActivityStickyHeader : AppCompatActivity()
 {
@@ -43,11 +43,11 @@ class ActivityStickyHeader : AppCompatActivity()
 
         //todo this is for testing. decide to change this or leave it when done testing
         val stickyHeaderAdapter = MyHeaderAdapter(list).apply {
-            defaultItemSelectionBehavior = false
+//            defaultItemSelectionBehavior = false
         }
         //todo this is for testing. decide to change this or leave it when done testing
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
-            dragOnLongClick = true
+//            dragOnLongClick = true
         })
 
         rv.apply {

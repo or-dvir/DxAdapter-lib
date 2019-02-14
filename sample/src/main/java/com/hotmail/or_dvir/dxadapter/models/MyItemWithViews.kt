@@ -8,8 +8,6 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
                            var mText: String = "")
     : DxItem/*<MyItemWithViews.DefaultViewHolder>*/()
 {
-    override fun isDraggable() = true
-
     override fun getViewType() = R.id.itemType_MyItemWithViews
 //    override fun getItemType() = R.id.itemType_MyItemWithViews
 //    override fun createViewHolder(itemView: View) = DefaultViewHolder(/*this, */itemView)
