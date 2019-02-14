@@ -14,6 +14,10 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
     //todo so that if the list is sorted, the headers remain constant!!!
     //TODO should headers show up on "filter"?
     //todo make the headers NOT interactable!!!!!
+
+    //todo maybe let the user decide???? if they decide YES, check what happens in real time!!!
+    //todo eg "header 1" is sticky and then the user drags items so that "header 2" should be sticky
+
     //todo DO NOT LET THE USER DRAG THEM OR SLIDE THEM OR CLICK THEM OR ANYTHING ELSE!!!!
     //todo when disabling drag, make sure though that the user CAN drag items from one "header group" to another and
     //todo that the items in the adapter actually switch!!!!!

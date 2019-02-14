@@ -5,7 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import com.hotmail.or_dvir.dxadapter.DxItem
+import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
 import com.hotmail.or_dvir.dxadapter.DxStickyHeaderItemDecoration
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyHeaderAdapter
@@ -15,6 +18,8 @@ import kotlinx.android.synthetic.main.activity_multi_type.*
 
 class ActivityStickyHeader : AppCompatActivity()
 {
+    private lateinit var mItemTouchHelper: ItemTouchHelper
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -36,13 +41,20 @@ class ActivityStickyHeader : AppCompatActivity()
                 list.add(MyItem(i.toString()))
         }
 
-        //todo sometimes when you select many items on and off, a sticky header flickers!!!
-        val stickyHeaderAdapter = MyHeaderAdapter(list)
+        //todo this is for testing. decide to change this or leave it when done testing
+        val stickyHeaderAdapter = MyHeaderAdapter(list).apply {
+            defaultItemSelectionBehavior = false
+        }
+        //todo this is for testing. decide to change this or leave it when done testing
+        mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
+            dragOnLongClick = true
+        })
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityStickyHeader, DividerItemDecoration.VERTICAL))
             addItemDecoration(DxStickyHeaderItemDecoration(stickyHeaderAdapter))
 
+            mItemTouchHelper.attachToRecyclerView(this)
             layoutManager = LinearLayoutManager(this@ActivityStickyHeader, RecyclerView.VERTICAL, false)
             adapter = stickyHeaderAdapter
         }

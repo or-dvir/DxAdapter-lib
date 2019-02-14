@@ -31,6 +31,9 @@ class ActivityMain : AppCompatActivity()
 
     //todo have different activities for different features? if you put all in 1 activity it might confuse the user
 
+    //todo check all documentations (including comments in code!!!) to make sure its accurate
+    //todo for example, click listeners are not needed anymore for default selection behavior
+
     //todo test the code WITHOUT default click behavior!!!
 
 //    i stopped here
@@ -184,7 +187,7 @@ class ActivityMain : AppCompatActivity()
                 //otherwise drag-and-drop will not work as expected
 //                isGridLayoutManager = true
 
-                onItemsMovedListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
+                onItemsAboutToMoveListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
                     Log.i("sample",
                         "about to switch ${draggedItem.mText} (position $draggedPosition) " +
                                 "with ${targetItem.mText} (position $targetPosition)"

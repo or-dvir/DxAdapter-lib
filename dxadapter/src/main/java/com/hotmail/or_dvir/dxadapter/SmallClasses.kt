@@ -1,12 +1,16 @@
 package com.hotmail.or_dvir.dxadapter
 
-//todo do i really need this class?!?!?!! of all i need is the function "getViewType()"
-//todo then there is no reason to limit the user to extend from this!!!!!!!!!!!!!!!!!!!!!
+//NOTE:
+//cannot use interface instead of this class because we need to save the state
+//of the mIsSelected variable
 abstract class DxItem/*<VH: RecyclerViewHolder>*/(internal var mIsSelected: Boolean = false)
 //    : IDxItem/*<VH>*/
 {
+    //todo think about a way to maybe convert everything (including "mIsSelected"!) to interfaces
+    //todo or aliases so that the user does NOT have to inherit from this class
     /**
      * to prevent bugs, it is recommended that you return an @idRes Int here
      */
     abstract fun getViewType(): Int
+    abstract fun isDraggable(): Boolean
 }

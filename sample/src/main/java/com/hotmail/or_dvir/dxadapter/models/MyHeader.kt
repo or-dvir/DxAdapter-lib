@@ -5,6 +5,8 @@ import com.hotmail.or_dvir.dxadapter.R
 
 class MyHeader(var mText: String): DxItem/*<MyItem.DefaultViewHolder>*/()
 {
+    override fun isDraggable() = false
+
     override fun getViewType() = R.id.itemType_MyHeader
 //    override fun getItemType() = R.id.itemType_MyItem
 //    override fun getItemLayoutRes() = R.layout.my_item

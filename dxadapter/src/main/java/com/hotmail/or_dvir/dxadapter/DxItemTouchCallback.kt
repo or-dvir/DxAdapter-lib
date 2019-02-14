@@ -9,7 +9,6 @@ import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.MotionEvent
 import java.util.*
 
@@ -49,10 +48,11 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
      */
     var isGridLayoutManager = false
 
+    //todo add function for AFTER move?????????
     /**
      * NOTE: this will trigger JUST BEFORE the items are moved
      */
-    var onItemsMovedListener: onItemsMovedListener<ITEM>? = null
+    var onItemsAboutToMoveListener: onItemsMovedListener<ITEM>? = null
 
     /**
      * FIRST: the direction of allowed swiping. one or more of:
@@ -66,6 +66,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
      *
      * SECOND: a callback which will trigger JUST BEFORE the item is dismissed and deleted from the adapter.
      */
+    //todo before release make sure that the doc for the callback is correct (is item automatically removed from adapter?)
     var onItemSwiped: Pair<Int, onItemDismissedListener<ITEM>>? = null
 
     private var mTextPaint: Paint? = null
@@ -126,6 +127,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         mTextRect = Rect()
     }
 
+    //todo make this a setter like kotlin should be!!!!!!
     private fun setSwipeBackgroundColor()
     {
         mSwipeBackgroundColorDrawable = ColorDrawable()
@@ -133,13 +135,29 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
 
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
     {
+//        here you should make item not dragable if the user doesnt want it to be (like a header)
+//        you can get item: mAdapter[holder.adapterPosition]
+//
+//        where else is drag affected?????
+
+        val item = mAdapter.mItems[holder.adapterPosition]
         val dragFlags =
-            //enable drag in all directions
-            if (isGridLayoutManager)
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-            //only enable drag UP and DOWN
-            else
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                when
+                {
+                    !item.isDraggable() -> 0
+                    isGridLayoutManager -> //enable drag in all directions
+                        ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                    else -> //only enable drag UP and DOWN
+                        ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                }
+
+//        val dragFlags =
+//            //enable drag in all directions
+//            if (isGridLayoutManager)
+//                ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+//            //only enable drag UP and DOWN
+//            else
+//                ItemTouchHelper.UP or ItemTouchHelper.DOWN
 
         //todo should i allow swiping when using grid layout??? maybe let the user decide????
         return makeMovementFlags(dragFlags, onItemSwiped?.first ?: 0)
@@ -153,7 +171,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         val targetPos = target.adapterPosition
 
         mAdapter.apply {
-            onItemsMovedListener?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
+            onItemsAboutToMoveListener?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
             Collections.swap(mItems, dragPos, targetPos)
             notifyItemMoved(dragPos, targetPos)
         }
@@ -282,6 +300,7 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
 
     override fun getSwipeThreshold(viewHolder: ViewHolder): Float
     {
+        //todo let user control this!!!!
         //default is 0.5f
         return 0.99f
     }

@@ -5,6 +5,7 @@ import com.hotmail.or_dvir.dxadapter.R
 
 class MyItem(var mText: String): DxItem/*<MyItem.DefaultViewHolder>*/()
 {
+    override fun isDraggable() = true
     override fun getViewType() = R.id.itemType_MyItem
 //    override fun getItemType() = R.id.itemType_MyItem
 //    override fun getItemLayoutRes() = R.layout.my_item

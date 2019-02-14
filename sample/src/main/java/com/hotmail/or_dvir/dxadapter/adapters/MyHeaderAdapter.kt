@@ -1,6 +1,5 @@
 package com.hotmail.or_dvir.dxadapter.adapters
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
