@@ -17,4 +17,5 @@ abstract class DxItem/*<VH: RecyclerViewHolder>*/(internal var mIsSelected: Bool
     //todo when documenting, explain that these can be overridden to change behavior
     open fun isDraggable() = true
     open fun isSelectable() = true
+    open fun isSwipeable() = true
 }

@@ -64,9 +64,8 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
      * the callback will also return [START][ItemTouchHelper.START] and [END][ItemTouchHelper.END] and NOT
      * [LEFT][ItemTouchHelper.LEFT] and [RIGHT][ItemTouchHelper.RIGHT]
      *
-     * SECOND: a callback which will trigger JUST BEFORE the item is dismissed and deleted from the adapter.
+     * SECOND: a callback which will triggered after an item is dismissed.
      */
-    //todo before release make sure that the doc for the callback is correct (is item automatically removed from adapter?)
     var onItemSwiped: Pair<Int, onItemDismissedListener<ITEM>>? = null
 
     private var mTextPaint: Paint? = null
@@ -151,16 +150,15 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                         ItemTouchHelper.UP or ItemTouchHelper.DOWN
                 }
 
-//        val dragFlags =
-//            //enable drag in all directions
-//            if (isGridLayoutManager)
-//                ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-//            //only enable drag UP and DOWN
-//            else
-//                ItemTouchHelper.UP or ItemTouchHelper.DOWN
+        val swipeFlags =
+            if (!item.isSwipeable() || onItemSwiped == null)
+                0
+            else
+                //for sure onItemSwiped is not null because of the "if" above
+                onItemSwiped!!.first
 
         //todo should i allow swiping when using grid layout??? maybe let the user decide????
-        return makeMovementFlags(dragFlags, onItemSwiped?.first ?: 0)
+        return makeMovementFlags(dragFlags, swipeFlags)
     }
 
     override fun onMove(recycler: RecyclerView,

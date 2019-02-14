@@ -159,13 +159,11 @@ class ActivityMain : AppCompatActivity()
                 onItemSwiped = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                                     { item, position, direction ->
 
-                        //todo do what you want here. for example:
-
-//                        if(direction == ItemTouchHelper.START)
-//                        {
-//                            //this will NEVER trigger because we did not provide
-//                            //ItemTouchHelper.START as a valid swipe direction
-//                        }
+                        if(direction == ItemTouchHelper.START)
+                        {
+                            //this will NEVER trigger because we did not provide
+                            //ItemTouchHelper.START as a valid swipe direction
+                        }
 
                         //delete item on left swipe
                         if(direction == ItemTouchHelper.LEFT)
@@ -176,7 +174,7 @@ class ActivityMain : AppCompatActivity()
                         }
 
                         //rename item on right swipe:
-                        if(direction == ItemTouchHelper.RIGHT)
+                        else if(direction == ItemTouchHelper.RIGHT)
                         {
                             item.mText = "new name ${position + 1}"
                             //don't forget to restore the item, or you will be left with empty space

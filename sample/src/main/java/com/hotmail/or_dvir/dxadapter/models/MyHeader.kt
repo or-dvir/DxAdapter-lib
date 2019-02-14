@@ -5,9 +5,10 @@ import com.hotmail.or_dvir.dxadapter.R
 
 class MyHeader(var mText: String): DxItem/*<MyItem.DefaultViewHolder>*/()
 {
-    //headers should not be draggable or selectable
+    //headers should not be interactable
     override fun isDraggable() = false
     override fun isSelectable() = false
+    override fun isSwipeable() = false
 
     override fun getViewType() = R.id.itemType_MyHeader
 //    override fun getItemType() = R.id.itemType_MyItem
