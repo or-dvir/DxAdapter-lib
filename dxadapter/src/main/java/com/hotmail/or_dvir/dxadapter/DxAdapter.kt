@@ -13,11 +13,14 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ThemedSpinnerAdapter
 
-abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mItems: MutableList<ITEM>)
-    : RecyclerView.Adapter<VH/*RecyclerViewHolder*/>()
+abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
+    : RecyclerView.Adapter<VH/*RecyclerViewHolder*/>(),
+    Filterable
 {
-
     //todo do i really need to restrict the adapter to DxItem?!?!?!??!?!
     //todo if all i need is the function "getViewType()" then there is no reason
     //todo to limit the user to extend from DxItem!!!!!!!!!!!!!!!!!!!!!
@@ -25,6 +28,9 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
     var onClickListener: onItemClickListener<ITEM>? = null
     var onLongClickListener: onItemLongClickListener<ITEM>? = null
     var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+
+    //not using type alias here so i can use the generic ITEM
+    var dxFilter: ((constraint: CharSequence) -> List<ITEM>)? = null
 
 //    private val mItemTypes = SparseArray<DxItem<VH>>()
 
@@ -68,16 +74,40 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
      */
     var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
-//    init
-//    {
-//        mItems.forEach {
-//            mItemTypes.apply {
-//                val type = it.getItemType()
-//                if (get(type) == null)
-//                    put(type, it)
-//            }
-//        }
-//    }
+    private val mOriginalList = mItems
+    private val privateFilter = object : Filter()
+    {
+        override fun performFiltering(constraint: CharSequence): FilterResults?
+        {
+            i stopped here
+            fix all these todo's!!!
+            //todo how to add animation to filtering????
+
+            //todo exception is thrown as a warning???? colored in yellow and the app keeps running!!!
+            if (dxFilter == null)
+                throw UninitializedPropertyAccessException("you must initialize the field \"dxFilter\" before filtering")
+
+            val results =
+                if (constraint.isEmpty())
+                    mOriginalList
+                else
+                //for SURE this is not null because of the "if" condition above
+                    dxFilter!!.invoke(constraint)
+
+            return FilterResults().apply {
+                values = results
+                count = results.size
+            }
+        }
+
+        override fun publishResults(constraint: CharSequence, results: FilterResults)
+        {
+            //todo cannot check for generic types in kotlin...
+            //todo test what happens when the user returns a list of a different type
+            mItems = results.values as MutableList<ITEM>
+            notifyDataSetChanged()
+        }
+    }
 
     override fun getItemViewType(position: Int) = mItems[position].getViewType()
     override fun getItemCount(): Int = mItems.size
@@ -378,6 +408,14 @@ abstract class DxAdapter<ITEM: DxItem, VH: RecyclerViewHolder>(internal val mIte
 
         return holder
     }
+
+    /**
+     * convenience method instead of calling [getFilter().filter(constraint)].
+     * @param constraint to get the original list, set this to an empty string
+     */
+    fun filter(constraint: CharSequence) = filter.filter(constraint)
+
+    override fun getFilter() = privateFilter
 
 //    /**
 //     * override this function if you want a custom ViewHolder (for example if you want to attach
