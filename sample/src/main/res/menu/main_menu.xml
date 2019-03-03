@@ -17,4 +17,9 @@
         android:title="sticky header sample"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/filterSample"
+        android:title="filter sample"
+        app:showAsAction="never"/>
+
 </menu>

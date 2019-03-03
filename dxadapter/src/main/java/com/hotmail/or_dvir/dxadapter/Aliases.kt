@@ -3,6 +3,9 @@ package com.hotmail.or_dvir.dxadapter
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
+
+typealias RecyclerViewHolder = RecyclerView.ViewHolder
+
 /**
  * @return true if the callback consumed the long click, false otherwise
  */
@@ -21,16 +24,12 @@ internal typealias onItemDismissedListener<ITEM> = (item: ITEM,
 
 internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 
-typealias RecyclerViewHolder = RecyclerView.ViewHolder
-
 /**
  * first: scroll sensitivity to trigger the listener
  *
  * second: the listener itself
  */
 internal typealias scrollUpDownPair = Pair<Int, () -> Any>
-
-
 
 /**
  * first: the text to display
@@ -40,10 +39,6 @@ internal typealias scrollUpDownPair = Pair<Int, () -> Any>
  * third: the resource id of the color of the text (MUST be @ColorRes)
  */
 internal typealias swipeBackgroundText = Triple<String, Float, Int>
-
-
-
-
 internal typealias actionModeTitleProvider = () -> String
 
 

@@ -233,6 +233,7 @@ class ActivityMain : AppCompatActivity()
             R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
             R.id.multiTypeSample -> startActivity<ActivityMultiType>()
             R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
+            R.id.filterSample -> startActivity<ActivityFilter>()
             else -> super.onOptionsItemSelected(item)
         }
 
