@@ -43,6 +43,28 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
     var dragOnLongClick = false
 
     /**
+     * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
+     */
+    var swipeThreshold: Float? = null
+
+    /**
+     * sets a fixed value for the swipe escape velocity.
+     * this value is overridden by [swipeEscapeVelocityMultiplier] (if set).
+     *
+     * see [ItemTouchHelper.Callback.getSwipeEscapeVelocity] for more details.
+     */
+    var swipeEscapeVelocity: Float? = null
+
+    /**
+     * sets a value for the swipe escape velocity as a multiplier
+     * of the device's default value.
+     * this value overrides [swipeEscapeVelocity]
+     *
+     * see [ItemTouchHelper.Callback.getSwipeEscapeVelocity] for details
+     */
+    var swipeEscapeVelocityMultiplier: Float? = null
+
+    /**
      * if your list is actually a grid, set this value to TRUE.
      * otherwise, drag-and-drop will not work as expected
      */
@@ -296,13 +318,6 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
 //        super.onChildDraw(c, recyclerView, viewHolder, dx, dy, actionState, isCurrentlyActive)
     }
 
-    override fun getSwipeThreshold(viewHolder: ViewHolder): Float
-    {
-        //todo let user control this!!!!
-        //default is 0.5f
-        return 0.99f
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun setTouchListener(
 //        c: Canvas,
@@ -368,6 +383,12 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
         else
             dragOnLongClick
     }
+
+    override fun getSwipeEscapeVelocity(defaultValue: Float) =
+        swipeEscapeVelocityMultiplier ?: swipeEscapeVelocity ?: super.getSwipeEscapeVelocity(defaultValue)
+
+    override fun getSwipeThreshold(viewHolder: ViewHolder) =
+        swipeThreshold ?: super.getSwipeThreshold(viewHolder)
 
     //todo allow swiping with a handle!!! similar to drag and drop with a handle - look online for examples
     override fun isItemViewSwipeEnabled() = onItemSwiped?.first != null
