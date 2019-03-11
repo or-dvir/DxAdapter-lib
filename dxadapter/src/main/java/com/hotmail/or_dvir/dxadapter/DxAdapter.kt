@@ -79,11 +79,11 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     {
         override fun performFiltering(constraint: CharSequence): FilterResults?
         {
-            i stopped here
-            fix all these todo's!!!
+//            i stopped here
+//            fix all these todo's!!!
             //todo how to add animation to filtering????
 
-            //todo exception is thrown as a warning???? colored in yellow and the app keeps running!!!
+            //todo exception is thrown as a warning???? colored in yellow!!!
             if (dxFilter == null)
                 throw UninitializedPropertyAccessException("you must initialize the field \"dxFilter\" before filtering")
 
@@ -102,8 +102,11 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
         override fun publishResults(constraint: CharSequence, results: FilterResults)
         {
-            //todo cannot check for generic types in kotlin...
-            //todo test what happens when the user returns a list of a different type
+            //note:
+            //cannot check for generic types in kotlin.
+            //but because dxFilter is defined with the generic type ITEM,
+            //the user will get a compiler error if they return a list of a different type
+            @Suppress("UNCHECKED_CAST")
             mItems = results.values as MutableList<ITEM>
             notifyDataSetChanged()
         }
@@ -411,6 +414,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
     /**
      * convenience method instead of calling [getFilter().filter(constraint)].
+     *
+     * Note: you MUST initialize [dxFilter] or an exception will be thrown.
      * @param constraint to get the original list, set this to an empty string
      */
     fun filter(constraint: CharSequence) = filter.filter(constraint)

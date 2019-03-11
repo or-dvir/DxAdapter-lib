@@ -23,14 +23,12 @@ class ActivityFilter : AppCompatActivity()
         val list = mutableListOf<MyItem>()
 
         for(i in 1..100)
-        {
             list.add(MyItem(i.toString()))
-        }
 
         val filterAdapter = MyAdapter(list).apply {
-//            dxFilter = { constraint ->
-//                list.filter { it.mText.startsWith(constraint.trim(), true) }
-//            }
+            dxFilter = { constraint ->
+                list.filter { it.mText.startsWith(constraint.trim(), true) }
+            }
         }
 
         rv.apply {
@@ -44,7 +42,7 @@ class ActivityFilter : AppCompatActivity()
             override fun afterTextChanged(s: Editable)
             {
                 //the long way
-                //filterAdapter.filter.filter(s.toString())
+//                filterAdapter.getFilter().filter(s.toString())
 
                 //the shorter way
                 filterAdapter.filter(s.toString())

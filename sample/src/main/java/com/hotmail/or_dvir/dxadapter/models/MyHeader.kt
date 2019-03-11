@@ -5,7 +5,8 @@ import com.hotmail.or_dvir.dxadapter.R
 
 class MyHeader(var mText: String): DxItem/*<MyItem.DefaultViewHolder>*/()
 {
-    //headers should not be interactable
+    //all of these are TRUE by default.
+    //set here to FALSE for demonstration: headers should not be interactable
     override fun isDraggable() = false
     override fun isSelectable() = false
     override fun isSwipeable() = false

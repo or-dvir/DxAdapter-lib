@@ -138,6 +138,20 @@ class ActivityMain : AppCompatActivity()
         mItemTouchHelper = ItemTouchHelper(
             DxItemTouchCallback(mSampleAdapter).apply {
 
+                //in order for the swipe to "count", the user needs to swipe with
+                //a speed of 200 pixels per second (or far enough as defined below).
+                //note that this value is overridden by swipeEscapeVelocityMultiplier (if set)
+//                swipeEscapeVelocity = 200f
+
+                //in order for the swipe to "count", the user needs to swipe 1.5 times faster
+                //then the device's default value (or far enough as defined below).
+                //note that this overrides swipeEscapeVelocity (if set)
+                swipeEscapeVelocityMultiplier = 1.5f
+
+                //in order for the swipe to "count", the user needs to swipe away 70% of the item
+                //(or fast enough as defined above)
+                swipeThreshold = 0.7f
+
                 //NOTE:
                 //drawing text will only work if there is a background set to the same side!
                 //todo is this what i want???? does this make sense???
@@ -183,7 +197,7 @@ class ActivityMain : AppCompatActivity()
                     })
 
                 //option to initiate drag with long-clicking an item
-                //be aware that if long-click also selects item,
+                //be aware that if long-click also selects items,
                 //results may not be as intended (e.g. meant to long-click but initiated drag instead)
 //                    dragOnLongClick = true
 
