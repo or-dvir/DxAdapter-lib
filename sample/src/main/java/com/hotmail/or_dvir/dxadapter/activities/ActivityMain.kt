@@ -219,13 +219,13 @@ class ActivityMain : AppCompatActivity()
             adapter = mSampleAdapter
             mItemTouchHelper.attachToRecyclerView(this)
 
-            firstItemVisibilityListenerI = object : IOnAdapterItemVisibilityChanged
+            firstItemVisibilityListener = object : IOnAdapterItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "first item visible")
                 override fun onInvisible() = Log.i("sample", "first item not visible")
             }
 
-            lastItemVisibilityListenerI = object : IOnAdapterItemVisibilityChanged
+            lastItemVisibilityListener = object : IOnAdapterItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "last item visible")
                 override fun onInvisible() = Log.i("sample", "last item not visible")
@@ -233,10 +233,6 @@ class ActivityMain : AppCompatActivity()
 
             onScrollingDownListener = Pair(50, { fab.hide() })
             onScrollingUpListener = Pair(50, { fab.show() })
-        }
-
-        button.setOnClickListener {
-            //todo do something
         }
     }
 
@@ -248,6 +244,7 @@ class ActivityMain : AppCompatActivity()
             R.id.multiTypeSample -> startActivity<ActivityMultiType>()
             R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
             R.id.filterSample -> startActivity<ActivityFilter>()
+            R.id.expandableSample -> startActivity<ActivityExpandable>()
             else -> super.onOptionsItemSelected(item)
         }
 

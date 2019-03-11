@@ -18,7 +18,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
      * (assuming the adapter contains at least 1 item).
      * * if your entire list fits inside the screen, [IOnAdapterItemVisibilityChanged.onInvisible] will NEVER trigger.
      */
-    var firstItemVisibilityListenerI: IOnAdapterItemVisibilityChanged? = null
+    var firstItemVisibilityListener: IOnAdapterItemVisibilityChanged? = null
     /**
      * * [IOnAdapterItemVisibilityChanged.onInvisible] will trigger immediately as the [DxRecyclerView] loads
      * (assuming it does NOT fit inside the screen).
@@ -26,7 +26,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
      * will trigger immediately as the [DxRecyclerView] loads,
      * and [IOnAdapterItemVisibilityChanged.onInvisible] will NEVER trigger.
      */
-    var lastItemVisibilityListenerI: IOnAdapterItemVisibilityChanged? = null
+    var lastItemVisibilityListener: IOnAdapterItemVisibilityChanged? = null
 
     /**
      * NOTE: depending on the sensitivity,
@@ -78,8 +78,8 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
         //no need to waste runtime on ScrollListener if
         //no callbacks have been set
-        if (firstItemVisibilityListenerI != null ||
-            lastItemVisibilityListenerI  != null)
+        if (firstItemVisibilityListener != null ||
+            lastItemVisibilityListener  != null)
         {
             addOnScrollListener(object : OnScrollListener()
             {
@@ -102,7 +102,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                     //todo don't forget about staggered grid!!!!!!!
                     mLayManLinear?.apply {
                         //todo when documenting, note the order of the callbacks!!!
-                        firstItemVisibilityListenerI?.let {
+                        firstItemVisibilityListener?.let {
                             val firstPos = findFirstVisibleItemPosition()
 
                             //if no items, we can immediately return
@@ -131,7 +131,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                             }
                         }
 
-                        lastItemVisibilityListenerI?.let {
+                        lastItemVisibilityListener?.let {
                             val lastPos = findLastVisibleItemPosition()
                             val numItems = adapter?.itemCount
 
