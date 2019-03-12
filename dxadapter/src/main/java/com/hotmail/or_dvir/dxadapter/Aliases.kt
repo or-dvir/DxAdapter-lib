@@ -13,7 +13,13 @@ internal typealias onItemLongClickListener<ITEM> = (view: View, position: Int, i
 internal typealias onItemClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Unit
 internal typealias onItemSelectStateChangedListener<ITEM> = (position: Int, item: ITEM, isSelected: Boolean) -> Unit
 
+
+
 internal typealias onItemExpandedStateChanged<ITEM> = (position: Int, item: ITEM, isExpanded: Boolean) -> Unit
+
+
+
+
 internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
 
 internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,

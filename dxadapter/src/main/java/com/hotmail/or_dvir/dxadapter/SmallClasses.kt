@@ -25,12 +25,18 @@ abstract class DxItem/*<VH: RecyclerViewHolder>*/(internal var mIsSelected: Bool
 abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
     : DxItem()
 {
-    internal var mIsExpanded: Boolean = mInitialExpandedState
+    var mIsExpanded: Boolean = mInitialExpandedState
 
+    /**
+     * @return Int the resource id of view (which is part of the list item) that is expandable
+     */
     @IdRes
     abstract fun getExpandableViewId(): Int
 
-    //todo documentation!!!!!
-    @IdRes
-    abstract fun getExpandHandleId(): Int?
+    /**
+     * @return Boolean whether or not clicking the item should trigger expand/collapse.
+     * if false, you must trigger expand and collapse yourself using
+     * [DxAdapter.expand] and [DxAdapter.collapse].
+     */
+    abstract fun expandAndCollapseOnItemClick(): Boolean
 }

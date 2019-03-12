@@ -55,6 +55,12 @@ interface IDxStickyHeader
     fun isHeader(adapterPosition: Int): Boolean
 }
 
+interface IOnExpandedStateChanged<ITEM>
+{
+    fun onExpanded(position: Int, item: ITEM): Any
+    fun onCollapsed(position: Int, item: ITEM): Any
+}
+
 interface IOnAdapterItemVisibilityChanged
 {
     /**

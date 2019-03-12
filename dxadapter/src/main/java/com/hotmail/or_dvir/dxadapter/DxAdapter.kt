@@ -61,6 +61,18 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     var triggerClickListenersInSelectionMode = false
 
+    var onExpandedStateChangedListener: IOnExpandedStateChanged<ITEM>? = null
+
+    /**
+     * default value: FALSE
+     *
+     * if TRUE, clicking an [DxItemExpandable] in "selectionMode" (at least one item is selected)
+     * would also expand or collapse the item.
+     *
+     * if FALSE, item would not expand/collapse in "selectionMode"
+     */
+    var expandAndCollapseItemsInSelectionMode = false
+
     /**
      * if you want to use drag and drop using a drag handle,
      * you MUST set this variable, and inside [startDragListener] call the method [ItemTouchHelper.startDrag]
@@ -118,6 +130,17 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         mItems[position].let { item ->
             holder.itemView.let {
                 it.isSelected = item.mIsSelected
+
+                if(item is DxItemExpandable)
+                {
+                    it.findViewById<View>(item.getExpandableViewId())
+                        .visibility =
+                        if (item.mIsExpanded)
+                            View.VISIBLE
+                        else
+                            View.GONE
+                }
+
                 bindViewHolder(holder, position, item)
             }
         }
@@ -138,10 +161,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
     //todo any other important methods i should override??????
 
-    fun select(vararg items: ITEM) = items.forEach { select(mItems.indexOf(it)) }
-    /**
-     * for indices which are out of bounds - nothing happens
-     */
+    fun select(vararg items: ITEM) = select(*getIndicesForItems(*items))
     fun select(vararg indices: Int)
     {
         indices.forEach { position ->
@@ -161,12 +181,10 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         }
     }
 
-    //todo make this function better by creating an array of indices to pass on!!!!!
-    //todo check is this note applies anywhere else in this class
-    fun deselect(vararg items: ITEM) = items.forEach { deselect(mItems.indexOf(it)) }
-    /**
-     * for indices which are out of bounds - nothing happens
-     */
+    //todo if item is expandable, when in selection mode clicking items (to select/deselect)
+    //todo exapnd/collapse is triggered - add varaible shouldExpandCollapseInSelectionMode
+
+    fun deselect(vararg items: ITEM) = deselect(*getIndicesForItems(*items))
     fun deselect(vararg indices: Int)
     {
         indices.forEach { position ->
@@ -188,25 +206,34 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
     //todo make sure every function has good documentation!!!
 
-    /**
-     * if out of bounds or not expandable, nothing happens
-     */
-    fun expand(vararg indices: Int)
+    private fun expandOrCollapse(shouldExpand: Boolean, vararg indices: Int)
     {
         indices.forEach { position ->
             if (isInBounds(position))
             {
                 mItems[position].apply {
 
-                    //only expand if expandable and collapsed
-                    //so we don't trigger listeners unnecessarily
-                    if(this is DxItemExpandable && !mIsExpanded)
+                    //only expand/collapse if not already expanded/collapsed
+                    //so we don't trigger unnecessary listeners and ui updates
+                    if(this is DxItemExpandable)
                     {
-                        mIsExpanded = true
+                        if(isInSelectionMode() && !expandAndCollapseItemsInSelectionMode)
+                            return@forEach
 
-                        change visibility of expanded view - how do i get a reference to the view?!?!?!?
+                        //trying to expand and item is NOT already expanded
+                        if(shouldExpand && !mIsExpanded)
+                        {
+                            mIsExpanded = true
+                            onExpandedStateChangedListener?.onExpanded(position, this)
+                        }
 
-                        invoke expand listener
+                        //trying to collapse and item is NOT already collapsed
+                        else if(!shouldExpand && mIsExpanded)
+                        {
+                            mIsExpanded = false
+                            onExpandedStateChangedListener?.onCollapsed(position, this)
+                        }
+
                         notifyItemChanged(position)
                     }
                 }
@@ -214,7 +241,21 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         }
     }
 
-    expand by item function
+    fun expand(vararg indices: Int) = expandOrCollapse(true, *indices)
+    fun expand(vararg items: ITEM) = expandOrCollapse(true, *getIndicesForItems(*items))
+
+    fun collapse(vararg indices: Int) = expandOrCollapse(false, *indices)
+    fun collapse(vararg items: ITEM) = expandOrCollapse(false, *getIndicesForItems(*items))
+
+    private fun getIndicesForItems(vararg items: ITEM): IntArray
+    {
+        val indices = IntArray(items.size)
+        items.forEachIndexed { index, item ->
+            indices[index] = mItems.indexOf(item)
+        }
+
+        return indices
+    }
 
     /**
      * "selection mode" means at least one item is selected
@@ -280,19 +321,18 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             }
         }
 
-        set expandable items here using handle (if available)
-
         //NOTE:
         //we CANNOT have "clickedPosition" outside of the click listeners because
         //if we do, it will not make a local copy and when clicking the item
         //it would be -1
         itemView.setOnClickListener { view ->
 
-
-            set expandable items here (if there is NO handle)
-
             val clickedPosition = holder.adapterPosition
             val clickedItem = mItems[clickedPosition]
+
+            if(clickedItem is DxItemExpandable && clickedItem.expandAndCollapseOnItemClick())
+                expandOrCollapse(!clickedItem.mIsExpanded, clickedPosition)
+
 
             //todo when documenting this library, notice the order of the calls
             //todo first selection listener or first click listener????

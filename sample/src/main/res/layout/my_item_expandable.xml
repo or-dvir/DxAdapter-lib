@@ -25,6 +25,13 @@
 
     <!--this is the expanding part-->
 
+    <android.support.constraint.Group
+        android:id="@+id/expandableGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="cb,et" />
+
     <EditText
         android:id="@+id/et"
         android:layout_width="0dp"
@@ -39,12 +46,5 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/et" />
-
-    <android.support.constraint.Group
-        android:id="@+id/expandableGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="cb,et" />
 
 </android.support.constraint.ConstraintLayout>

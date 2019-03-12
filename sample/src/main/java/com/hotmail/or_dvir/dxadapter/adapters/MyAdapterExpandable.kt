@@ -22,11 +22,11 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
             tv.text = item.mText
             et.setText(item.mSubText)
             cb.isChecked = item.isDone
-            group.visibility =
-                    if(item.mIsExpanded)
-                        View.VISIBLE
-                    else
-                        View.GONE
+
+            if(item.mIsExpanded)
+                iv.animate().rotation(180f).start()
+            else
+                iv.animate().rotation(0f).start()
         }
     }
 
@@ -34,7 +34,8 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
     {
         holder.apply {
             tv.text = ""
-            et.setText("")
+            //note:
+            //do NOT set text for the edit text here because it would trigger the text changed listener
             cb.isChecked = false
         }
     }
@@ -60,25 +61,21 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
         val iv = itemView.iv
         val et = itemView.et
         val cb = itemView.cb
-        val group = itemView.expandableGroup
 
-        //todo flip the handle 180 degrees when expanded/collapsed
-
+        //todo show example of expand/collapse using handle
         init
         {
-            itemView.setOnClickListener {
-                mItems[adapterPosition].apply {
-                    isExpanded = !isExpanded
+            //optionally setting iv as expand/collapse handle.
+            //don't forget to set expandAndCollapseOnItemClick to false in your expandable item
+            //(otherwise there is no point to the handle because any click on the item
+            //would collapse/expand)
 
-                    group.visibility =
-                        if(isExpanded)
-                            View.VISIBLE
-                        else
-                            View.GONE
-
-                    notifyItemChanged(adapterPosition)
-                }
-            }
+//            iv.setOnClickListener {
+//                if(mItems[adapterPosition].mIsExpanded)
+//                    collapse(adapterPosition)
+//                else
+//                    expand(adapterPosition)
+//            }
 
             //NOTE:
             //not using onCheckedChanged because it is being triggered also when the item gets out of view
@@ -93,18 +90,14 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
                     s?.apply { mItems[adapterPosition].mSubText = toString() }
                 }
 
-                //todo figure this out before releasing!!!!!
-                //for some reason this only works when put inside this function
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)
                 {
-//                    s?.apply { mItems[adapterPosition].mText = toString() }
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
                 {
                 }
             })
-
         }
     }
 }
