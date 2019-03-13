@@ -41,11 +41,11 @@ class ActivityStickyHeader : AppCompatActivity()
                 list.add(MyItem(i.toString()))
         }
 
-        //todo this is for testing. decide to change this or leave it when done testing
+        //todo this is for Testing. decide to change this or leave it when done Testing
         val stickyHeaderAdapter = MyHeaderAdapter(list).apply {
             defaultItemSelectionBehavior = false
         }
-        //todo this is for testing. decide to change this or leave it when done testing
+        //todo this is for Testing. decide to change this or leave it when done Testing
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
             dragOnLongClick = true
 

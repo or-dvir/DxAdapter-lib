@@ -18,15 +18,26 @@ import android.widget.Filterable
 
 abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
-    Filterable
+      Filterable
 {
     //todo do i really need to restrict the adapter to DxItem?!?!?!??!?!
     //todo if all i need is the function "getViewType()" then there is no reason
     //todo to limit the user to extend from DxItem!!!!!!!!!!!!!!!!!!!!!
 
-    var onClickListener: onItemClickListener<ITEM>? = null
-    var onLongClickListener: onItemLongClickListener<ITEM>? = null
-    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+    //click listeners
+    var onItemClick: onItemClickListener<ITEM>? = null
+    var onItemLongClick: onItemLongClickListener<ITEM>? = null
+
+    //selection listeners
+    var onItemSelected: positionAndItemCallback<ITEM>? = null
+    var onItemDeselected: positionAndItemCallback<ITEM>? = null
+//    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+
+    //expansion listeners
+    var onItemExpanded: positionAndItemCallback<ITEM>? = null
+    var onItemCollapsed: positionAndItemCallback<ITEM>? = null
+//    var onItemExpansionChangedListener: IOnItemExpansionChanged<ITEM>? = null
+
 
     var dxFilter: dxFilter<ITEM>? = null
 
@@ -60,8 +71,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      * if FALSE, those listeners would NOT be triggered in "selection mode".
      */
     var triggerClickListenersInSelectionMode = false
-
-    var onExpandedStateChangedListener: IOnExpandedStateChanged<ITEM>? = null
 
     /**
      * default value: FALSE
@@ -173,7 +182,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                     if(isSelectable() && !mIsSelected)
                     {
                         mIsSelected = true
-                        onSelectStateChangedListener?.invoke(position, this, true)
+                        onItemSelected?.invoke(position, this)
+//                        onSelectStateChangedListener?.invoke(position, this, true)
                         notifyItemChanged(position)
                     }
                 }
@@ -196,7 +206,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                     if(isSelectable() && mIsSelected)
                     {
                         mIsSelected = false
-                        onSelectStateChangedListener?.invoke(position, this, false)
+                        onItemDeselected?.invoke(position, this)
+//                        onSelectStateChangedListener?.invoke(position, this, false)
                         notifyItemChanged(position)
                     }
                 }
@@ -224,14 +235,16 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                         if(shouldExpand && !mIsExpanded)
                         {
                             mIsExpanded = true
-                            onExpandedStateChangedListener?.onExpanded(position, this)
+                            onItemExpanded?.invoke(position, this)
+//                            onItemExpansionChangedListener?.onItemExpanded(position, this)
                         }
 
                         //trying to collapse and item is NOT already collapsed
                         else if(!shouldExpand && mIsExpanded)
                         {
                             mIsExpanded = false
-                            onExpandedStateChangedListener?.onCollapsed(position, this)
+                            onItemCollapsed?.invoke(position, this)
+//                            onItemExpansionChangedListener?.onItemCollapsed(position, this)
                         }
 
                         notifyItemChanged(position)
@@ -355,7 +368,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             //if we WERE in selection mode before and the user
             //requested it (right operand of the "OR" condition) -> trigger the listener.
             if(!selectionModeBefore || triggerClickListenersInSelectionMode)
-                onClickListener?.invoke(view, clickedPosition, clickedItem)
+                onItemClick?.invoke(view, clickedPosition, clickedItem)
         }
 
         itemView.setOnLongClickListener { view ->
@@ -380,7 +393,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                 select(clickedPosition)
             }
 
-            onLongClickListener?.let {
+            onItemLongClick?.let {
                 //if we are NOT in selection mode -> regular long-click -> trigger the listener.
                 //if we ARE in selection mode and the user
                 //requested it (right operand of the "OR" condition) -> trigger the listener.

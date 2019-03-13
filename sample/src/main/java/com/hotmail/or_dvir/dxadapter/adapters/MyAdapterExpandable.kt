@@ -70,7 +70,7 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
             //(otherwise there is no point to the handle because any click on the item
             //would collapse/expand)
 
-//            iv.setOnClickListener {
+//            iv.setOnItemClick {
 //                if(mItems[adapterPosition].mIsExpanded)
 //                    collapse(adapterPosition)
 //                else

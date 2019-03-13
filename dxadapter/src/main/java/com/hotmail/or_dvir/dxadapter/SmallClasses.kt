@@ -5,8 +5,7 @@ import android.support.annotation.IdRes
 //NOTE:
 //cannot use interface instead of this class because we need to save the state
 //of the mIsSelected variable
-abstract class DxItem/*<VH: RecyclerViewHolder>*/(internal var mIsSelected: Boolean = false)
-//    : IDxItem/*<VH>*/
+abstract class DxItem(internal var mIsSelected: Boolean = false)
 {
     //todo think about a way to maybe convert everything (including "mIsSelected"!) to interfaces
     //todo or aliases so that the user does NOT have to inherit from this class

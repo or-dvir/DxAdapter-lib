@@ -11,14 +11,9 @@ typealias RecyclerViewHolder = RecyclerView.ViewHolder
  */
 internal typealias onItemLongClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Boolean
 internal typealias onItemClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Unit
-internal typealias onItemSelectStateChangedListener<ITEM> = (position: Int, item: ITEM, isSelected: Boolean) -> Unit
 
-
-
-internal typealias onItemExpandedStateChanged<ITEM> = (position: Int, item: ITEM, isExpanded: Boolean) -> Unit
-
-
-
+//internal typealias onItemSelectStateChangedListener<ITEM> = (position: Int, item: ITEM, isSelected: Boolean) -> Unit
+internal typealias  positionAndItemCallback<ITEM> = (position: Int, item: ITEM) -> Unit
 
 internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
 

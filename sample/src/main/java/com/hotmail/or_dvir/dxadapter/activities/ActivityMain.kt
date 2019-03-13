@@ -58,15 +58,22 @@ class ActivityMain : AppCompatActivity()
         }
 
         mSampleAdapter = MyAdapter(myListItems).apply {
-            onClickListener = { view, position, item ->
+            onItemClick = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
 
-            onLongClickListener = { view, position, item ->
+            onItemLongClick = { view, position, item ->
                 toast("long clicked ${item.mText}. position $position")
                 true
             }
 
+            onItemSelected = { position, item ->
+                Log.i("sample", "selected ${item.mText} (position $position)")
+            }
+
+            onItemDeselected = { position, item ->
+                Log.i("sample", "deselected ${item.mText} (position $position)")
+            }
             onSelectStateChangedListener = { position, item, isSelected ->
 
                 //todo can i do anything that would NOT make the user make this call????
@@ -219,13 +226,13 @@ class ActivityMain : AppCompatActivity()
             adapter = mSampleAdapter
             mItemTouchHelper.attachToRecyclerView(this)
 
-            firstItemVisibilityListener = object : IOnAdapterItemVisibilityChanged
+            firstItemVisibilityListener = object : IOnItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "first item visible")
                 override fun onInvisible() = Log.i("sample", "first item not visible")
             }
 
-            lastItemVisibilityListener = object : IOnAdapterItemVisibilityChanged
+            lastItemVisibilityListener = object : IOnItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "last item visible")
                 override fun onInvisible() = Log.i("sample", "last item not visible")
