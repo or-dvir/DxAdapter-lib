@@ -35,6 +35,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
     //expansion listeners
     var onItemExpanded: positionAndItemCallback<ITEM>? = null
+    var test: IOnItemExpansionChanged<ITEM>? = null
     var onItemCollapsed: positionAndItemCallback<ITEM>? = null
 //    var onItemExpansionChangedListener: IOnItemExpansionChanged<ITEM>? = null
 

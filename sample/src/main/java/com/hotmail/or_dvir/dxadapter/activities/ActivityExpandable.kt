@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.hotmail.or_dvir.dxadapter.IOnItemExpansionChanged
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterExpandable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
@@ -34,15 +33,6 @@ class ActivityExpandable : AppCompatActivity()
 
             onItemExpanded = { position, item ->
                 toast("expanded item ${item.mText}")
-            }
-
-            onItemExpansionChangedListener = object : IOnItemExpansionChanged<MyItemExpandable>
-            {
-                override fun onItemExpanded(position: Int, item: MyItemExpandable) =
-                    toast("expanded item ${item.mText}")
-
-                override fun onItemCollapsed(position: Int, item: MyItemExpandable) =
-                    toast("collapsed item ${item.mText}")
             }
         }
 
