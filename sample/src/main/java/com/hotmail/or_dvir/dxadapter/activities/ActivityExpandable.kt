@@ -21,7 +21,7 @@ class ActivityExpandable : AppCompatActivity()
         val list = mutableListOf<MyItemExpandable>()
 
         for(i in 1..100)
-            list.add(MyItemExpandable(i.toString(),"expandable text $i"))
+            list.add(MyItemExpandable(i.toString(),"expandable mText $i"))
 
         val expandableAdapter = MyAdapterExpandable(list).apply {
 

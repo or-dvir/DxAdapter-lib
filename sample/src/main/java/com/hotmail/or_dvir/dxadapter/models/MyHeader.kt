@@ -17,10 +17,10 @@ class MyHeader(var mText: String): DxItem/*<MyItem.DefaultViewHolder>*/()
 //    override fun createViewHolder(itemView: View) = DefaultViewHolder(itemView)
 //    override fun createViewHolder(itemView: View) = SimpleViewHolder(itemView)
 //    override fun getItemLayoutRes() = R.layout.my_item
-//    override fun bindViewHolder(holder: RecyclerViewHolder) { holder.itemView.tv.text = mText }
-//    override fun bindViewHolder(holder: SimpleViewHolder) { holder.itemView.tv.text = mText }
-//    override fun unbindViewHolder(holder: RecyclerViewHolder) { holder.itemView.tv.text = "" }
-//    override fun unbindViewHolder(holder: SimpleViewHolder) { holder.itemView.tv.text = "" }
+//    override fun bindViewHolder(holder: RecyclerViewHolder) { holder.itemView.tv.mText = mText }
+//    override fun bindViewHolder(holder: SimpleViewHolder) { holder.itemView.tv.mText = mText }
+//    override fun unbindViewHolder(holder: RecyclerViewHolder) { holder.itemView.tv.mText = "" }
+//    override fun unbindViewHolder(holder: SimpleViewHolder) { holder.itemView.tv.mText = "" }
 
 //    class DefaultViewHolder(itemView: View): RecyclerViewHolder(itemView)
 //    {

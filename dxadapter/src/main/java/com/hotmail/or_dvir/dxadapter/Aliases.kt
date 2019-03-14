@@ -19,9 +19,6 @@ internal typealias onItemSelectStateChangedListener<ITEM> =
 
 internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
 
-
-
-
 internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,
                                                  targetItem: ITEM,
                                                  draggedPosition: Int,
@@ -41,11 +38,11 @@ internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 internal typealias scrollUpDownPair = Pair<Int, () -> Any>
 
 /**
- * first: the text to display
+ * first: the mText to display
  *
- * second: the text size in pixels
+ * second: the mText size in pixels
  *
- * third: the resource id of the color of the text (MUST be @ColorRes)
+ * third: the resource id of the color of the mText (MUST be @ColorRes)
  */
 internal typealias swipeBackgroundText = Triple<String, Float, Int>
 internal typealias actionModeTitleProvider = () -> String

@@ -7,11 +7,11 @@ import android.view.MenuItem
 
 /**
  * A helper class that provides default behavior for [ActionMode].
- * * IMPORTANT: in order for this to work as intended, you MUST provide a selection listener
- * to your [DxAdapter] AND inside that listener, you MUST call [updateActionMode]
+ * * IMPORTANT: in order for this to work as intended, you MUST set [onItemSelectionChanged][DxAdapter.onItemSelectionChanged]
+ * in your [DxAdapter] AND inside that listener, you MUST call [updateActionMode]
  *
  * Behavior:
- * * selecting an item will start ActionMode.
+ * * selecting the first item will start ActionMode.
  * * deselecting the last item will finish ActionMode.
  * * clicking a menu item will also finish ActionMode, but only if you have consumed/handled the event
  * in [onActionItemClicked][ActionMode.Callback.onActionItemClicked] (TRUE was returned)
@@ -42,8 +42,6 @@ class DxActionModeHelper<ITEM : DxItem>(
             callback.onPrepareActionMode(mode, menu)
         override fun onDestroyActionMode(mode: ActionMode?)
         {
-            //todo is this note still true after i made the selection listener changes????
-            //todo can i simply call "deselect()"?????
             //if action mode is destroyed, we need to deselect all the items.
             //NOTE: do NOT call adapter.deselect() because it will cause an
             //infinite loop:
@@ -65,12 +63,11 @@ class DxActionModeHelper<ITEM : DxItem>(
         }
     }
 
-    //todo update this documentation!!! should not be called inside selection listener
     /**
      * this function starts/finishes actionMode, and updates its' title using
      * [titleProvider].
      *
-     * it's assumed that this function is called inside [DxAdapter.onSelectStateChangedListener].
+     * it's assumed that this function is called inside [DxAdapter.onItemSelectionChanged].
      * if it's called from other places, it may cause bugs.
      */
     fun updateActionMode(act: AppCompatActivity)
@@ -78,7 +75,7 @@ class DxActionModeHelper<ITEM : DxItem>(
         //NOTE:
         //at this point we should be AFTER the selected state has already changed.
         //i say "should" because we are assuming that this function is called from inside
-        //onSelectStateChangedListener in the adapter
+        //onItemSelectionChanged in the adapter
 
         when (adapter.getNumSelectedItems())
         {

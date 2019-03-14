@@ -35,7 +35,7 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
         holder.apply {
             tv.text = ""
             //note:
-            //do NOT set text for the edit text here because it would trigger the text changed listener
+            //do NOT set mText for the edit mText here because it would trigger the mText changed listener
             cb.isChecked = false
         }
     }

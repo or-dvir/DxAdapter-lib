@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
@@ -70,7 +71,7 @@ class ActivityMain : AppCompatActivity()
                 true
             }
 
-            onSelectStateChangedListener = { position, item, isSelected ->
+            onItemSelectionChanged = { position, item, isSelected ->
 
                 //MUST be called in order for DxActionMode to function as intended
                 mActionModeHelper.updateActionMode(this@ActivityMain)
@@ -145,15 +146,13 @@ class ActivityMain : AppCompatActivity()
             swipeThreshold = 0.7f
 
             //NOTE:
-            //drawing text will only work if there is a background set to the same side!
+            //drawing mText will only work if there is a background set to the same side!
             //todo is this what i want???? does this make sense???
 
-            swipeBackgroundColorRight = android.R.color.holo_orange_light
-            swipeBackgroundTextRight = Triple("right swipe", 60f, android.R.color.white)
+                //todo align all this code!!!!!!
 
-            swipeBackgroundColorLeft = android.R.color.holo_red_light
-            swipeBackgroundTextLeft = Triple("left swipe", 60f, android.R.color.white)
-
+                swipeTextRight = DxSwipeText("right swipe", 60f, Color.WHITE, Color.BLUE)
+                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.WHITE, Color.RED)
 
             //IMPORTANT NOTE:
             //the direction you provide in the first element of the Pair
@@ -197,7 +196,7 @@ class ActivityMain : AppCompatActivity()
             //otherwise drag-and-drop will not work as expected
 //                isGridLayoutManager = true
 
-            onItemsAboutToMoveListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
+            onItemsAboutToMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
                 Log.i("sample",
                       "about to switch ${draggedItem.mText} (position $draggedPosition) " +
                               "with ${targetItem.mText} (position $targetPosition)"

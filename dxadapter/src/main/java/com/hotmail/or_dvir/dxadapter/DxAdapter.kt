@@ -39,7 +39,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     var triggerClickListenersInSelectionMode = false
 
     //selection listener
-    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+    var onItemSelectionChanged: onItemSelectStateChangedListener<ITEM>? = null
 
     @ColorInt
     var selectedItemBackgroundColor: Int? = null
@@ -177,11 +177,11 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             {
                 mItems[position].apply {
                     //only select if previously not selected
-                    //so we don't trigger onSelectStateChangedListener unnecessarily
+                    //so we don't trigger onItemSelectionChanged unnecessarily
                     if(isSelectable() && !mIsSelected)
                     {
                         mIsSelected = true
-                        onSelectStateChangedListener?.invoke(position, this, true)
+                        onItemSelectionChanged?.invoke(position, this, true)
                         notifyItemChanged(position)
                     }
                 }
@@ -200,11 +200,11 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             {
                 mItems[position].apply {
                     //only deselect if previously selected
-                    //so we don't trigger onSelectStateChangedListener unnecessarily
+                    //so we don't trigger onItemSelectionChanged unnecessarily
                     if(isSelectable() && mIsSelected)
                     {
                         mIsSelected = false
-                        onSelectStateChangedListener?.invoke(position, this, false)
+                        onItemSelectionChanged?.invoke(position, this, false)
                         notifyItemChanged(position)
                     }
                 }
@@ -233,7 +233,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                         {
                             mIsExpanded = true
                             onItemExpanded?.invoke(position, this)
-//                            onItemExpansionChangedListener?.onItemExpanded(position, this)
                         }
 
                         //trying to collapse and item is NOT already collapsed
@@ -241,7 +240,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                         {
                             mIsExpanded = false
                             onItemCollapsed?.invoke(position, this)
-//                            onItemExpansionChangedListener?.onItemCollapsed(position, this)
                         }
 
                         notifyItemChanged(position)

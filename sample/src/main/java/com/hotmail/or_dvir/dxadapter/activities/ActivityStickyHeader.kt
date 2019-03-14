@@ -1,20 +1,17 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.view.ActionMode
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.view.Menu
-import android.view.MenuItem
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyHeaderAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.activity_multi_type.*
-import org.jetbrains.anko.toast
 
 class ActivityStickyHeader : AppCompatActivity()
 {
@@ -49,8 +46,7 @@ class ActivityStickyHeader : AppCompatActivity()
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
             dragOnLongClick = true
 
-            swipeBackgroundColorLeft = android.R.color.holo_green_dark
-            swipeBackgroundTextLeft = Triple("left swipe", 60f, android.R.color.white)
+            swipeTextLeft = DxSwipeText("left swipe", 60f, Color.WHITE, Color.GREEN)
 
             onItemSwiped =
                 Pair(ItemTouchHelper.LEFT,

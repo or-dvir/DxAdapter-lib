@@ -1,5 +1,10 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
+import android.support.annotation.ColorInt
+import android.support.annotation.ColorRes
 import android.support.annotation.IdRes
 
 //NOTE:
@@ -38,4 +43,24 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
      * [DxAdapter.expand] and [DxAdapter.collapse].
      */
     abstract fun expandAndCollapseOnItemClick(): Boolean
+}
+
+//todo can i improve this class by adding the Paint() and Rect() objects to it?????
+class DxSwipeText (val mText: String,
+                   val mTextSizePx: Float,
+                   @ColorInt val mTextColor: Int,
+                   @ColorInt val mBackgroundColor: Int?)
+{
+    internal val mRect = Rect()
+    internal val mPaint = Paint().apply {
+        textSize = mTextSizePx
+        color = mTextColor
+    }
+
+    internal var mBackgroundColorDrawable: ColorDrawable? = null
+
+    init
+    {
+        mBackgroundColor?.let { mBackgroundColorDrawable = ColorDrawable(it) }
+    }
 }
