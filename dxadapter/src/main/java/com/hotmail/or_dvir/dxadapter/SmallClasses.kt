@@ -45,7 +45,6 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
     abstract fun expandAndCollapseOnItemClick(): Boolean
 }
 
-//todo can i improve this class by adding the Paint() and Rect() objects to it?????
 class DxSwipeText (val mText: String,
                    val mTextSizePx: Float,
                    @ColorInt val mTextColor: Int,
@@ -57,10 +56,6 @@ class DxSwipeText (val mText: String,
         color = mTextColor
     }
 
-    internal var mBackgroundColorDrawable: ColorDrawable? = null
-
-    init
-    {
-        mBackgroundColor?.let { mBackgroundColorDrawable = ColorDrawable(it) }
-    }
+    internal var mBackgroundColorDrawable =
+        mBackgroundColor?.let { ColorDrawable(it) } ?: ColorDrawable()
 }

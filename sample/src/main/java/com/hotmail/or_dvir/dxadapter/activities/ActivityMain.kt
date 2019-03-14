@@ -152,7 +152,10 @@ class ActivityMain : AppCompatActivity()
                 //todo align all this code!!!!!!
 
                 swipeTextRight = DxSwipeText("right swipe", 60f, Color.WHITE, Color.BLUE)
-                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.WHITE, Color.RED)
+                //todo bug!!!!!
+                //todo if there is no background, the text appears OVER the item!!!!
+                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.BLACK, null)
+//                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.WHITE, Color.RED)
 
             //IMPORTANT NOTE:
             //the direction you provide in the first element of the Pair

@@ -149,7 +149,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
             val itemView = viewHolder.itemView
             val isSwipingRight = dx > 0
 
-
             //todo a lot of repetition between swipeTextRight and swipeTextLeft
             //todo can i make it better???
             if (isSwipingRight)
