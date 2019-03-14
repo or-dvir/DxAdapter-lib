@@ -25,7 +25,10 @@ class ActivityExpandable : AppCompatActivity()
 
         val expandableAdapter = MyAdapterExpandable(list).apply {
 
-            expandAndCollapseItemsInSelectionMode = true
+            //todo should i add an option for collapse all in selection mode?
+            //if set to true, clicking an item to select/deselect it
+            //will also expand/collapse the item
+//            expandAndCollapseItemsInSelectionMode = true
 
             onItemCollapsed = { position, item ->
                 toast("collapsed item ${item.mText}")

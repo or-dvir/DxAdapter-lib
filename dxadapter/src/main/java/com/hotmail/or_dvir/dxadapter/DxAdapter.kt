@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
+import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -28,26 +29,21 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     var onItemClick: onItemClickListener<ITEM>? = null
     var onItemLongClick: onItemLongClickListener<ITEM>? = null
 
+    /**
+     * default value: FALSE
+     *
+     * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
+     * would also trigger the click listener and long-click listener.
+     *
+     * if FALSE, those listeners would NOT be triggered in "selection mode".
+     */
+    var triggerClickListenersInSelectionMode = false
+
     //selection listeners
     var onItemSelected: positionAndItemCallback<ITEM>? = null
     var onItemDeselected: positionAndItemCallback<ITEM>? = null
 //    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
 
-    //expansion listeners
-    var onItemExpanded: positionAndItemCallback<ITEM>? = null
-    var test: IOnItemExpansionChanged<ITEM>? = null
-    var onItemCollapsed: positionAndItemCallback<ITEM>? = null
-//    var onItemExpansionChangedListener: IOnItemExpansionChanged<ITEM>? = null
-
-
-    var dxFilter: dxFilter<ITEM>? = null
-
-    //todo convert all pairs to kotlin classes with descriptive names so its easier and not as confusing (have to check what is first, what is second...)
-
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     @ColorInt
     var selectedItemBackgroundColor: Int? = null
 
@@ -63,15 +59,9 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     var defaultItemSelectionBehavior = true
 
-    /**
-     * default value: FALSE
-     *
-     * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
-     * would also trigger the click listener and long-click listener.
-     *
-     * if FALSE, those listeners would NOT be triggered in "selection mode".
-     */
-    var triggerClickListenersInSelectionMode = false
+    //expansion listeners
+    var onItemExpanded: positionAndItemCallback<ITEM>? = null
+    var onItemCollapsed: positionAndItemCallback<ITEM>? = null
 
     /**
      * default value: FALSE
@@ -83,6 +73,17 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     var expandAndCollapseItemsInSelectionMode = false
 
+    var dxFilter: dxFilter<ITEM>? = null
+
+    //todo convert all pairs to kotlin classes with descriptive names so its easier and not as confusing (have to check what is first, what is second...)
+
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+
+
+    //todo fix this documentation!!! user does not have to do anything!!!
     /**
      * if you want to use drag and drop using a drag handle,
      * you MUST set this variable, and inside [startDragListener] call the method [ItemTouchHelper.startDrag]
@@ -92,7 +93,19 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      *
      * second: a callback to initiate the drag event (must be done by YOU as described above)
      */
-    var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
+    internal /*private*/ var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
+    ///////////////////////////////////////////////////////////////////////////////
+//    fun setDragAndDropHandle(@IdRes handleId: Int,
+//                             itemTouchHelper: ItemTouchHelper)
+//    {
+//        dragAndDropWithHandle =
+//            Pair(handleId, { holder -> itemTouchHelper.startDrag(holder) })
+//    }
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+
+
 
     private val mOriginalList = mItems
     private val privateFilter = object : Filter()

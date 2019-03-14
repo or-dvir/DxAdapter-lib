@@ -6,17 +6,17 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.ColorRes
+import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.MotionEvent
 import java.util.*
 
-
-class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private val mAdapter: DxAdapter<ITEM, */*VH*/>)
+//todo make this class only accessible to the library!!!!!!!
+class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>)
     : ItemTouchHelper.Callback()
 {
-
     private var mmmmmSwipeBack = false
     private var buttonShowedState = ButtonsState.GONE
     private val mButtonWidth = 300f
@@ -373,6 +373,13 @@ class DxItemTouchCallback<ITEM: DxItem/*<VH>, VH: RecyclerViewHolder*/>(private 
                 onItemSwiped?.second?.invoke(mItems[it], it, direction)
             }
         }
+    }
+
+    internal fun setDragHandle(@IdRes handleId: Int,
+                             itemTouchHelper: ItemTouchHelper)
+    {
+        mAdapter.dragAndDropWithHandle =
+            Pair(handleId, { holder -> itemTouchHelper.startDrag(holder) })
     }
 
     override fun isLongPressDragEnabled(): Boolean
