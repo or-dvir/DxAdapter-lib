@@ -70,48 +70,19 @@ class ActivityMain : AppCompatActivity()
                 true
             }
 
-            onItemSelected = { position, item ->
-                Log.i("sample", "selected ${item.mText} (position $position)")
-            }
+            onSelectStateChangedListener = { position, item, isSelected ->
 
-            onItemDeselected = { position, item ->
-                Log.i("sample", "deselected ${item.mText} (position $position)")
-            }
+                //MUST be called in order for DxActionMode to function as intended
+                mActionModeHelper.updateActionMode(this@ActivityMain)
 
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //todo fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//            onSelectStateChangedListener = { position, item, isSelected ->
-//
-//                //todo can i do anything that would NOT make the user make this call????
-//                //todo could be confusing if they forget... (and also just annoying to call this every time)
-//                //MUST be called in order for DxActionMode to function as intended
-//                mActionModeHelper.updateActionMode(this@ActivityMain)
-//
-//                val txt =
-//                    if (isSelected)
-//                        "selected"
-//                    else
-//                        "deselected"
-//
-//                Log.i("sample", "${item.mText} (position $position) $txt")
-//            }
+                val txt =
+                    if (isSelected)
+                        "selected"
+                    else
+                        "deselected"
+
+                Log.i("sample", "${item.mText} (position $position) $txt")
+            }
 
             //default is accent color (if not provided, primary color is used).
             //note: this must be @ColorInt
@@ -234,12 +205,10 @@ class ActivityMain : AppCompatActivity()
             }
         }
 
-
         //if you want to use the drag-and-drop features of this adapter,
         //you must provide DxItemTouchCallback to ItemTouchHelper.
         //don't forget to attach it to your RecyclerView!
         mItemTouchHelper = DxItemTouchHelper(itemTouchCallback).apply {
-
             //todo what if i mix items in the adapter, and each has different handle?!
             //todo make a method "getHandleId()"???? keep it like this and force the user
             //todo so use the same id for all handles????

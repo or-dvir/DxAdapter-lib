@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.StateListDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
-import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -39,10 +38,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     var triggerClickListenersInSelectionMode = false
 
-    //selection listeners
-    var onItemSelected: positionAndItemCallback<ITEM>? = null
-    var onItemDeselected: positionAndItemCallback<ITEM>? = null
-//    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+    //selection listener
+    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
 
     @ColorInt
     var selectedItemBackgroundColor: Int? = null
@@ -60,8 +57,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     var defaultItemSelectionBehavior = true
 
     //expansion listeners
-    var onItemExpanded: positionAndItemCallback<ITEM>? = null
-    var onItemCollapsed: positionAndItemCallback<ITEM>? = null
+    var onItemExpanded: positionAndItemListener<ITEM>? = null
+    var onItemCollapsed: positionAndItemListener<ITEM>? = null
 
     /**
      * default value: FALSE
@@ -93,19 +90,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      *
      * second: a callback to initiate the drag event (must be done by YOU as described above)
      */
-    internal /*private*/ var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
-    ///////////////////////////////////////////////////////////////////////////////
-//    fun setDragAndDropHandle(@IdRes handleId: Int,
-//                             itemTouchHelper: ItemTouchHelper)
-//    {
-//        dragAndDropWithHandle =
-//            Pair(handleId, { holder -> itemTouchHelper.startDrag(holder) })
-//    }
-    ///////////////////////////////////////////////////////////////////////////////
-
-
-
-
+    internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
     private val mOriginalList = mItems
     private val privateFilter = object : Filter()
@@ -196,8 +181,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                     if(isSelectable() && !mIsSelected)
                     {
                         mIsSelected = true
-                        onItemSelected?.invoke(position, this)
-//                        onSelectStateChangedListener?.invoke(position, this, true)
+                        onSelectStateChangedListener?.invoke(position, this, true)
                         notifyItemChanged(position)
                     }
                 }
@@ -220,8 +204,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                     if(isSelectable() && mIsSelected)
                     {
                         mIsSelected = false
-                        onItemDeselected?.invoke(position, this)
-//                        onSelectStateChangedListener?.invoke(position, this, false)
+                        onSelectStateChangedListener?.invoke(position, this, false)
                         notifyItemChanged(position)
                     }
                 }
