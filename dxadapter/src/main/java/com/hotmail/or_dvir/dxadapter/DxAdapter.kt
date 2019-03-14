@@ -15,29 +15,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ThemedSpinnerAdapter
 
 abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
-    : RecyclerView.Adapter<VH/*RecyclerViewHolder*/>(),
-    Filterable
+    : RecyclerView.Adapter<VH>(),
+      Filterable
 {
     //todo do i really need to restrict the adapter to DxItem?!?!?!??!?!
     //todo if all i need is the function "getViewType()" then there is no reason
     //todo to limit the user to extend from DxItem!!!!!!!!!!!!!!!!!!!!!
 
-    var onClickListener: onItemClickListener<ITEM>? = null
-    var onLongClickListener: onItemLongClickListener<ITEM>? = null
-    var onSelectStateChangedListener: onItemSelectStateChangedListener<ITEM>? = null
+    //click listeners
+    var onItemClick: onItemClickListener<ITEM>? = null
+    var onItemLongClick: onItemLongClickListener<ITEM>? = null
 
-    //not using type alias here so i can use the generic ITEM
-    var dxFilter: ((constraint: CharSequence) -> List<ITEM>)? = null
+    /**
+     * default value: FALSE
+     *
+     * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
+     * would also trigger the click listener and long-click listener.
+     *
+     * if FALSE, those listeners would NOT be triggered in "selection mode".
+     */
+    var triggerClickListenersInSelectionMode = false
 
-//    private val mItemTypes = SparseArray<DxItem<VH>>()
+    //selection listener
+    var onItemSelectionChanged: onItemSelectStateChangedListener<ITEM>? = null
 
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
     @ColorInt
     var selectedItemBackgroundColor: Int? = null
 
@@ -53,16 +56,31 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     var defaultItemSelectionBehavior = true
 
+    //expansion listeners
+    var onItemExpanded: positionAndItemListener<ITEM>? = null
+    var onItemCollapsed: positionAndItemListener<ITEM>? = null
+
     /**
      * default value: FALSE
      *
-     * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
-     * would also trigger the click listener and long-click listener.
+     * if TRUE, clicking an [DxItemExpandable] in "selectionMode" (at least one item is selected)
+     * would also expand or collapse the item.
      *
-     * if FALSE, those listeners would NOT be triggered in "selection mode".
+     * if FALSE, item would not expand/collapse in "selectionMode"
      */
-    var triggerClickListenersInSelectionMode = false
+    var expandAndCollapseItemsInSelectionMode = false
 
+    var dxFilter: dxFilter<ITEM>? = null
+
+    //todo convert all pairs to kotlin classes with descriptive names so its easier and not as confusing (have to check what is first, what is second...)
+
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+
+
+    //todo fix this documentation!!! user does not have to do anything!!!
     /**
      * if you want to use drag and drop using a drag handle,
      * you MUST set this variable, and inside [startDragListener] call the method [ItemTouchHelper.startDrag]
@@ -72,15 +90,13 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      *
      * second: a callback to initiate the drag event (must be done by YOU as described above)
      */
-    var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
+    internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
     private val mOriginalList = mItems
     private val privateFilter = object : Filter()
     {
         override fun performFiltering(constraint: CharSequence): FilterResults?
         {
-//            i stopped here
-//            fix all these todo's!!!
             //todo how to add animation to filtering????
 
             //todo exception is thrown as a warning???? colored in yellow!!!
@@ -122,7 +138,18 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         mItems[position].let { item ->
             holder.itemView.let {
                 it.isSelected = item.mIsSelected
-                /*item.*/bindViewHolder(holder, position, item)
+
+                if(item is DxItemExpandable)
+                {
+                    it.findViewById<View>(item.getExpandableViewId())
+                        .visibility =
+                        if (item.mIsExpanded)
+                            View.VISIBLE
+                        else
+                            View.GONE
+                }
+
+                bindViewHolder(holder, position, item)
             }
         }
     }
@@ -134,9 +161,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
         holder.adapterPosition.let {
             if (it != RecyclerView.NO_POSITION)
-            {
-                /*mItems[it].*/unbindViewHolder(holder, it, mItems[it])
-            }
+                unbindViewHolder(holder, it, mItems[it])
         }
     }
 
@@ -144,10 +169,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
     //todo any other important methods i should override??????
 
-    fun select(vararg items: ITEM) = items.forEach { select(mItems.indexOf(it)) }
-    /**
-     * for indices which are out of bounds - nothing happens
-     */
+    fun select(vararg items: ITEM) = select(*getIndicesForItems(*items))
     fun select(vararg indices: Int)
     {
         indices.forEach { position ->
@@ -155,11 +177,11 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             {
                 mItems[position].apply {
                     //only select if previously not selected
-                    //so we don't trigger onSelectStateChangedListener unnecessarily
+                    //so we don't trigger onItemSelectionChanged unnecessarily
                     if(isSelectable() && !mIsSelected)
                     {
                         mIsSelected = true
-                        onSelectStateChangedListener?.invoke(position, this, true)
+                        onItemSelectionChanged?.invoke(position, this, true)
                         notifyItemChanged(position)
                     }
                 }
@@ -167,10 +189,10 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         }
     }
 
-    fun deselect(vararg items: ITEM) = items.forEach { deselect(mItems.indexOf(it)) }
-    /**
-     * for indices which are out of bounds - nothing happens
-     */
+    //todo if item is expandable, when in selection mode clicking items (to select/deselect)
+    //todo exapnd/collapse is triggered - add varaible shouldExpandCollapseInSelectionMode
+
+    fun deselect(vararg items: ITEM) = deselect(*getIndicesForItems(*items))
     fun deselect(vararg indices: Int)
     {
         indices.forEach { position ->
@@ -178,16 +200,69 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             {
                 mItems[position].apply {
                     //only deselect if previously selected
-                    //so we don't trigger onSelectStateChangedListener unnecessarily
+                    //so we don't trigger onItemSelectionChanged unnecessarily
                     if(isSelectable() && mIsSelected)
                     {
                         mIsSelected = false
-                        onSelectStateChangedListener?.invoke(position, this, false)
+                        onItemSelectionChanged?.invoke(position, this, false)
                         notifyItemChanged(position)
                     }
                 }
             }
         }
+    }
+
+    //todo make sure every function has good documentation!!!
+
+    private fun expandOrCollapse(shouldExpand: Boolean, vararg indices: Int)
+    {
+        indices.forEach { position ->
+            if (isInBounds(position))
+            {
+                mItems[position].apply {
+
+                    //only expand/collapse if not already expanded/collapsed
+                    //so we don't trigger unnecessary listeners and ui updates
+                    if(this is DxItemExpandable)
+                    {
+                        if(isInSelectionMode() && !expandAndCollapseItemsInSelectionMode)
+                            return@forEach
+
+                        //trying to expand and item is NOT already expanded
+                        if(shouldExpand && !mIsExpanded)
+                        {
+                            mIsExpanded = true
+                            onItemExpanded?.invoke(position, this)
+                        }
+
+                        //trying to collapse and item is NOT already collapsed
+                        else if(!shouldExpand && mIsExpanded)
+                        {
+                            mIsExpanded = false
+                            onItemCollapsed?.invoke(position, this)
+                        }
+
+                        notifyItemChanged(position)
+                    }
+                }
+            }
+        }
+    }
+
+    fun expand(vararg indices: Int) = expandOrCollapse(true, *indices)
+    fun expand(vararg items: ITEM) = expandOrCollapse(true, *getIndicesForItems(*items))
+
+    fun collapse(vararg indices: Int) = expandOrCollapse(false, *indices)
+    fun collapse(vararg items: ITEM) = expandOrCollapse(false, *getIndicesForItems(*items))
+
+    private fun getIndicesForItems(vararg items: ITEM): IntArray
+    {
+        val indices = IntArray(items.size)
+        items.forEachIndexed { index, item ->
+            indices[index] = mItems.indexOf(item)
+        }
+
+        return indices
     }
 
     /**
@@ -259,8 +334,13 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         //if we do, it will not make a local copy and when clicking the item
         //it would be -1
         itemView.setOnClickListener { view ->
+
             val clickedPosition = holder.adapterPosition
             val clickedItem = mItems[clickedPosition]
+
+            if(clickedItem is DxItemExpandable && clickedItem.expandAndCollapseOnItemClick())
+                expandOrCollapse(!clickedItem.mIsExpanded, clickedPosition)
+
 
             //todo when documenting this library, notice the order of the calls
             //todo first selection listener or first click listener????
@@ -283,54 +363,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             //if we WERE in selection mode before and the user
             //requested it (right operand of the "OR" condition) -> trigger the listener.
             if(!selectionModeBefore || triggerClickListenersInSelectionMode)
-                onClickListener?.invoke(view, clickedPosition, clickedItem)
-
+                onItemClick?.invoke(view, clickedPosition, clickedItem)
         }
-
-/////////////////////////////////ORIGINAL REGULAR CLICK LISTENER CODE START/////////////////////////////////
-        //NOTE:
-        //we CANNOT have "clickedPosition" outside of the click listeners because
-        //if we do, it will not make a local copy and when clicking the item
-        //it would be -1
-//        onClickListener?.apply {
-//            itemView.setOnClickListener {
-//                val clickedPosition = holder.adapterPosition
-//                val clickedItem = mItems[clickedPosition]
-//
-//                //WARNING:
-//                //do NOT save the state of isInSelectionMode() into a variable here
-//                //because below this line we are changing the selected state of the clicked item
-//                //and the variable would not be updates according to the new state
-//
-//                //todo when documenting this library, notice the order of the calls
-//                //todo first selection listener or first click listener????
-//
-//                val selectionBefore = isInSelectionMode()
-//
-//                if(defaultItemSelectionBehavior && selectionBefore)
-//                {
-//                    //reverse the selection
-//                    if(clickedItem.mIsSelected)
-//                        deselect(clickedPosition)
-//                    else
-//                        select(clickedPosition)
-//                }
-//
-//                val selectionAfter = isInSelectionMode()
-//                val deselectedLastItem = selectionBefore && !selectionAfter
-//
-//                //triggering the click listener
-//                when
-//                {
-//                    !selectionAfter && !deselectedLastItem -> invoke(it, clickedPosition, clickedItem)
-//                    //if we get here, we ARE in "selection mode".
-//                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
-//                }
-//            }
-//        }
-/////////////////////////////////ORIGINAL REGULAR CLICK LISTENER CODE END/////////////////////////////////
-
-
 
         itemView.setOnLongClickListener { view ->
             val clickedPosition = holder.adapterPosition
@@ -354,7 +388,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                 select(clickedPosition)
             }
 
-            onLongClickListener?.let {
+            onItemLongClick?.let {
                 //if we are NOT in selection mode -> regular long-click -> trigger the listener.
                 //if we ARE in selection mode and the user
                 //requested it (right operand of the "OR" condition) -> trigger the listener.
@@ -366,48 +400,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                     true
             } ?: true
         }
-
-
-
-
-/////////////////////////////////ORIGINAL LONG CLICK LISTENER CODE START/////////////////////////////////
-//        onLongClickListener?.apply {
-//            itemView.setOnLongClickListener {
-//                val clickedPosition = holder.adapterPosition
-//                val clickedItem = mItems[clickedPosition]
-//
-//                //WARNING:
-//                //do NOT save the state of isInSelectionMode() into a variable here
-//                //because below this line we are changing the selected state of the clicked item
-//                //and the variable would not be updates according to the new state
-//
-//                //todo when documenting this library, notice the order of the calls
-//                //todo first selection listener or first long-click listener????
-//
-//                //long-click should NOT select items if:
-//                //1) defaultItemSelectionBehavior is false
-//                //2) the item is already selected (this would trigger unnecessary callbacks and UI updates).
-//                //3) at least one item is already selected (we are in "selection mode" where regular clicks
-//                //   should select/deselect an item)
-//                if (defaultItemSelectionBehavior &&
-//                    !clickedItem.mIsSelected &&
-//                    !isInSelectionMode())
-//                {
-//                    select(clickedPosition)
-//                }
-//
-//                //triggering the long-click listener
-//                when
-//                {
-//                    !isInSelectionMode() -> invoke(it, clickedPosition, clickedItem)
-//                    //if we get here, we ARE in "selection mode".
-//                    triggerClickListenersInSelectionMode -> invoke(it, clickedPosition, clickedItem)
-//                    //consume the event
-//                    else -> true
-//                }
-//            }
-//        }
-/////////////////////////////////ORIGINAL LONG CLICK LISTENER CODE END/////////////////////////////////
 
         return holder
     }
@@ -422,13 +414,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
     override fun getFilter() = privateFilter
 
-//    /**
-//     * override this function if you want a custom ViewHolder (for example if you want to attach
-//     * listeners to the individual views of an item).
-//     *
-//     * to get the model object from inside those listeners, use [mItems] and [getAdapterPosition()]
-//     * [RecyclerView.ViewHolder.getAdapterPosition]
-//     */
     abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): VH
     @LayoutRes
     abstract fun getItemLayoutRes(parent: ViewGroup, viewType: Int): Int

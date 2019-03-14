@@ -52,13 +52,13 @@ data class MyItemWithViews(var isSwitchOn: Boolean = false,
 ////            //NOTE:
 ////            //not using onCheckedChanged because it is being triggered also when the item gets out of view
 ////            itemView.apply {
-////                mySwitch.setOnClickListener {
+////                mySwitch.setOnItemClick {
 //////                    EventBus.getDefault().post(SwitchEvent(mySwitch.isChecked, adapterPosition))
 //////                    isSwitchOn = mySwitch.isChecked
 //////                    Log.i("aaaaa", "checkkkkkkkkkkkkkkkkkkkkkkkk $isChecked $adapterPosition")
 ////                }
 ////
-////                myCheckBox.setOnClickListener {
+////                myCheckBox.setOnItemClick {
 //////                    isBoxChecked = isChecked
 ////                }
 ////

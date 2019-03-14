@@ -7,11 +7,11 @@ import android.view.MenuItem
 
 /**
  * A helper class that provides default behavior for [ActionMode].
- * * IMPORTANT: in order for this to work as intended, you MUST provide a selection listener
- * to your [DxAdapter] AND inside that listener, you MUST call [updateActionMode]
+ * * IMPORTANT: in order for this to work as intended, you MUST set [onItemSelectionChanged][DxAdapter.onItemSelectionChanged]
+ * in your [DxAdapter] AND inside that listener, you MUST call [updateActionMode]
  *
  * Behavior:
- * * selecting an item will start ActionMode.
+ * * selecting the first item will start ActionMode.
  * * deselecting the last item will finish ActionMode.
  * * clicking a menu item will also finish ActionMode, but only if you have consumed/handled the event
  * in [onActionItemClicked][ActionMode.Callback.onActionItemClicked] (TRUE was returned)
@@ -19,8 +19,8 @@ import android.view.MenuItem
  * all items will be deselected. IMPORTANT: this does NOT trigger the selection
  * listener given to [DxAdapter]
  */
-class DxActionModeHelper<ITEM : DxItem/*<VH>, VH: RecyclerViewHolder*/>(
-    private val adapter: DxAdapter<ITEM, */*VH*/>,
+class DxActionModeHelper<ITEM : DxItem>(
+    private val adapter: DxAdapter<ITEM, *>,
     private val titleProvider: actionModeTitleProvider,
     private val callback: ActionMode.Callback)
 {
@@ -43,14 +43,16 @@ class DxActionModeHelper<ITEM : DxItem/*<VH>, VH: RecyclerViewHolder*/>(
         override fun onDestroyActionMode(mode: ActionMode?)
         {
             //if action mode is destroyed, we need to deselect all the items.
-            //NOTE: do NOT call adapter.deselect() here because it will cause an
+            //NOTE: do NOT call adapter.deselect() because it will cause an
             //infinite loop:
             //deselect() will trigger the selection listener, which should call updateActionMode()
             //(if user followed instructions), which will eventually call finish() on the actionMode,
             //which will bring us back here.
             adapter.apply {
-                mItems.forEach { it.mIsSelected = false }
-                notifyDataSetChanged()
+                getAllSelectedIndices().forEach {
+                    mItems[it].mIsSelected = false
+                    notifyItemChanged(it)
+                }
             }
 
             callback.onDestroyActionMode(mode)
@@ -65,7 +67,7 @@ class DxActionModeHelper<ITEM : DxItem/*<VH>, VH: RecyclerViewHolder*/>(
      * this function starts/finishes actionMode, and updates its' title using
      * [titleProvider].
      *
-     * it's assumed that this function is called inside [DxAdapter.onSelectStateChangedListener].
+     * it's assumed that this function is called inside [DxAdapter.onItemSelectionChanged].
      * if it's called from other places, it may cause bugs.
      */
     fun updateActionMode(act: AppCompatActivity)
@@ -73,7 +75,7 @@ class DxActionModeHelper<ITEM : DxItem/*<VH>, VH: RecyclerViewHolder*/>(
         //NOTE:
         //at this point we should be AFTER the selected state has already changed.
         //i say "should" because we are assuming that this function is called from inside
-        //onSelectStateChangedListener in the adapter
+        //onItemSelectionChanged in the adapter
 
         when (adapter.getNumSelectedItems())
         {

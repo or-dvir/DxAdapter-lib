@@ -22,4 +22,9 @@
         android:title="filter sample"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/expandableSample"
+        android:title="expandable sample"
+        app:showAsAction="never"/>
+
 </menu>

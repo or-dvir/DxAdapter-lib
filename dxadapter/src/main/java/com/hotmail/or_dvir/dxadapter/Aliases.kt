@@ -11,7 +11,13 @@ typealias RecyclerViewHolder = RecyclerView.ViewHolder
  */
 internal typealias onItemLongClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Boolean
 internal typealias onItemClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Unit
-internal typealias onItemSelectStateChangedListener<ITEM> = (position: Int, item: ITEM, isSelected: Boolean) -> Unit
+
+internal typealias  positionAndItemListener<ITEM> = (position: Int, item: ITEM) -> Unit
+
+internal typealias onItemSelectStateChangedListener<ITEM> =
+        (position: Int, item: ITEM, isSelected: Boolean) -> Unit
+
+internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
 
 internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,
                                                  targetItem: ITEM,
@@ -32,11 +38,11 @@ internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 internal typealias scrollUpDownPair = Pair<Int, () -> Any>
 
 /**
- * first: the text to display
+ * first: the mText to display
  *
- * second: the text size in pixels
+ * second: the mText size in pixels
  *
- * third: the resource id of the color of the text (MUST be @ColorRes)
+ * third: the resource id of the color of the mText (MUST be @ColorRes)
  */
 internal typealias swipeBackgroundText = Triple<String, Float, Int>
 internal typealias actionModeTitleProvider = () -> String

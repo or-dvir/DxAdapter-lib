@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
@@ -45,6 +46,9 @@ class ActivityMain : AppCompatActivity()
 
     //todo ripple effect is being overridden when applying stateListDrawable to our item
 
+    //todo instead of writing what the default value for everything in the sample is,
+    //todo refer them to the documentation - that way it only has to change in one place
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -58,19 +62,17 @@ class ActivityMain : AppCompatActivity()
         }
 
         mSampleAdapter = MyAdapter(myListItems).apply {
-            onClickListener = { view, position, item ->
+            onItemClick = { view, position, item ->
                 toast("clicked ${item.mText}. position $position")
             }
 
-            onLongClickListener = { view, position, item ->
+            onItemLongClick = { view, position, item ->
                 toast("long clicked ${item.mText}. position $position")
                 true
             }
 
-            onSelectStateChangedListener = { position, item, isSelected ->
+            onItemSelectionChanged = { position, item, isSelected ->
 
-                //todo can i do anything that would NOT make the user make this call????
-                //todo could be confusing if they forget... (and also just annoying to call this every time)
                 //MUST be called in order for DxActionMode to function as intended
                 mActionModeHelper.updateActionMode(this@ActivityMain)
 
@@ -82,13 +84,6 @@ class ActivityMain : AppCompatActivity()
 
                 Log.i("sample", "${item.mText} (position $position) $txt")
             }
-
-            //todo what if i mix items in the adapter, and each has different handle?!
-            //todo make a method "getHandleId()"???? keep it like this and force the user
-            //todo so use the same id for all handles????
-            dragAndDropWithHandle = Pair(R.id.myItemDragHandle, { holder ->
-                mItemTouchHelper.startDrag(holder)
-            })
 
             //default is accent color (if not provided, primary color is used).
             //note: this must be @ColorInt
@@ -132,86 +127,95 @@ class ActivityMain : AppCompatActivity()
                                    }
                                })
 
+
+        val itemTouchCallback =
+            DxItemTouchCallback(mSampleAdapter).apply {
+
+            //in order for the swipe to "count", the user needs to swipe with
+            //a speed of 200 pixels per second (or far enough as defined below).
+            //note that this value is overridden by swipeEscapeVelocityMultiplier (if set)
+//                swipeEscapeVelocity = 200f
+
+            //in order for the swipe to "count", the user needs to swipe 1.5 times faster
+            //then the device's default value (or far enough as defined below).
+            //note that this overrides swipeEscapeVelocity (if set)
+            swipeEscapeVelocityMultiplier = 1.5f
+
+            //in order for the swipe to "count", the user needs to swipe away 70% of the item
+            //(or fast enough as defined above)
+            swipeThreshold = 0.7f
+
+            //NOTE:
+            //drawing mText will only work if there is a background set to the same side!
+            //todo is this what i want???? does this make sense???
+
+                //todo align all this code!!!!!!
+
+                swipeTextRight = DxSwipeText("right swipe", 60f, Color.WHITE, Color.BLUE)
+                //todo bug!!!!!
+                //todo if there is no background, the text appears OVER the item!!!!
+                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.BLACK, null)
+//                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.WHITE, Color.RED)
+
+            //IMPORTANT NOTE:
+            //the direction you provide in the first element of the Pair
+            //determine the "direction" parameter of the callback. for example:
+            //if you provide ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT
+            //like below, then the "direction" parameter of the
+            //listener will ALSO be either ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT.
+            //however if you check for ItemTouchHelper.START in the listener, it will not work
+            onItemSwiped = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+                                { item, position, direction ->
+
+                                    if(direction == ItemTouchHelper.START)
+                                    {
+                                        //this will NEVER trigger because we did not provide
+                                        //ItemTouchHelper.START as a valid swipe direction
+                                    }
+
+                                    //delete item on left swipe
+                                    if(direction == ItemTouchHelper.LEFT)
+                                    {
+                                        myListItems.removeAt(position)
+                                        mSampleAdapter.notifyItemRemoved(position)
+                                        toast("removed ${item.mText} (position $position)")
+                                    }
+
+                                    //rename item on right swipe:
+                                    else if(direction == ItemTouchHelper.RIGHT)
+                                    {
+                                        item.mText = "new name ${position + 1}"
+                                        //don't forget to restore the item, or you will be left with empty space
+                                        mSampleAdapter.notifyItemChanged(position)
+                                    }
+                                })
+
+            //option to initiate drag with long-clicking an item
+            //be aware that if long-click also selects items,
+            //results may not be as intended (e.g. meant to long-click but initiated drag instead)
+//                dragOnLongClick = true
+
+            //if your list is actually a grid, you need to set this value to TRUE
+            //otherwise drag-and-drop will not work as expected
+//                isGridLayoutManager = true
+
+            onItemsAboutToMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
+                Log.i("sample",
+                      "about to switch ${draggedItem.mText} (position $draggedPosition) " +
+                              "with ${targetItem.mText} (position $targetPosition)"
+                )
+            }
+        }
+
         //if you want to use the drag-and-drop features of this adapter,
         //you must provide DxItemTouchCallback to ItemTouchHelper.
         //don't forget to attach it to your RecyclerView!
-        mItemTouchHelper = ItemTouchHelper(
-            DxItemTouchCallback(mSampleAdapter).apply {
-
-                //in order for the swipe to "count", the user needs to swipe with
-                //a speed of 200 pixels per second (or far enough as defined below).
-                //note that this value is overridden by swipeEscapeVelocityMultiplier (if set)
-//                swipeEscapeVelocity = 200f
-
-                //in order for the swipe to "count", the user needs to swipe 1.5 times faster
-                //then the device's default value (or far enough as defined below).
-                //note that this overrides swipeEscapeVelocity (if set)
-                swipeEscapeVelocityMultiplier = 1.5f
-
-                //in order for the swipe to "count", the user needs to swipe away 70% of the item
-                //(or fast enough as defined above)
-                swipeThreshold = 0.7f
-
-                //NOTE:
-                //drawing text will only work if there is a background set to the same side!
-                //todo is this what i want???? does this make sense???
-
-                swipeBackgroundColorRight = android.R.color.holo_orange_light
-                swipeBackgroundTextRight = Triple("right swipe", 60f, android.R.color.white)
-
-                swipeBackgroundColorLeft = android.R.color.holo_red_light
-                swipeBackgroundTextLeft = Triple("left swipe", 60f, android.R.color.white)
-
-
-                //IMPORTANT NOTE:
-                //the direction you provide in the first element of the Pair
-                //determine the "direction" parameter of the callback. for example:
-                //if you provide ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT
-                //like below, then the "direction" parameter of the
-                //listener will ALSO be either ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT.
-                //however if you check for ItemTouchHelper.START in the listener, it will not work
-                onItemSwiped = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-                                    { item, position, direction ->
-
-                        if(direction == ItemTouchHelper.START)
-                        {
-                            //this will NEVER trigger because we did not provide
-                            //ItemTouchHelper.START as a valid swipe direction
-                        }
-
-                        //delete item on left swipe
-                        if(direction == ItemTouchHelper.LEFT)
-                        {
-                            myListItems.removeAt(position)
-                            mSampleAdapter.notifyItemRemoved(position)
-                            toast("removed ${item.mText} (position $position)")
-                        }
-
-                        //rename item on right swipe:
-                        else if(direction == ItemTouchHelper.RIGHT)
-                        {
-                            item.mText = "new name ${position + 1}"
-                            //don't forget to restore the item, or you will be left with empty space
-                            mSampleAdapter.notifyItemChanged(position)
-                        }
-                    })
-
-                //option to initiate drag with long-clicking an item
-                //be aware that if long-click also selects items,
-                //results may not be as intended (e.g. meant to long-click but initiated drag instead)
-//                    dragOnLongClick = true
-
-                //if your list is actually a grid, you need to set this value to TRUE
-                //otherwise drag-and-drop will not work as expected
-//                isGridLayoutManager = true
-
-                onItemsAboutToMoveListener = { draggedItem, targetItem, draggedPosition, targetPosition ->
-                    Log.i("sample",
-                        "about to switch ${draggedItem.mText} (position $draggedPosition) " +
-                                "with ${targetItem.mText} (position $targetPosition)"
-                    )
-                }
-            })
+        mItemTouchHelper = DxItemTouchHelper(itemTouchCallback).apply {
+            //todo what if i mix items in the adapter, and each has different handle?!
+            //todo make a method "getHandleId()"???? keep it like this and force the user
+            //todo so use the same id for all handles????
+            setDragHandleId(R.id.myItemDragHandle)
+        }
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
@@ -219,13 +223,13 @@ class ActivityMain : AppCompatActivity()
             adapter = mSampleAdapter
             mItemTouchHelper.attachToRecyclerView(this)
 
-            firstItemVisibilityListenerI = object : IOnAdapterItemVisibilityChanged
+            firstItemVisibilityListener = object : IOnItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "first item visible")
                 override fun onInvisible() = Log.i("sample", "first item not visible")
             }
 
-            lastItemVisibilityListenerI = object : IOnAdapterItemVisibilityChanged
+            lastItemVisibilityListener = object : IOnItemVisibilityChanged
             {
                 override fun onVisible() = Log.i("sample", "last item visible")
                 override fun onInvisible() = Log.i("sample", "last item not visible")
@@ -233,10 +237,6 @@ class ActivityMain : AppCompatActivity()
 
             onScrollingDownListener = Pair(50, { fab.hide() })
             onScrollingUpListener = Pair(50, { fab.show() })
-        }
-
-        button.setOnClickListener {
-            //todo do something
         }
     }
 
@@ -248,6 +248,7 @@ class ActivityMain : AppCompatActivity()
             R.id.multiTypeSample -> startActivity<ActivityMultiType>()
             R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
             R.id.filterSample -> startActivity<ActivityFilter>()
+            R.id.expandableSample -> startActivity<ActivityExpandable>()
             else -> super.onOptionsItemSelected(item)
         }
 

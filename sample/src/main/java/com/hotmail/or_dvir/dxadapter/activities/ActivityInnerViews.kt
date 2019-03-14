@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
+import com.hotmail.or_dvir.dxadapter.DxItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterInnerViews
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithViews
@@ -16,6 +17,7 @@ class ActivityInnerViews : AppCompatActivity()
 {
     lateinit var mAdapter: MyAdapterInnerViews
     lateinit var mItemTouchHelper: ItemTouchHelper
+//    lateinit var mItemTouchHelper: ItemTouchHelper
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -29,13 +31,11 @@ class ActivityInnerViews : AppCompatActivity()
             list.add(MyItemWithViews())
         }
 
-        mAdapter = MyAdapterInnerViews(list).apply {
-            dragAndDropWithHandle = Pair(R.id.myItemDragHandle, { holder ->
-                mItemTouchHelper.startDrag(holder)
-            })
-        }
+        mAdapter = MyAdapterInnerViews(list)
 
-        mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(mAdapter))
+        mItemTouchHelper = DxItemTouchHelper(DxItemTouchCallback(mAdapter)).apply {
+            setDragHandleId(R.id.myItemDragHandle)
+        }
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityInnerViews, DividerItemDecoration.VERTICAL))

@@ -6,20 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".activities.ActivityMain">
 
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/rv"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/button"-->
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
-
     <com.hotmail.or_dvir.dxadapter.DxRecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,14 +24,5 @@
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintEnd_toEndOf="@+id/rv"
         app:layout_constraintBottom_toBottomOf="@+id/rv"/>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="test"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
