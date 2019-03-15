@@ -49,6 +49,10 @@ class ActivityMain : AppCompatActivity()
     //todo instead of writing what the default value for everything in the sample is,
     //todo refer them to the documentation - that way it only has to change in one place
 
+    //todo BUG BUG BUG BUG BUG BUG BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //todo selecting an item, swiping it to the left (deleting) while selected
+    //todo -> action mode still active!!! what adapter thinks about number of selected items????
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -152,12 +156,12 @@ class ActivityMain : AppCompatActivity()
                 swipeBackgroundRight = DxSwipeBackground("right swipe",
                                                          60f,
                                                          Color.BLACK,
-                                                         null)
+                                                         Color.RED)
 
                 swipeBackgroundLeft = DxSwipeBackground("left swipe",
                                                         60f,
                                                         Color.BLACK,
-                                                        null)
+                                                        Color.BLUE)
 
                 //IMPORTANT NOTE:
                 //the directions you provide in the first parameter

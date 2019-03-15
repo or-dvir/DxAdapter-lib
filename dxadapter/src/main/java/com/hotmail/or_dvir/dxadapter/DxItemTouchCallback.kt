@@ -7,7 +7,10 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>)
     : ItemTouchHelper.Callback()
@@ -27,7 +30,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      */
     var dragOnLongClick = false
 
-    private val mDrawRect = Rect()
+    private val mTextRect = Rect()
 
     /**
      * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
@@ -120,6 +123,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
         return true
     }
 
+    //todo add option to draw icons (drawable)
     override fun onChildDraw(c: Canvas,
                              recyclerView: RecyclerView,
                              viewHolder: ViewHolder,
@@ -128,62 +132,108 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                              actionState: Int,
                              isCurrentlyActive: Boolean)
     {
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
+
+        if (actionState != ItemTouchHelper.ACTION_STATE_SWIPE)
+            return
+
+
+        val itemView = viewHolder.itemView
+        val isSwipingLeft = dx < 0 && dx != 0f
+
+        //todo bug!!!!!
+        //todo if there is no background, the text appears OVER the item!!!!
+
+        val swipeBackground = when
         {
-            val itemView = viewHolder.itemView
-            val isSwipingLeft = dx < 0 && dx != 0f
+            //not swiping, or swiping but item is exactly in the middle.
+            //in such cases, we don't draw the background
+            dx == 0f -> null
 
-            //todo bug!!!!!
-            //todo if there is no background, the text appears OVER the item!!!!
+            //swiping left
+            isSwipingLeft ->
+                swipeBackgroundLeft?.apply {
+                    mPaint.textAlign = Paint.Align.LEFT
+                    mBackgroundColorDrawable.setBounds(itemView.right + dx.roundToInt(),
+                                                       itemView.top,
+                                                       itemView.right,
+                                                       itemView.bottom)
+                }
 
-            val swipeBackground = when
-            {
-                //not swiping, or swiping but item is exactly in the middle.
-                //in such cases, we don't draw the background
-                dx == 0f -> null
+            //swiping right
+            else ->
+                swipeBackgroundRight?.apply {
+                    mPaint.textAlign = Paint.Align.RIGHT
+                    mBackgroundColorDrawable.setBounds(itemView.left,
+                                                       itemView.top,
+                                                       itemView.left + dx.roundToInt(),
+                                                       itemView.bottom)
+                }
+        }
 
-                //swiping left
-                isSwipingLeft ->
-                    swipeBackgroundLeft?.apply {
-                        mPaint.textAlign = Paint.Align.LEFT
-                        mBackgroundColorDrawable.setBounds(itemView.right + dx.toInt(),
-                                                           itemView.top,
-                                                           itemView.right,
-                                                           itemView.bottom)
-                    }
+        swipeBackground?.apply {
+            //NOTE:
+            //drawing background MUST come BEFORE drawing the mText
+            mBackgroundColorDrawable.let { backDraw ->
+                backDraw.draw(c)
+                if (mText.isNotEmpty())
+                {
+                    mPaint.let { paint ->
+                        var halfTextWidth = (mTextRect.width() / 2f)
+                        //if swiping left, make the width negative because we need to SUBTRACT it
+                        //when drawing the text
+                        if (isSwipingLeft)
+                            halfTextWidth *= -1
 
-                //swiping right
-                else ->
-                    swipeBackgroundRight?.apply {
-                        mPaint.textAlign = Paint.Align.RIGHT
-                        mBackgroundColorDrawable.setBounds(itemView.left,
-                                                           itemView.top,
-                                                           itemView.left + dx.toInt(),
-                                                           itemView.bottom)
-                    }
-            }
+                        paint.getTextBounds(mText, 0, mText.length, mTextRect)
 
-            swipeBackground?.apply {
-                //NOTE:
-                //drawing background MUST come BEFORE drawing the mText
-                mBackgroundColorDrawable.let { backDraw ->
-                    backDraw.draw(c)
-                    if(mText.isNotEmpty())
-                    {
-                        mPaint.let { paint ->
-                            var halfTextWidth = (mDrawRect.width() / 2f)
-                            //if swiping left, make the width negative because we need to SUBTRACT it
-                            //when drawing the text
-                            if (isSwipingLeft)
-                                halfTextWidth *= -1
+                        ///////////////////////////////////////////////////////////////////////////
+//                        as soon as the first character of the text is in bounds of itemView
+//                        start drawing from 0!!!
 
-                            paint.getTextBounds(mText, 0, mText.length, mDrawRect)
-                            c.drawText(mText,
-                                       backDraw.bounds.exactCenterX() + halfTextWidth,
-                                //todo not sure why i need to divide by 4 and not 2...
-                                       backDraw.bounds.exactCenterY() + (mDrawRect.height() / 4f),
-                                       paint)
-                        }
+
+                        val numChars = paint.breakText(mText,
+                                                       true,
+                                                       backDraw.bounds.width().toFloat(),
+                                                       null)
+                        paint.textAlign = Paint.Align.RIGHT
+                        use this!!! this is good! now convert it to work on both sides!!!
+                        also let the user choose padding!!!
+                        val xCoord =
+                            if(numChars == mText.length)
+                            {
+                                paint.textAlign = Paint.Align.LEFT
+                                0f
+                            }
+                            else
+                                backDraw.bounds.right.toFloat()
+
+
+                        c.drawText(mText,
+                                   xCoord,
+                                   backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f),
+                                   paint)
+                        ///////////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////////
+                        //the code here draws only the letters that can fit!
+                        //but it doesn't look good and smooth enough...
+//                        val numChars = paint.breakText(mText,
+//                                                       true,
+//                                                       backDraw.bounds.width().toFloat(),
+//                                                       null)
+//                        paint.textAlign = Paint.Align.LEFT
+//                        c.drawText(mText,
+//                                   0,
+//                                   numChars,
+//                                   backDraw.bounds.left.toFloat(),
+//                                   backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f),
+//                                   paint)
+                        ///////////////////////////////////////////////////////////////////////////
+//                        c.drawText(mText,
+//                                   backDraw.bounds.exactCenterX() + halfTextWidth,
+//                            //todo not sure why i need to divide by 4 and not 2...
+//                                   backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f),
+//                                   paint)
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
