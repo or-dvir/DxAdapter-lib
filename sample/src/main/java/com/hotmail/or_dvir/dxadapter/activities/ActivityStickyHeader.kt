@@ -46,18 +46,17 @@ class ActivityStickyHeader : AppCompatActivity()
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
             dragOnLongClick = true
 
-            swipeTextLeft = DxSwipeText("left swipe", 60f, Color.WHITE, Color.GREEN)
+            swipeBackgroundLeft = DxSwipeBackground("left swipe", 60f, Color.WHITE, Color.GREEN)
 
-            onItemSwiped =
-                Pair(ItemTouchHelper.LEFT,
-                     { item, position, direction ->
+            setItemsSwipeable(ItemTouchHelper.LEFT)
+            { item, position, direction ->
 
-                         if (direction == ItemTouchHelper.LEFT)
-                         {
-                             //don't do anything (but restore the item so we don't have empty line)
-                             stickyHeaderAdapter.notifyItemChanged(position)
-                         }
-                     })
+                if (direction == ItemTouchHelper.LEFT)
+                {
+                    //don't do anything (but restore the item so we don't have empty line)
+                    stickyHeaderAdapter.notifyItemChanged(position)
+                }
+            }
         })
 
         rv.apply {

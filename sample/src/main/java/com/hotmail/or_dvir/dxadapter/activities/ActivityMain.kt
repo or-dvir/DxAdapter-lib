@@ -131,81 +131,82 @@ class ActivityMain : AppCompatActivity()
         val itemTouchCallback =
             DxItemTouchCallback(mSampleAdapter).apply {
 
-            //in order for the swipe to "count", the user needs to swipe with
-            //a speed of 200 pixels per second (or far enough as defined below).
-            //note that this value is overridden by swipeEscapeVelocityMultiplier (if set)
+                //in order for the swipe to "count", the user needs to swipe with
+                //a speed of 200 pixels per second (or far enough as defined below).
+                //note that this value is overridden by swipeEscapeVelocityMultiplier (if set)
 //                swipeEscapeVelocity = 200f
 
-            //in order for the swipe to "count", the user needs to swipe 1.5 times faster
-            //then the device's default value (or far enough as defined below).
-            //note that this overrides swipeEscapeVelocity (if set)
-            swipeEscapeVelocityMultiplier = 1.5f
+                //in order for the swipe to "count", the user needs to swipe 1.5 times faster
+                //then the device's default value (or far enough as defined below).
+                //note that this overrides swipeEscapeVelocity (if set)
+                swipeEscapeVelocityMultiplier = 1.5f
 
-            //in order for the swipe to "count", the user needs to swipe away 70% of the item
-            //(or fast enough as defined above)
-            swipeThreshold = 0.7f
-
-            //NOTE:
-            //drawing mText will only work if there is a background set to the same side!
-            //todo is this what i want???? does this make sense???
+                //in order for the swipe to "count", the user needs to swipe away 70% of the item
+                //(or fast enough as defined above)
+                swipeThreshold = 0.7f
 
                 //todo align all this code!!!!!!
 
-                swipeTextRight = DxSwipeText("right swipe", 60f, Color.WHITE, Color.BLUE)
-                //todo bug!!!!!
-                //todo if there is no background, the text appears OVER the item!!!!
-                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.BLACK, null)
-//                swipeTextLeft = DxSwipeText("left swipe", 60f, Color.WHITE, Color.RED)
+                //if you don't want text, pass empty string.
+                //if you don't want background color, pass null.
+                swipeBackgroundRight = DxSwipeBackground("right swipe",
+                                                         60f,
+                                                         Color.BLACK,
+                                                         null)
 
-            //IMPORTANT NOTE:
-            //the direction you provide in the first element of the Pair
-            //determine the "direction" parameter of the callback. for example:
-            //if you provide ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT
-            //like below, then the "direction" parameter of the
-            //listener will ALSO be either ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT.
-            //however if you check for ItemTouchHelper.START in the listener, it will not work
-            onItemSwiped = Pair(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-                                { item, position, direction ->
+                swipeBackgroundLeft = DxSwipeBackground("left swipe",
+                                                        60f,
+                                                        Color.BLACK,
+                                                        null)
 
-                                    if(direction == ItemTouchHelper.START)
-                                    {
-                                        //this will NEVER trigger because we did not provide
-                                        //ItemTouchHelper.START as a valid swipe direction
-                                    }
+                //IMPORTANT NOTE:
+                //the directions you provide in the first parameter
+                //determine the "direction" parameter of the callback.
+                //in the example below, the "direction" parameter of the
+                //callback will ALSO be either ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT.
+                //however if you check for ItemTouchHelper.START in the listener, it will not work
+                setItemsSwipeable(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+                { item, position, direction ->
 
-                                    //delete item on left swipe
-                                    if(direction == ItemTouchHelper.LEFT)
-                                    {
-                                        myListItems.removeAt(position)
-                                        mSampleAdapter.notifyItemRemoved(position)
-                                        toast("removed ${item.mText} (position $position)")
-                                    }
+                    if (direction == ItemTouchHelper.START)
+                    {
+                        //code will NEVER get here because we did not provide
+                        //ItemTouchHelper.START as a valid swipe direction
+                    }
 
-                                    //rename item on right swipe:
-                                    else if(direction == ItemTouchHelper.RIGHT)
-                                    {
-                                        item.mText = "new name ${position + 1}"
-                                        //don't forget to restore the item, or you will be left with empty space
-                                        mSampleAdapter.notifyItemChanged(position)
-                                    }
-                                })
+                    //delete item on left swipe
+                    if (direction == ItemTouchHelper.LEFT)
+                    {
+                        myListItems.removeAt(position)
+                        mSampleAdapter.notifyItemRemoved(position)
+                        toast("removed ${item.mText} (position $position)")
+                    }
 
-            //option to initiate drag with long-clicking an item
-            //be aware that if long-click also selects items,
-            //results may not be as intended (e.g. meant to long-click but initiated drag instead)
+                    //rename item on right swipe:
+                    else if (direction == ItemTouchHelper.RIGHT)
+                    {
+                        item.mText = "new name ${position + 1}"
+                        //don't forget to restore the item, or you will be left with empty space
+                        mSampleAdapter.notifyItemChanged(position)
+                    }
+                }
+
+                //option to initiate drag with long-clicking an item.
+                //be aware that if long-click also selects items,
+                //results may not be as intended (e.g. meant to long-click but started drag instead)
 //                dragOnLongClick = true
 
-            //if your list is actually a grid, you need to set this value to TRUE
-            //otherwise drag-and-drop will not work as expected
+                //if your list is actually a grid, you need to set this value to TRUE
+                //otherwise drag-and-drop will not work as expected
 //                isGridLayoutManager = true
 
-            onItemsAboutToMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
-                Log.i("sample",
-                      "about to switch ${draggedItem.mText} (position $draggedPosition) " +
-                              "with ${targetItem.mText} (position $targetPosition)"
-                )
+                onItemMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
+                    Log.i("sample",
+                          "about to switch ${draggedItem.mText} (position $draggedPosition) " +
+                                  "with ${targetItem.mText} (position $targetPosition)"
+                    )
+                }
             }
-        }
 
         //if you want to use the drag-and-drop features of this adapter,
         //you must provide DxItemTouchCallback to ItemTouchHelper.

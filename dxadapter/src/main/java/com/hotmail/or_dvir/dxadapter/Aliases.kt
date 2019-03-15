@@ -19,14 +19,14 @@ internal typealias onItemSelectStateChangedListener<ITEM> =
 
 internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
 
-internal typealias onItemsMovedListener<ITEM> = (draggedItem: ITEM,
-                                                 targetItem: ITEM,
-                                                 draggedPosition: Int,
-                                                 targetPosition: Int) -> Unit
+internal typealias onItemsMoveListener<ITEM> = (draggedItem: ITEM,
+                                                targetItem: ITEM,
+                                                draggedPosition: Int,
+                                                targetPosition: Int) -> Unit
 
-internal typealias onItemDismissedListener<ITEM> = (item: ITEM,
-                                                    position: Int,
-                                                    direction: Int) -> Unit
+internal typealias onItemSwipedListener<ITEM> = (item: ITEM,
+                                                 position: Int,
+                                                 direction: Int) -> Unit
 
 internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 

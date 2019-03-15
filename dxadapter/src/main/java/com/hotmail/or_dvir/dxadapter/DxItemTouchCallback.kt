@@ -3,7 +3,6 @@ package com.hotmail.or_dvir.dxadapter
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
@@ -27,6 +26,8 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      * produce the intended result (selecting an item when actually meant to drag and vice-versa)
      */
     var dragOnLongClick = false
+
+    private val mDrawRect = Rect()
 
     /**
      * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
@@ -56,39 +57,28 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      */
     var isGridLayoutManager = false
 
-    //todo add function for AFTER move?????????
     /**
      * NOTE: this will trigger JUST BEFORE the items are moved
      */
-    var onItemsAboutToMove: onItemsMovedListener<ITEM>? = null
+    var onItemMove: onItemsMoveListener<ITEM>? = null
+
+    var swipeBackgroundLeft: DxSwipeBackground? = null
+    var swipeBackgroundRight: DxSwipeBackground? = null
+
+    private var onItemSwiped: Pair<Int, onItemSwipedListener<ITEM>>? = null
 
     /**
-     * FIRST: the direction of allowed swiping. one or more of:
+     * @param swipeDirections Int: the direction of allowed swiping. one or more of:
      * [LEFT][ItemTouchHelper.LEFT], [RIGHT][ItemTouchHelper.RIGHT],
      * [START][ItemTouchHelper.START], [END][ItemTouchHelper.END].
      *
-     * NOTE: the directions you give here will affect the "direction" parameter for the callback.
-     * for example, if you provide [START][ItemTouchHelper.START] and [END][ItemTouchHelper.END],
-     * the callback will also return [START][ItemTouchHelper.START] and [END][ItemTouchHelper.END] and NOT
-     * [LEFT][ItemTouchHelper.LEFT] and [RIGHT][ItemTouchHelper.RIGHT]
-     *
-     * SECOND: a callback which will triggered after an item is dismissed.
+     * @param onSwipeListener onItemSwipedListener<ITEM>:
+     *     a callback to invoke when an item is swiped.
      */
-    var onItemSwiped: Pair<Int, onItemDismissedListener<ITEM>>? = null
-
-    var swipeTextLeft: DxSwipeText? = null
-        set(value)
-        {
-            value?.mPaint?.textAlign = Paint.Align.LEFT
-            field = value
-        }
-
-    var swipeTextRight: DxSwipeText? = null
-        set(value)
-        {
-            value?.mPaint?.textAlign = Paint.Align.RIGHT
-            field = value
-        }
+    fun setItemsSwipeable(swipeDirections: Int, onSwipeListener: onItemSwipedListener<ITEM>)
+    {
+        onItemSwiped = Pair(swipeDirections, onSwipeListener)
+    }
 
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
     {
@@ -122,7 +112,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
         val targetPos = target.adapterPosition
 
         mAdapter.apply {
-            onItemsAboutToMove?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
+            onItemMove?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
             Collections.swap(mItems, dragPos, targetPos)
             notifyItemMoved(dragPos, targetPos)
         }
@@ -140,69 +130,61 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
     {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
         {
-            //todo can i make this more efficient???? meaning NOT setting these variables here
-            //todo but instead take them from swipeTextLeft and swipeTextRight???????
-            var swipeColor: ColorDrawable? = null
-            var swipePaint: Paint? = null
-            var swipeRect: Rect? = null
-            var swipeText = ""
             val itemView = viewHolder.itemView
-            val isSwipingRight = dx > 0
+            val isSwipingLeft = dx < 0 && dx != 0f
 
-            //todo a lot of repetition between swipeTextRight and swipeTextLeft
-            //todo can i make it better???
-            if (isSwipingRight)
+            //todo bug!!!!!
+            //todo if there is no background, the text appears OVER the item!!!!
+
+            val swipeBackground = when
             {
-                swipeTextRight?.apply {
-                    swipeRect = mRect
-                    swipeText = mText
-                    swipePaint = mPaint
-                    swipeColor = mBackgroundColorDrawable?.apply {
-                        setBounds(itemView.left,
-                                  itemView.top,
-                                  itemView.left + dx.toInt(),
-                                  itemView.bottom)
+                //not swiping, or swiping but item is exactly in the middle.
+                //in such cases, we don't draw the background
+                dx == 0f -> null
+
+                //swiping left
+                isSwipingLeft ->
+                    swipeBackgroundLeft?.apply {
+                        mPaint.textAlign = Paint.Align.LEFT
+                        mBackgroundColorDrawable.setBounds(itemView.right + dx.toInt(),
+                                                           itemView.top,
+                                                           itemView.right,
+                                                           itemView.bottom)
                     }
-                }
+
+                //swiping right
+                else ->
+                    swipeBackgroundRight?.apply {
+                        mPaint.textAlign = Paint.Align.RIGHT
+                        mBackgroundColorDrawable.setBounds(itemView.left,
+                                                           itemView.top,
+                                                           itemView.left + dx.toInt(),
+                                                           itemView.bottom)
+                    }
             }
 
-            //Swiping left
-            else
-            {
-                swipeTextLeft?.apply {
-                    swipeRect = mRect
-                    swipeText = mText
-                    swipePaint = mPaint
-                    swipeColor = mBackgroundColorDrawable?.apply {
-                        setBounds(itemView.right + dx.toInt(),
-                                  itemView.top,
-                                  itemView.right,
-                                  itemView.bottom)
-                    }
-                }
-            }
-
-            //todo this is forcing the user to set a background color for swiping!!!!
-            //todo make it possible to just have mText
-            //NOTE:
-            //this MUST come AFTER the above "when" statement
-            swipeColor?.apply {
+            swipeBackground?.apply {
                 //NOTE:
                 //drawing background MUST come BEFORE drawing the mText
-                draw(c)
-                swipePaint?.let {
-                    var halfTextWidth = (swipeRect!!.width() / 2f)
-                    //if swiping left, make the width negative because we need to SUBTRACT it
-                    //when drawing the mText
-                    if (!isSwipingRight)
-                        halfTextWidth *= -1
+                mBackgroundColorDrawable.let { backDraw ->
+                    backDraw.draw(c)
+                    if(mText.isNotEmpty())
+                    {
+                        mPaint.let { paint ->
+                            var halfTextWidth = (mDrawRect.width() / 2f)
+                            //if swiping left, make the width negative because we need to SUBTRACT it
+                            //when drawing the text
+                            if (isSwipingLeft)
+                                halfTextWidth *= -1
 
-                    it.getTextBounds(swipeText, 0, swipeText.length, swipeRect)
-                    c.drawText(swipeText,
-                               bounds.exactCenterX() + halfTextWidth,
-                        //todo not sure why i have to divide by 4 and not 2...
-                               bounds.exactCenterY() + (swipeRect!!.height() / 4f),
-                               it)
+                            paint.getTextBounds(mText, 0, mText.length, mDrawRect)
+                            c.drawText(mText,
+                                       backDraw.bounds.exactCenterX() + halfTextWidth,
+                                //todo not sure why i need to divide by 4 and not 2...
+                                       backDraw.bounds.exactCenterY() + (mDrawRect.height() / 4f),
+                                       paint)
+                        }
+                    }
                 }
             }
         }
@@ -241,6 +223,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
     override fun getSwipeThreshold(viewHolder: ViewHolder) =
         swipeThreshold ?: super.getSwipeThreshold(viewHolder)
 
-    //todo allow swiping with a handle!!! similar to drag and drop with a handle - look online for examples
+    //todo allow swiping with a handle??? similar to drag and drop with a handle - look online for examples
     override fun isItemViewSwipeEnabled() = onItemSwiped?.first != null
 }

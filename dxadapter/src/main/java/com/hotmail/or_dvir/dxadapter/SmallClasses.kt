@@ -45,12 +45,11 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
     abstract fun expandAndCollapseOnItemClick(): Boolean
 }
 
-class DxSwipeText (val mText: String,
-                   val mTextSizePx: Float,
-                   @ColorInt val mTextColor: Int,
-                   @ColorInt val mBackgroundColor: Int?)
+class DxSwipeBackground (val mText: String,
+                         val mTextSizePx: Float,
+                         @ColorInt val mTextColor: Int,
+                         @ColorInt val mBackgroundColor: Int?)
 {
-    internal val mRect = Rect()
     internal val mPaint = Paint().apply {
         textSize = mTextSizePx
         color = mTextColor
