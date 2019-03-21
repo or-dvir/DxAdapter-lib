@@ -1,11 +1,8 @@
 package com.hotmail.or_dvir.dxadapter
 
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
 import android.support.annotation.IdRes
 
 //NOTE:
@@ -46,6 +43,7 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
     abstract fun expandAndCollapseOnItemClick(): Boolean
 }
 
+//todo add documentation!!!
 class DxSwipeBackground (val mText: String,
                          val mTextSizePx: Float,
                          @ColorInt val mTextColor: Int,
