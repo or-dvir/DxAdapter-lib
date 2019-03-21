@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.ColorInt
 import android.support.annotation.IdRes
+import android.support.annotation.Px
 
 //NOTE:
 //cannot use interface instead of this class because we need to save the state
@@ -44,8 +45,9 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
 }
 
 //todo add documentation!!!
-class DxSwipeBackground (val mText: String,
+class DxSwipeBackground (var mText: String,
                          val mTextSizePx: Float,
+                         val mPaddingPx: Int,
                          @ColorInt val mTextColor: Int,
                          @ColorInt val mBackgroundColor: Int?)
 {

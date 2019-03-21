@@ -46,7 +46,11 @@ class ActivityStickyHeader : AppCompatActivity()
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
             dragOnLongClick = true
 
-            swipeBackgroundLeft = DxSwipeBackground("left swipe", 60f, Color.WHITE, Color.GREEN)
+            swipeBackgroundLeft = DxSwipeBackground("left swipe",
+                                                    60f,
+                                                    30,
+                                                    Color.WHITE,
+                                                    Color.GREEN)
 
             setItemsSwipeable(ItemTouchHelper.LEFT)
             { item, position, direction ->

@@ -155,11 +155,13 @@ class ActivityMain : AppCompatActivity()
                 //if you don't want background color, pass null.
                 swipeBackgroundRight = DxSwipeBackground("right swipe",
                                                          60f,
+                                                         100,
                                                          Color.BLACK,
                                                          Color.RED)
 
                 swipeBackgroundLeft = DxSwipeBackground("left swipe",
                                                         60f,
+                                                        100,
                                                         Color.BLACK,
                                                         Color.BLUE)
 

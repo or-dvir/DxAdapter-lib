@@ -28,6 +28,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      */
     var dragOnLongClick = false
 
+    private var mTextFitInSwipBackground = false
     private val mTextRect = Rect()
 
     /**
@@ -177,37 +178,30 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
 
 
                 mPaint.let { paint ->
-                    var halfTextWidth = (mTextRect.width() / 2f)
-                    //if swiping left, make the width negative because we need to SUBTRACT it
-                    //when drawing the text
-                    if (isSwipingLeft)
-                        halfTextWidth *= -1
-
                     paint.getTextBounds(mText, 0, mText.length, mTextRect)
 
-                    val numChars = paint.breakText(mText,
-                                                   true,
-                                                    backDraw.bounds.width().toFloat(),
-                                                    null)
                     val xCoord =
-                    backDraw.bounds.let {
-                        //text fits in swiped area
-                        if (numChars == mText.length)
-                        {
-                            reverseTextAlign(paint)
-                            if (isSwipingLeft) it.right
-                            else it.left
+                        backDraw.bounds.let {
+                            //padding is for left AND rights
+                            mTextFitInSwipBackground = it.width() >= mTextRect.width() + (2 * mPaddingPx)
+
+                            if (mTextFitInSwipBackground)
+                            {
+                                reverseTextAlign(paint)
+                                if (isSwipingLeft) it.right - mPaddingPx
+                                else it.left + mPaddingPx
+                            }
+                            //text does NOT fit in swiped area
+                            else
+                            {
+                                if (isSwipingLeft) it.left + mPaddingPx
+                                else it.right - mPaddingPx
+                            }
                         }
-                        //text does NOT fit in swiped area
-                        else
-                        {
-                            if (isSwipingLeft) it.left
-                            else it.right
-                        }
-                    }.toFloat()
 
                     c.drawText(mText,
-                               xCoord,
+                               xCoord.toFloat(),
+                               //todo not sure why i have to divide by 4 and not 2
                                backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f),
                                paint)
                 }
