@@ -154,16 +154,18 @@ class ActivityMain : AppCompatActivity()
                 //if you don't want text, pass empty string.
                 //if you don't want background color, pass null.
                 swipeBackgroundRight = DxSwipeBackground("right swipe",
-                                                         60f,
+                                                         60,
                                                          100,
                                                          Color.BLACK,
-                                                         Color.RED)
+                                                         Color.RED,
+                                                         getDrawable(R.drawable.ic_arrow_right))
 
                 swipeBackgroundLeft = DxSwipeBackground("left swipe",
-                                                        60f,
+                                                        60,
                                                         100,
                                                         Color.BLACK,
-                                                        Color.BLUE)
+                                                        Color.BLUE,
+                                                        getDrawable(R.drawable.ic_arrow_left))
 
                 //IMPORTANT NOTE:
                 //the directions you provide in the first parameter

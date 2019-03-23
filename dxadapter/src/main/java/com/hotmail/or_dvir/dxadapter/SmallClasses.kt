@@ -2,9 +2,10 @@ package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
 import android.support.annotation.IdRes
-import android.support.annotation.Px
+import kotlin.math.roundToInt
 
 //NOTE:
 //cannot use interface instead of this class because we need to save the state
@@ -46,16 +47,49 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
 
 //todo add documentation!!!
 class DxSwipeBackground (var mText: String,
-                         val mTextSizePx: Float,
+                         val mTextSizePx: Int,
                          val mPaddingPx: Int,
                          @ColorInt val mTextColor: Int,
-                         @ColorInt val mBackgroundColor: Int?)
+                         @ColorInt val mBackgroundColor: Int?,
+                         val mIcon: Drawable?)
 {
+    internal val mHalfIconHeight = mIcon?.let { it.intrinsicHeight / 2 }
+
     internal val mPaint = Paint().apply {
-        textSize = mTextSizePx
+        textSize = mTextSizePx.toFloat()
         color = mTextColor
     }
 
     internal var mBackgroundColorDrawable =
         mBackgroundColor?.let { ColorDrawable(it) } ?: ColorDrawable()
+
+    internal var mTotalWidthToFit: Int
+
+    internal var mTextWidth = mPaint.measureText(mText).roundToInt()
+
+    init
+    {
+        //padding both left and right
+        mTotalWidthToFit = mTextWidth + (2 * mPaddingPx)
+
+        mIcon?.apply {
+            //add padding between icon and text
+            mTotalWidthToFit += mPaddingPx + intrinsicWidth
+        }
+    }
+
+    internal fun reverseTextAlign()
+    {
+        mPaint.textAlign = mPaint.textAlign.let {
+            when (it)
+            {
+                Paint.Align.RIGHT -> Paint.Align.LEFT
+                Paint.Align.LEFT -> Paint.Align.RIGHT
+                else -> it
+            }
+        }
+    }
+
+    internal fun doesBackgroundFitInSwipeArea() =
+        mBackgroundColorDrawable.bounds.width() >= mTotalWidthToFit
 }

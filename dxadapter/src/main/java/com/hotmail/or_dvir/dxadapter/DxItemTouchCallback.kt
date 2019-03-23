@@ -7,7 +7,6 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
-import java.util.*
 import kotlin.math.roundToInt
 
 class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>)
@@ -28,8 +27,9 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      */
     var dragOnLongClick = false
 
-    private var mTextFitInSwipBackground = false
     private val mTextRect = Rect()
+    private var mTextCoordX = 0
+    private var mDoesBackFit = false
 
     /**
      * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
@@ -115,15 +115,41 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
 
         mAdapter.apply {
             onItemMove?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
-            Collections.swap(mItems, dragPos, targetPos)
             notifyItemMoved(dragPos, targetPos)
         }
 
         return true
     }
 
-    //todo add option to draw icons (drawable)
-    override fun onChildDraw(c: Canvas,
+    private fun getTextCoordX(swipeBackground: DxSwipeBackground,
+                              isSwipingLeft: Boolean)
+    {
+        must take icon into consideration
+
+        swipeBackground.apply {
+            if (mDoesBackFit)
+            {
+                reverseTextAlign()
+                if (isSwipingLeft) it.right - mPaddingPx
+                else it.left + mPaddingPx
+            }
+            //text does NOT fit in swiped area
+            else
+            {
+                if (isSwipingLeft) it.left + mPaddingPx
+                else it.right - mPaddingPx
+            }
+
+        }
+
+    }
+
+    //todo check ALL calculation done in this function
+    //todo whatever can be moved to DxSwipeBackground, MOVE IT!!!!
+    //todo check ALL var and val declarations in this function
+    //todo whatever can be global variable, DO IT!!!!
+    //todo break some inner calculations to separate functions because this one is getting long!!!
+    override fun onChildDraw(canvas: Canvas,
                              recyclerView: RecyclerView,
                              viewHolder: ViewHolder,
                              dx: Float,
@@ -131,7 +157,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                              actionState: Int,
                              isCurrentlyActive: Boolean)
     {
-
         if (actionState != ItemTouchHelper.ACTION_STATE_SWIPE)
             return
 
@@ -170,24 +195,28 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
             //NOTE:
             //drawing background MUST come BEFORE drawing the mText
             mBackgroundColorDrawable.let { backDraw ->
-                backDraw.draw(c)
+                backDraw.draw(canvas)
+
+                //drawing text
 
                 //if no text, stop processing
                 if (mText.isEmpty())
                     return@let
 
-
                 mPaint.let { paint ->
+                    //todo do i need mTextRect??? try to do without it!
+                    //todo or at least make this calculation only once and NOT inside this function!!!
                     paint.getTextBounds(mText, 0, mText.length, mTextRect)
 
-                    val xCoord =
+                    hljgvgvkjgvjhjhvjhvjhhjkjh
+                    mTextCoordX =
                         backDraw.bounds.let {
                             //padding is for left AND rights
-                            mTextFitInSwipBackground = it.width() >= mTextRect.width() + (2 * mPaddingPx)
 
-                            if (mTextFitInSwipBackground)
+                            mDoesBackFit = doesBackgroundFitInSwipeArea()
+                            if (mDoesBackFit)
                             {
-                                reverseTextAlign(paint)
+                                reverseTextAlign()
                                 if (isSwipingLeft) it.right - mPaddingPx
                                 else it.left + mPaddingPx
                             }
@@ -199,28 +228,39 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                             }
                         }
 
-                    c.drawText(mText,
-                               xCoord.toFloat(),
+                    canvas.drawText(mText,
+                                    mTextCoordX.toFloat(),
                                //todo not sure why i have to divide by 4 and not 2
-                               backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f),
-                               paint)
+                                    backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f),
+                                    paint)
+                }
+
+
+                //drawing icon
+                //todo option for just text
+                //todo option for just icon
+                //todo option for both
+                //todo handle both right and left swipe
+
+                mIcon?.apply {
+                    //text x coordinate minus icon width minus padding between icon and text
+                    var left = mTextCoordX - intrinsicWidth - mPaddingPx
+
+                    //if we don't yet fit, also subtract mTextWidth
+                    if (!mDoesBackFit)
+                        left -= mTextWidth
+
+                    //if we are here, then FOR SURE mHalfIconHeight is NOT null
+                    setBounds(left,
+                              backDraw.bounds.exactCenterY().toInt() - mHalfIconHeight!!,
+                              left + intrinsicWidth,
+                              backDraw.bounds.exactCenterY().toInt() + mHalfIconHeight)
+                    draw(canvas)
                 }
             }
         }
 
-        super.onChildDraw(c, recyclerView, viewHolder, dx, dy, actionState, isCurrentlyActive)
-    }
-
-    private fun reverseTextAlign(p: Paint)
-    {
-        p.textAlign = p.textAlign.let {
-            when (it)
-            {
-                Paint.Align.RIGHT -> Paint.Align.LEFT
-                Paint.Align.LEFT -> Paint.Align.RIGHT
-                else -> it
-            }
-        }
+        super.onChildDraw(canvas, recyclerView, viewHolder, dx, dy, actionState, isCurrentlyActive)
     }
 
     override fun onSwiped(holder: ViewHolder, direction: Int)
