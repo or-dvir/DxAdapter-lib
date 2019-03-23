@@ -153,19 +153,23 @@ class ActivityMain : AppCompatActivity()
 
                 //if you don't want text, pass empty string.
                 //if you don't want background color, pass null.
+                //if you don't want icon, pass null
+                //todo if i dont want text, no point in passing text color!!!
                 swipeBackgroundRight = DxSwipeBackground("right swipe",
-                                                         60,
-                                                         100,
+                                                         60, //todo before release, change this to SP from dimen!!!
+                                                         30, //todo before release, change this to DP from dimen!!!
                                                          Color.BLACK,
                                                          Color.RED,
-                                                         getDrawable(R.drawable.ic_arrow_right))
+                                                         null)
+//                                                         getDrawable(R.drawable.ic_arrow_right))
 
                 swipeBackgroundLeft = DxSwipeBackground("left swipe",
-                                                        60,
-                                                        100,
+                                                        60, //todo before release, change this to SP from dimen!!!
+                                                        30, //todo before release, change this to DP from dimen!!!
                                                         Color.BLACK,
-                                                        Color.BLUE,
-                                                        getDrawable(R.drawable.ic_arrow_left))
+                                                        Color.CYAN,
+                                                        null)
+//                                                        getDrawable(R.drawable.ic_arrow_left))
 
                 //IMPORTANT NOTE:
                 //the directions you provide in the first parameter

@@ -1,6 +1,7 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
@@ -46,16 +47,19 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
 }
 
 //todo add documentation!!!
-class DxSwipeBackground (var mText: String,
-                         val mTextSizePx: Int,
-                         val mPaddingPx: Int,
-                         @ColorInt val mTextColor: Int,
-                         @ColorInt val mBackgroundColor: Int?,
-                         val mIcon: Drawable?)
+class DxSwipeBackground (internal var mText: String,
+                         private val mTextSizePx: Int,
+                         internal var mPaddingPx: Int,
+                         @ColorInt internal val mTextColor: Int,
+                         @ColorInt internal val mBackgroundColor: Int?,
+                         internal val mIcon: Drawable?)
 {
-    internal val mHalfIconHeight = mIcon?.let { it.intrinsicHeight / 2 }
+    internal val mIconWidth = mIcon?.intrinsicWidth ?: 0
+    internal val mHalfIconHeight = (mIcon?.intrinsicHeight ?: 0) / 2
 
+    //todo make text size half the height of the itemView?!?!?!?!?!?!?!?!!?!?
     internal val mPaint = Paint().apply {
+        textAlign = Paint.Align.LEFT
         textSize = mTextSizePx.toFloat()
         color = mTextColor
     }
@@ -63,31 +67,43 @@ class DxSwipeBackground (var mText: String,
     internal var mBackgroundColorDrawable =
         mBackgroundColor?.let { ColorDrawable(it) } ?: ColorDrawable()
 
-    internal var mTotalWidthToFit: Int
+    internal var mTextWidth = mPaint.measureText(mText.trim()).roundToInt()
 
-    internal var mTextWidth = mPaint.measureText(mText).roundToInt()
+    private var mTotalWidthToFit = 0
 
     init
     {
-        //padding both left and right
-        mTotalWidthToFit = mTextWidth + (2 * mPaddingPx)
+        var atLeastOne = false
+        var both = false
 
-        mIcon?.apply {
-            //add padding between icon and text
-            mTotalWidthToFit += mPaddingPx + intrinsicWidth
+        //adding text width
+        if(mText.isNotBlank())
+        {
+            atLeastOne = true
+            mTotalWidthToFit += mTextWidth
         }
-    }
 
-    internal fun reverseTextAlign()
-    {
-        mPaint.textAlign = mPaint.textAlign.let {
-            when (it)
-            {
-                Paint.Align.RIGHT -> Paint.Align.LEFT
-                Paint.Align.LEFT -> Paint.Align.RIGHT
-                else -> it
-            }
+        //adding icon width
+        if(mIcon != null)
+        {
+            if(atLeastOne)
+                both = true
+
+            atLeastOne = true
+            mTotalWidthToFit += mIcon.intrinsicWidth
         }
+
+        //adding padding on left AND right,
+        //or set to 0 so calculations using this variable will not be affected.
+        if(atLeastOne)
+            mTotalWidthToFit += (2 * mPaddingPx)
+        //no text and no icon
+        else
+            mPaddingPx = 0
+
+        //one more padding between icon and text
+        if(both)
+            mTotalWidthToFit += mPaddingPx
     }
 
     internal fun doesBackgroundFitInSwipeArea() =

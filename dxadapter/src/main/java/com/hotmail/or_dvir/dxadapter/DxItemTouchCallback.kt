@@ -1,7 +1,6 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Rect
 import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
@@ -28,8 +27,16 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
     var dragOnLongClick = false
 
     private val mTextRect = Rect()
-    private var mTextCoordX = 0
     private var mDoesBackFit = false
+
+    private var mIconTop = 0
+    private var mIconBottom = 0
+    private var mIconLeft = 0
+    private var mIconRight = 0
+    private var mTextX = 0f
+    private var mTextY = 0f
+    private var mIsSwipingLeft = false
+    private var mSwipeBackground: DxSwipeBackground? = null
 
     /**
      * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
@@ -121,34 +128,50 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
         return true
     }
 
-    private fun getTextCoordX(swipeBackground: DxSwipeBackground,
-                              isSwipingLeft: Boolean)
+    private fun calculateIconLeft(swipeBack: DxSwipeBackground,
+                                  isSwipingLeft: Boolean)
+            : Int
     {
-        must take icon into consideration
+        mDoesBackFit = swipeBack.doesBackgroundFitInSwipeArea()
+        var temp: Int
 
-        swipeBackground.apply {
-            if (mDoesBackFit)
-            {
-                reverseTextAlign()
-                if (isSwipingLeft) it.right - mPaddingPx
-                else it.left + mPaddingPx
-            }
-            //text does NOT fit in swiped area
-            else
-            {
-                if (isSwipingLeft) it.left + mPaddingPx
-                else it.right - mPaddingPx
-            }
+        swipeBack.apply {
+            swipeBack.mBackgroundColorDrawable.bounds.let { bounds ->
+                return when
+                {
+                    mDoesBackFit && isSwipingLeft ->
+                        bounds.right - mPaddingPx - mIconWidth
 
+                    //swiping right
+                    mDoesBackFit -> bounds.left + mPaddingPx
+
+                    //mDoesBackFit is FALSE
+                    isSwipingLeft ->
+                    {
+                        temp = bounds.left + mPaddingPx
+                        if (mTextWidth > 0)
+                            temp += mTextWidth + mPaddingPx
+
+                        temp
+                    }
+                    //swiping right
+                    else ->
+                    {
+                        temp = bounds.right - mPaddingPx - mIconWidth
+                        //NOTE:
+                        //do NOT do "temp -= <expression>" here because the order of
+                        //operations is slightly different and with certain values it will
+                        //cause bugs
+                        if (mTextWidth > 0)
+                            temp = temp - mTextWidth - mPaddingPx
+
+                        temp
+                    }
+                }
+            }
         }
-
     }
 
-    //todo check ALL calculation done in this function
-    //todo whatever can be moved to DxSwipeBackground, MOVE IT!!!!
-    //todo check ALL var and val declarations in this function
-    //todo whatever can be global variable, DO IT!!!!
-    //todo break some inner calculations to separate functions because this one is getting long!!!
     override fun onChildDraw(canvas: Canvas,
                              recyclerView: RecyclerView,
                              viewHolder: ViewHolder,
@@ -160,20 +183,18 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
         if (actionState != ItemTouchHelper.ACTION_STATE_SWIPE)
             return
 
-
+        //todo should i keep global reference to view???? is it safe in this class??????
         val itemView = viewHolder.itemView
-        val isSwipingLeft = dx < 0 && dx != 0f
+        mIsSwipingLeft = dx < 0 && dx != 0f
 
-        val swipeBackground = when
+        mSwipeBackground = when
         {
             //not swiping, or swiping but item is exactly in the middle.
             //in such cases, we don't draw the background
             dx == 0f -> null
 
-            //swiping left
-            isSwipingLeft ->
+            mIsSwipingLeft ->
                 swipeBackgroundLeft?.apply {
-                    mPaint.textAlign = Paint.Align.LEFT
                     mBackgroundColorDrawable.setBounds(itemView.right + dx.roundToInt(),
                                                        itemView.top,
                                                        itemView.right,
@@ -183,7 +204,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
             //swiping right
             else ->
                 swipeBackgroundRight?.apply {
-                    mPaint.textAlign = Paint.Align.RIGHT
                     mBackgroundColorDrawable.setBounds(itemView.left,
                                                        itemView.top,
                                                        itemView.left + dx.roundToInt(),
@@ -191,71 +211,35 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                 }
         }
 
-        swipeBackground?.apply {
+        mSwipeBackground?.apply {
             //NOTE:
             //drawing background MUST come BEFORE drawing the mText
             mBackgroundColorDrawable.let { backDraw ->
                 backDraw.draw(canvas)
 
-                //drawing text
-
-                //if no text, stop processing
-                if (mText.isEmpty())
-                    return@let
-
-                mPaint.let { paint ->
-                    //todo do i need mTextRect??? try to do without it!
-                    //todo or at least make this calculation only once and NOT inside this function!!!
-                    paint.getTextBounds(mText, 0, mText.length, mTextRect)
-
-                    hljgvgvkjgvjhjhvjhvjhhjkjh
-                    mTextCoordX =
-                        backDraw.bounds.let {
-                            //padding is for left AND rights
-
-                            mDoesBackFit = doesBackgroundFitInSwipeArea()
-                            if (mDoesBackFit)
-                            {
-                                reverseTextAlign()
-                                if (isSwipingLeft) it.right - mPaddingPx
-                                else it.left + mPaddingPx
-                            }
-                            //text does NOT fit in swiped area
-                            else
-                            {
-                                if (isSwipingLeft) it.left + mPaddingPx
-                                else it.right - mPaddingPx
-                            }
-                        }
-
-                    canvas.drawText(mText,
-                                    mTextCoordX.toFloat(),
-                               //todo not sure why i have to divide by 4 and not 2
-                                    backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f),
-                                    paint)
-                }
-
-
-                //drawing icon
-                //todo option for just text
-                //todo option for just icon
-                //todo option for both
-                //todo handle both right and left swipe
+                mIconTop = backDraw.bounds.centerY() - mHalfIconHeight
+                mIconBottom = backDraw.bounds.centerY() + mHalfIconHeight
+                mIconLeft = calculateIconLeft(this, mIsSwipingLeft)
+                mIconRight = mIconLeft + (mIcon?.intrinsicWidth ?: 0)
 
                 mIcon?.apply {
-                    //text x coordinate minus icon width minus padding between icon and text
-                    var left = mTextCoordX - intrinsicWidth - mPaddingPx
-
-                    //if we don't yet fit, also subtract mTextWidth
-                    if (!mDoesBackFit)
-                        left -= mTextWidth
-
-                    //if we are here, then FOR SURE mHalfIconHeight is NOT null
-                    setBounds(left,
-                              backDraw.bounds.exactCenterY().toInt() - mHalfIconHeight!!,
-                              left + intrinsicWidth,
-                              backDraw.bounds.exactCenterY().toInt() + mHalfIconHeight)
+                    setBounds(mIconLeft, mIconTop, mIconRight, mIconBottom)
                     draw(canvas)
+                }
+
+                BUG!!! if i only have text, it jumps!!! somewhere i count twice the padding!!!!
+                if(mText.isNotBlank())
+                {
+                    mPaint.getTextBounds(mText, 0, mText.length, mTextRect)
+
+                    mTextY = backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f)
+                    mTextX =
+                        if(mIsSwipingLeft)
+                            mIconLeft.toFloat() - mPaddingPx - mTextWidth
+                        else
+                            mIconRight.toFloat() + mPaddingPx
+
+                    canvas.drawText(mText, mTextX, mTextY, mPaint)
                 }
             }
         }
