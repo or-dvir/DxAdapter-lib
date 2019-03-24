@@ -25,7 +25,7 @@ class ActivityExpandable : AppCompatActivity()
 
         val expandableAdapter = MyAdapterExpandable(list).apply {
 
-            //todo should i add an option for collapse all in selection mode?
+            //todo is this still an option? if not, remove these lines so users are not confused
             //if set to true, clicking an item to select/deselect it
             //will also expand/collapse the item
 //            expandAndCollapseItemsInSelectionMode = true
