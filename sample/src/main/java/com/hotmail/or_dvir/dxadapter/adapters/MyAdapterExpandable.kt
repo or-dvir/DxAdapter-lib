@@ -62,7 +62,6 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
         val et = itemView.et
         val cb = itemView.cb
 
-        //todo show example of expand/collapse using handle
         init
         {
             //optionally setting iv as expand/collapse handle.

@@ -20,9 +20,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     : RecyclerView.Adapter<VH>(),
       Filterable
 {
-    //todo do i really need to restrict the adapter to DxItem?!?!?!??!?!
-    //todo if all i need is the function "getViewType()" then there is no reason
-    //todo to limit the user to extend from DxItem!!!!!!!!!!!!!!!!!!!!!
+    //todo find a way so that the user does NOT have to extend DxItem
 
     //click listeners
     var onItemClick: onItemClickListener<ITEM>? = null
@@ -75,21 +73,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     //todo convert all pairs to kotlin classes with descriptive names so its easier and not as confusing (have to check what is first, what is second...)
 
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
 
-
-    //todo fix this documentation!!! user does not have to do anything!!!
-    /**
-     * if you want to use drag and drop using a drag handle,
-     * you MUST set this variable, and inside [startDragListener] call the method [ItemTouchHelper.startDrag]
-     * with the given ViewHolder.
-     *
-     * first: the resource id of the drag handle
-     *
-     * second: a callback to initiate the drag event (must be done by YOU as described above)
-     */
     internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
     private val mOriginalList = mItems
@@ -189,8 +173,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         }
     }
 
-    //todo if item is expandable, when in selection mode clicking items (to select/deselect)
-    //todo exapnd/collapse is triggered - add varaible shouldExpandCollapseInSelectionMode
+    i stopped here
+    //todo add option to collapse all items in selection mode
 
     fun deselect(vararg items: ITEM) = deselect(*getIndicesForItems(*items))
     fun deselect(vararg indices: Int)
