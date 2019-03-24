@@ -140,10 +140,21 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                 return when
                 {
                     mDoesBackFit && isSwipingLeft ->
-                        bounds.right - mPaddingPx - mIconWidth
+                    {
+                        temp = bounds.right - mIconWidth
+                        if(mIconWidth > 0)
+                            temp -= mPaddingPx
+                        temp
+                    }
 
                     //swiping right
-                    mDoesBackFit -> bounds.left + mPaddingPx
+                    mDoesBackFit ->
+                    {
+                        temp = bounds.left
+                        if(mIconWidth > 0)
+                            temp += mPaddingPx
+                        temp
+                    }
 
                     //mDoesBackFit is FALSE
                     isSwipingLeft ->
@@ -151,7 +162,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                         temp = bounds.left + mPaddingPx
                         if (mTextWidth > 0)
                             temp += mTextWidth + mPaddingPx
-
                         temp
                     }
                     //swiping right
@@ -164,7 +174,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                         //cause bugs
                         if (mTextWidth > 0)
                             temp = temp - mTextWidth - mPaddingPx
-
                         temp
                     }
                 }
@@ -227,7 +236,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                     draw(canvas)
                 }
 
-                BUG!!! if i only have text, it jumps!!! somewhere i count twice the padding!!!!
                 if(mText.isNotBlank())
                 {
                     mPaint.getTextBounds(mText, 0, mText.length, mTextRect)
@@ -236,6 +244,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                     mTextX =
                         if(mIsSwipingLeft)
                             mIconLeft.toFloat() - mPaddingPx - mTextWidth
+                        //swiping right
                         else
                             mIconRight.toFloat() + mPaddingPx
 

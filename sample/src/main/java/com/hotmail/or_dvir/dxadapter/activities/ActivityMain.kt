@@ -149,7 +149,6 @@ class ActivityMain : AppCompatActivity()
                 //(or fast enough as defined above)
                 swipeThreshold = 0.7f
 
-                //todo align all this code!!!!!!
 
                 //if you don't want text, pass empty string.
                 //if you don't want background color, pass null.
@@ -160,16 +159,14 @@ class ActivityMain : AppCompatActivity()
                                                          30, //todo before release, change this to DP from dimen!!!
                                                          Color.BLACK,
                                                          Color.RED,
-                                                         null)
-//                                                         getDrawable(R.drawable.ic_arrow_right))
+                                                         getDrawable(R.drawable.ic_arrow_right))
 
                 swipeBackgroundLeft = DxSwipeBackground("left swipe",
                                                         60, //todo before release, change this to SP from dimen!!!
                                                         30, //todo before release, change this to DP from dimen!!!
                                                         Color.BLACK,
                                                         Color.CYAN,
-                                                        null)
-//                                                        getDrawable(R.drawable.ic_arrow_left))
+                                                        getDrawable(R.drawable.ic_arrow_left))
 
                 //IMPORTANT NOTE:
                 //the directions you provide in the first parameter
