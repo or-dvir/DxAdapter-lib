@@ -153,58 +153,63 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     //todo any other important methods i should override??????
 
 
-    //todo add selectAll and deselctall functions
     //todo add documentation that when selecting/deselecting all items listeners will NOT be triggered!!!
-    fun select(vararg items: ITEM) = select(*getIndicesForItems(*items))
-    fun select(vararg indices: Int)
+    @JvmName("selectListIndices")
+    fun select(indices: List<Int>) = selectOrDeselect(true, indices)
+    fun select(index: Int) = select(listOf(index))
+    fun select(items: List<ITEM>) = select(getIndicesForItems(items))
+    fun select(item: ITEM) = select(listOf(item))
+    fun selectAll() = select(mItems)
+
+    //todo add documentation that when selecting/deselecting all items listeners will NOT be triggered!!!
+    @JvmName("deselectListIndices")
+    fun deselect(indices: List<Int>) = selectOrDeselect(false, indices)
+    fun deselect(index: Int) = deselect(listOf(index))
+    fun deselect(items: List<ITEM>) = deselect(getIndicesForItems(items))
+    fun deselect(item: ITEM) = deselect(listOf(item))
+    fun deselectAll() = deselect(mItems)
+
+    private fun selectOrDeselect(shouldSelect: Boolean,
+                                 indices: List<Int>)
     {
-//        val shouldTriggerListener = indices.size == getNumSelectedItems()
+        //        val shouldTriggerListener = indices.size == getNumSelectedItems()
 
         indices.forEach { position ->
             if (isInBounds(position))
             {
                 mItems[position].apply {
-                    //only select if previously not selected
-                    //so we don't trigger onItemSelectionChanged unnecessarily
-                    if(isSelectable() && !mIsSelected)
+                    //only select/deselect if actually needed
+                    //to avoid triggering listener multiple times
+                    if(isSelectable() && shouldSelect != mIsSelected)
                     {
-                        mIsSelected = true
+                        mIsSelected = shouldSelect
 //                        if(shouldTriggerListener)
-                            onItemSelectionChanged?.invoke(position, this, true)
+                        onItemSelectionChanged?.invoke(position, this, shouldSelect)
                         notifyItemChanged(position)
                     }
                 }
             }
         }
     }
-
-    //todo add documentation that when selecting/deselecting all items listeners will NOT be triggered!!!
-    fun deselect(vararg items: ITEM) = deselect(*getIndicesForItems(*items))
-    fun deselect(vararg indices: Int)
-    {
-//        val shouldTriggerListener = indices.size == getNumSelectedItems()
-
-        indices.forEach { position ->
-            if (isInBounds(position))
-            {
-                mItems[position].apply {
-                    //only deselect if previously selected
-                    //so we don't trigger onItemSelectionChanged unnecessarily
-                    if(isSelectable() && mIsSelected)
-                    {
-                        mIsSelected = false
-                        onItemSelectionChanged?.invoke(position, this, false)
-                        notifyItemChanged(position)
-                    }
-                }
-            }
-        }
-    }
-
     //todo make sure every function has good documentation!!!
 
+    //todo add to documentation that when expanding/collapsing all items the listeners will NOT be triggered
+    @JvmName("expandListIndices")
+    fun expand(indices: List<Int>) = expandOrCollapse(true, indices)
+    fun expand(index: Int) = expand(listOf(index))
+    fun expand(items: List<ITEM>) = expand(getIndicesForItems(items))
+    fun expand(item: ITEM) = expand(listOf(item))
+    fun expandAll() = expand(mItems)
+
+    @JvmName("collapseListIndices")
+    fun collapse(indices: List<Int>) = expandOrCollapse(false, indices)
+    fun collapse(index: Int) = collapse(listOf(index))
+    fun collapse(items: List<ITEM>) = collapse(getIndicesForItems(items))
+    fun collapse(item: ITEM) = collapse(listOf(item))
+    fun collapseAll() = collapse(mItems)
+
     private fun expandOrCollapse(shouldExpand: Boolean,
-                                 vararg indices: Int)
+                                 indices: List<Int>)
     {
 //        val shouldTriggerListener = indices.size == getNumExpandedItems()
 
@@ -221,23 +226,20 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                         if(isInSelectionMode()/* && !expandAndCollapseItemsInSelectionMode*/)
                             return@forEach
 
-                        //trying to expand and item is NOT already expanded
-                        if(shouldExpand && !mIsExpanded)
+
+                        //only expand/collapse if actually needed
+                        //to avoid triggering listener multiple times
+                        if(shouldExpand != mIsExpanded)
                         {
-                            mIsExpanded = true
+                            mIsExpanded = shouldExpand
 //                            if(shouldTriggerListener)
+                            if(shouldExpand)
                                 onItemExpanded?.invoke(position, this)
-                        }
-
-                        //trying to collapse and item is NOT already collapsed
-                        else if(!shouldExpand && mIsExpanded)
-                        {
-                            mIsExpanded = false
-//                            if(shouldTriggerListener)
+                            else
                                 onItemCollapsed?.invoke(position, this)
-                        }
 
-                        notifyItemChanged(position)
+                            notifyItemChanged(position)
+                        }
                     }
                 }
             }
@@ -247,30 +249,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     //todo option for only 1 expanded item
     //todo test what happens when expanding all but only 1 item is expandable...
 
-
-    //todo add to documentation that when expanding/collapsing all items the listeners will NOT be triggered
-    fun expand(vararg indices: Int) =
-        expandOrCollapse(true, *indices)
-
-
-    fun expand(vararg items: ITEM) =
-        expandOrCollapse(true, *getIndicesForItems(*items))
-
-    fun expandAll() = expand(*mItems.indices.toList().toIntArray())
-
-    fun collapse(vararg indices: Int) = expandOrCollapse(false, *indices)
-    fun collapse(vararg items: ITEM) = expandOrCollapse(false, *getIndicesForItems(*items))
-    fun collapseAll() = collapse(*mItems.indices.toList().toIntArray())
-
-    private fun getIndicesForItems(vararg items: ITEM): IntArray
-    {
-        val indices = IntArray(items.size)
-        items.forEachIndexed { index, item ->
-            indices[index] = mItems.indexOf(item)
-        }
-
-        return indices
-    }
+    private fun getIndicesForItems(items: List<ITEM>) = items.map { mItems.indexOf(it) }
 
     /**
      * "selection mode" means at least one item is selected
@@ -359,7 +338,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             val clickedItem = mItems[clickedPosition]
 
             if(clickedItem is DxItemExpandable && clickedItem.expandAndCollapseOnItemClick())
-                expandOrCollapse(!clickedItem.mIsExpanded, clickedPosition)
+                expandOrCollapse(!clickedItem.mIsExpanded, listOf(clickedPosition))
 
 
             //todo when documenting this library, notice the order of the calls
