@@ -130,7 +130,6 @@ class ActivityMain : AppCompatActivity()
                                    }
                                })
 
-
         val itemTouchCallback =
             DxItemTouchCallback(mSampleAdapter).apply {
 
@@ -166,6 +165,12 @@ class ActivityMain : AppCompatActivity()
                                                         Color.BLACK,
                                                         Color.CYAN,
                                                         getDrawable(R.drawable.ic_arrow_left))
+
+                //todo wne documenting add a note that initializing swipeBackgroundLeft/right
+                //todo does not automatically mean that swipe is enabled.
+                //todo the user MUST call setItemsSwipeable() to enable swiping
+                //todo maybe i can make it such that swipeBackgroundLeft/right is part of the function?
+                //todo that way it would be less confusing to the user
 
                 //IMPORTANT NOTE:
                 //the directions you provide in the first parameter

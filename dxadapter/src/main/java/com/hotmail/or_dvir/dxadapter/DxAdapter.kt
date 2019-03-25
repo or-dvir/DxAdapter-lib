@@ -57,19 +57,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     var onItemExpanded: positionAndItemListener<ITEM>? = null
     var onItemCollapsed: positionAndItemListener<ITEM>? = null
 
-    /**
-     * default value: FALSE
-     *
-     * if TRUE, clicking an [DxItemExpandable] in "selectionMode" (at least one item is selected)
-     * would also expand or collapse the item.
-     *
-     * if FALSE, item would not expand/collapse in "selectionMode"
-     */
-//    var expandAndCollapseItemsInSelectionMode = false
-
     var dxFilter: dxFilter<ITEM>? = null
-
-    //todo convert all pairs to kotlin classes with descriptive names so its easier and not as confusing (have to check what is first, what is second...)
 
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
 
@@ -122,10 +110,9 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             holder.itemView.let {
                 it.isSelected = item.mIsSelected
 
-                if(item is DxItemExpandable)
+                if (item is DxItemExpandable)
                 {
-                    it.findViewById<View>(item.getExpandableViewId())
-                        .visibility =
+                    it.findViewById<View>(item.getExpandableViewId()).visibility =
                         if (item.mIsExpanded)
                             View.VISIBLE
                         else
@@ -156,7 +143,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     fun getNumSelectedItems() = getAllSelectedItems().size
     fun getAllSelectedIndices() = getIndicesForItems(getAllSelectedItems())
 
-    //todo add documentation that when selecting/deselecting all items listeners will NOT be triggered!!!
     @JvmName("selectListIndices")
     fun select(indices: List<Int>, triggerListener: Boolean = true) =
         selectOrDeselect(true, indices, triggerListener)
@@ -214,10 +200,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     }
 
     //todo make sure every function has good documentation!!!
-
-    //todo option for only 1 expanded item
-    //todo test what happens when expanding all but only 1 item is expandable...
-    //todo or if initialExpandedState is set to "expanded" on all items...
 
     fun getAllExpandedItems() = mItems.filter { it is DxItemExpandable && it.mIsExpanded }
     fun getNumExpandedItems() = getAllExpandedItems().size
@@ -373,10 +355,9 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             if(defaultItemSelectionBehavior && selectionModeBefore)
             {
                 //reverse the selection
-                if(clickedItem.mIsSelected)
-                    deselect(clickedPosition)
-                else
-                    select(clickedPosition)
+                selectOrDeselect(!clickedItem.isSelectable(),
+                                 listOf(clickedPosition),
+                                 true)
             }
 
             //if we were NOT in selection mode before -> regular click -> trigger the listener.

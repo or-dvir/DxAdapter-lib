@@ -9,13 +9,13 @@ typealias RecyclerViewHolder = RecyclerView.ViewHolder
 /**
  * @return true if the callback consumed the long click, false otherwise
  */
-internal typealias onItemLongClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Boolean
-internal typealias onItemClickListener<ITEM> = (view: View, position: Int, item: ITEM) -> Unit
+internal typealias onItemLongClickListener<ITEM> = (view: View, adapterPosition: Int, item: ITEM) -> Boolean
+internal typealias onItemClickListener<ITEM> = (view: View, adapterPosition: Int, item: ITEM) -> Unit
 
-internal typealias  positionAndItemListener<ITEM> = (position: Int, item: ITEM) -> Unit
+internal typealias  positionAndItemListener<ITEM> = (adapterPosition: Int, item: ITEM) -> Unit
 
 internal typealias onItemSelectStateChangedListener<ITEM> =
-        (position: Int, item: ITEM, isSelected: Boolean) -> Unit
+        (adapterPosition: Int, item: ITEM, isSelected: Boolean) -> Unit
 
 internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
 
@@ -25,7 +25,7 @@ internal typealias onItemsMoveListener<ITEM> = (draggedItem: ITEM,
                                                 targetPosition: Int) -> Unit
 
 internal typealias onItemSwipedListener<ITEM> = (item: ITEM,
-                                                 position: Int,
+                                                 adapterPosition: Int,
                                                  direction: Int) -> Unit
 
 internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
@@ -37,14 +37,6 @@ internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
  */
 internal typealias scrollUpDownPair = Pair<Int, () -> Any>
 
-/**
- * first: the mText to display
- *
- * second: the mText size in pixels
- *
- * third: the resource id of the color of the mText (MUST be @ColorRes)
- */
-internal typealias swipeBackgroundText = Triple<String, Float, Int>
 internal typealias actionModeTitleProvider = () -> String
 
 
