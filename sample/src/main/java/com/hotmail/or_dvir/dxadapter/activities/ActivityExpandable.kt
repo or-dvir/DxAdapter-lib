@@ -30,6 +30,7 @@ class ActivityExpandable : AppCompatActivity()
 
         val expandableAdapter = MyAdapterExpandable(list).apply {
 
+            //please read documentation for special notes on this variable
             onlyOneItemExpanded = true
 
             onItemCollapsed = { adapterPosition, item ->
@@ -38,14 +39,6 @@ class ActivityExpandable : AppCompatActivity()
 
             onItemExpanded = { adapterPosition, item ->
                 toast("expanded item ${item.mText}")
-
-                //how to get only one item expanded at a time
-//                val allExceptThisOne =
-//                    getAllExpandedItems().toMutableList().apply { remove(item) }
-//
-//                //list could be long... so prevent a lot of calls to the listener
-//                //with the optional variable
-//                collapse(allExceptThisOne, false)
             }
         }
 

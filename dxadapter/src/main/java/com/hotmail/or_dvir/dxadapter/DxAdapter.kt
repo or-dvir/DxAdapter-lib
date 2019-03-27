@@ -28,13 +28,13 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     var onItemClick: onItemClickListener<ITEM>? = null
     var onItemLongClick: onItemLongClickListener<ITEM>? = null
 
-    //using item reference and not position because the position might change.
-    //e.g. user expands position 0 -> user switches first and second items ->
-    //user expands position 3 -> actual expanded item is now at position 1 but
-    //the variable (if it were saving position) would still be 0.
-//    private var mExpandedItemToCollapse: DxItemExpandable? = null
-    private var mLastExpandedItem: ITEM? = null
-//    private var mLastExpandedItem: DxItemExpandable? = null
+    /**
+     * default value: FALSE
+     *
+     * if TRUE, any call to one of the [expand] methods that accepts a list
+     * would only expand the first item of that list.
+     * In the case of [expandAll], only the first item in the adapter will be expanded.
+     */
     var onlyOneItemExpanded = false
 
     /**
@@ -42,8 +42,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      *
      * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
      * would also trigger the click listener and long-click listener.
-     *
-     * if FALSE, those listeners would NOT be triggered in "selection mode".
      */
     var triggerClickListenersInSelectionMode = false
 
@@ -215,18 +213,31 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     fun getNumExpandedItems() = getAllExpandedItems().size
     fun getAllExpandedIndices() = getIndicesForItems(getAllExpandedItems())
 
+    /**
+     * expands all the items of this adapter at the given indices.
+     *
+     * NOTE: if [onlyOneItemExpanded] is TRUE, then only the first item in [indices] will be expanded
+     */
     @JvmName("expandListIndices")
     fun expand(indices: List<Int>, triggerListener: Boolean = true) =
         expandOrCollapse(true, indices, triggerListener)
-    fun expand(index: Int) = expand(listOf(index))
+    /**
+     * expands all the given items.
+     *
+     * NOTE: if [onlyOneItemExpanded] is TRUE, then only the first item in [items] will be expanded
+     */
     fun expand(items: List<ITEM>, triggerListener: Boolean = true) =
         expand(getIndicesForItems(items), triggerListener)
+    fun expand(index: Int) = expand(listOf(index))
     fun expand(item: ITEM) = expand(listOf(item))
 
     /**
      * convenience function to expand all items.
      *
-     * note that this function does NOT trigger [onItemExpanded].
+     * NOTE: that this function does NOT trigger [onItemExpanded].
+     *
+     * NOTE: if onlyOneItemExpanded is TRUE, only the first item in this adapter
+     * will be expanded.
      */
     fun expandAll() = expand(mItems, false)
 
@@ -252,13 +263,19 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         if(isInSelectionMode())
             return
 
-        if(onlyOneItemExpanded)
-
+        val tempIndices =
+            when
+            {
+                indices.isEmpty() -> null
+                shouldExpand && onlyOneItemExpanded -> listOf(indices[0])
+                else -> indices
+            }
 
         //todo this is getting too nested... see if you can improve it
-        indices.forEach { position ->
+        tempIndices?.forEach { position ->
             if (isInBounds(position))
             {
+                //todo can i change this to apply?
                 mItems[position].let {
 
                     //only expand/collapse if not already expanded/collapsed
@@ -276,6 +293,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                                 onItemCollapsed?.invoke(position, it)
                         }
 
+                        if (shouldExpand)
+                            checkOnlyOneItemExpanded(it)
                         notifyItemChanged(position)
                     }
                 }
@@ -283,42 +302,18 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         }
     }
 
-//    private fun checkOnlyOneItemExpanded()
-//    {
-//        if(onlyOneItemExpanded)
-//        {
-//            val allExceptLast =
-//                getAllExpandedItems().toMutableList().apply { remove(mLastExpandedItem) }
-//
-//            if(allExceptLast.size > 0)
-//                collapse(allExceptLast)
-//        }
-//
-//        //////////////////////////////////////////////////////////////
-//        if(!onlyOneItemExpanded)
-//            return
-//
-//        if(mExpandedItemToCollapse == null)
-//        {
-//            //if we're here then this is the first time we're trying to collapse
-//            //the previous expanded item (which doesn't exist yet),
-//            //so just set the variable for next time.
-//            mExpandedItemToCollapse = mLastExpandedItem
-//            return
-//        }
-//
-//        mExpandedItemToCollapse.apply {
-//            //we must calculate position every time.
-//            //see comment on mExpandedItemToCollapse for explanation
-//            val index = mItems.indexOf(this as DxItem)
-//
-//            mIsExpanded = false
-//            //using mItems[index] and not "this" because "this"
-//            //causes a compile error
-//            onItemCollapsed?.invoke(index, mItems[index])
-//            notifyItemChanged(index)
-//        }
-//    }
+    private fun checkOnlyOneItemExpanded(newExpandedItem: ITEM)
+    {
+        if(onlyOneItemExpanded)
+        {
+            val allExceptNew =
+                getAllExpandedItems().toMutableList().apply { remove(newExpandedItem) }
+
+            //list could be long... so prevent a lot of calls to the listener
+            //with the optional variable
+            collapse(allExceptNew, true)
+        }
+    }
 
     private fun getIndicesForItems(items: List<ITEM>) = items.map { mItems.indexOf(it) }
 
