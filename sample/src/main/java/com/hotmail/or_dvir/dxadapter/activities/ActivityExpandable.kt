@@ -31,7 +31,7 @@ class ActivityExpandable : AppCompatActivity()
         val expandableAdapter = MyAdapterExpandable(list).apply {
 
             //please read documentation for special notes on this variable
-            onlyOneItemExpanded = true
+//            onlyOneItemExpanded = true
 
             onItemCollapsed = { adapterPosition, item ->
                 toast("collapsed item ${item.mText}")

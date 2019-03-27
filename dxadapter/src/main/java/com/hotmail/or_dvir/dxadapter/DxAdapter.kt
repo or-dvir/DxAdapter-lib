@@ -275,26 +275,25 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         tempIndices?.forEach { position ->
             if (isInBounds(position))
             {
-                //todo can i change this to apply?
-                mItems[position].let {
+                mItems[position].apply {
 
                     //only expand/collapse if not already expanded/collapsed
                     //so we don't trigger unnecessary listeners and ui updates
-                    if(it is DxItemExpandable &&
-                        shouldExpand != it.mIsExpanded)
+                    if(this is DxItemExpandable &&
+                        shouldExpand != mIsExpanded)
                     {
-                        it.mIsExpanded = shouldExpand
+                        mIsExpanded = shouldExpand
 
                         if (triggerListener)
                         {
                             if (shouldExpand)
-                                onItemExpanded?.invoke(position, it)
+                                onItemExpanded?.invoke(position, this)
                             else
-                                onItemCollapsed?.invoke(position, it)
+                                onItemCollapsed?.invoke(position, this)
                         }
 
                         if (shouldExpand)
-                            checkOnlyOneItemExpanded(it)
+                            checkOnlyOneItemExpanded(this)
                         notifyItemChanged(position)
                     }
                 }

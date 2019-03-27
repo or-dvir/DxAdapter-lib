@@ -152,14 +152,14 @@ class ActivityMain : AppCompatActivity()
                 //if you don't want background color, pass null.
                 //if you don't want icon, pass null
                 //todo if i dont want text, no point in passing text color!!!
-                swipeBackgroundRight = DxSwipeBackground("right swipe",
+                val backgroundRight = DxSwipeBackground("right swipe",
                                                          60, //todo before release, change this to SP from dimen!!!
                                                          30, //todo before release, change this to DP from dimen!!!
                                                          Color.BLACK,
                                                          Color.RED,
                                                          getDrawable(R.drawable.ic_arrow_right))
 
-                swipeBackgroundLeft = DxSwipeBackground("left swipe",
+                val backgroundLeft = DxSwipeBackground("left swipe",
                                                         60, //todo before release, change this to SP from dimen!!!
                                                         30, //todo before release, change this to DP from dimen!!!
                                                         Color.BLACK,
@@ -178,7 +178,9 @@ class ActivityMain : AppCompatActivity()
                 //in the example below, the "direction" parameter of the
                 //callback will ALSO be either ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT.
                 //however if you check for ItemTouchHelper.START in the listener, it will not work
-                setItemsSwipeable(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+                setItemsSwipeable(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+                                  backgroundRight,
+                                  backgroundLeft)
                 { item, position, direction ->
 
                     if (direction == ItemTouchHelper.START)

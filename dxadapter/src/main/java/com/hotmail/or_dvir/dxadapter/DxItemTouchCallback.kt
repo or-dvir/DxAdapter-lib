@@ -36,7 +36,9 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
     private var mTextX = 0f
     private var mTextY = 0f
     private var mIsSwipingLeft = false
-    private var mSwipeBackground: DxSwipeBackground? = null
+    private var mSwipeBackgroundForDrawing: DxSwipeBackground? = null
+    private var mSwipeBackgroundLeft: DxSwipeBackground? = null
+    private var mSwipeBackgroundRight: DxSwipeBackground? = null
 
     /**
      * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
@@ -71,9 +73,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      */
     var onItemMove: onItemsMoveListener<ITEM>? = null
 
-    var swipeBackgroundLeft: DxSwipeBackground? = null
-    var swipeBackgroundRight: DxSwipeBackground? = null
-
     private var onItemSwiped: Pair<Int, onItemSwipedListener<ITEM>>? = null
 
     /**
@@ -84,9 +83,15 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      * @param onSwipeListener onItemSwipedListener<ITEM>:
      *     a callback to invoke when an item is swiped.
      */
-    fun setItemsSwipeable(swipeDirections: Int, onSwipeListener: onItemSwipedListener<ITEM>)
+    fun setItemsSwipeable(swipeDirections: Int,
+                          swipeBackgroundRight: DxSwipeBackground,
+                          swipeBackgroundLeft: DxSwipeBackground,
+                          onSwipeListener: onItemSwipedListener<ITEM>)
     {
         onItemSwiped = Pair(swipeDirections, onSwipeListener)
+
+        mSwipeBackgroundLeft = swipeBackgroundLeft
+        mSwipeBackgroundRight = swipeBackgroundRight
     }
 
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
@@ -196,14 +201,14 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
         val itemView = viewHolder.itemView
         mIsSwipingLeft = dx < 0 && dx != 0f
 
-        mSwipeBackground = when
+        mSwipeBackgroundForDrawing = when
         {
             //not swiping, or swiping but item is exactly in the middle.
             //in such cases, we don't draw the background
             dx == 0f -> null
 
             mIsSwipingLeft ->
-                swipeBackgroundLeft?.apply {
+                mSwipeBackgroundLeft?.apply {
                     mBackgroundColorDrawable.setBounds(itemView.right + dx.roundToInt(),
                                                        itemView.top,
                                                        itemView.right,
@@ -212,7 +217,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
 
             //swiping right
             else ->
-                swipeBackgroundRight?.apply {
+                mSwipeBackgroundRight?.apply {
                     mBackgroundColorDrawable.setBounds(itemView.left,
                                                        itemView.top,
                                                        itemView.left + dx.roundToInt(),
@@ -220,7 +225,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                 }
         }
 
-        mSwipeBackground?.apply {
+        mSwipeBackgroundForDrawing?.apply {
             //NOTE:
             //drawing background MUST come BEFORE drawing the mText
             mBackgroundColorDrawable.let { backDraw ->
