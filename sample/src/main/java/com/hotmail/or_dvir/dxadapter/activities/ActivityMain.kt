@@ -11,8 +11,6 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import co.zsmb.materialdrawerkt.builders.drawer
-import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyItem
