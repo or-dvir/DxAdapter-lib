@@ -21,9 +21,21 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 {
     //todo find a way so that the user does NOT have to extend DxItem
 
+    //todo this class is getting too big.
+    //todo separate adapter features (select/expand/etc) to separate classes
+
     //click listeners
     var onItemClick: onItemClickListener<ITEM>? = null
     var onItemLongClick: onItemLongClickListener<ITEM>? = null
+
+    //using item reference and not position because the position might change.
+    //e.g. user expands position 0 -> user switches first and second items ->
+    //user expands position 3 -> actual expanded item is now at position 1 but
+    //the variable (if it were saving position) would still be 0.
+//    private var mExpandedItemToCollapse: DxItemExpandable? = null
+    private var mLastExpandedItem: ITEM? = null
+//    private var mLastExpandedItem: DxItemExpandable? = null
+    var onlyOneItemExpanded = false
 
     /**
      * default value: FALSE
@@ -154,10 +166,9 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     /**
      * convenience function to select all items.
      *
-     * NOTE: by default this function does NOT trigger [onItemSelectStateChangedListener].
-     * if you DO want it to trigger, pass TRUE for the optional argument.
+     * note that this function does NOT trigger [onItemSelectStateChangedListener].
      */
-    fun selectAll(triggerListener: Boolean = false) = select(mItems, triggerListener)
+    fun selectAll() = select(mItems, false)
 
     //todo add documentation that when selecting/deselecting all items listeners will NOT be triggered!!!
     @JvmName("deselectListIndices")
@@ -171,10 +182,9 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     /**
      * convenience function to deselect all items.
      *
-     * NOTE: by default this function does NOT trigger [onItemSelectStateChangedListener].
-     * if you DO want it to trigger, pass TRUE for the optional argument.
+     * note that this function does NOT trigger [onItemSelectStateChangedListener].
      */
-    fun deselectAll(triggerListener: Boolean = false) = deselect(mItems, triggerListener)
+    fun deselectAll() = deselect(mItems, false)
 
     private fun selectOrDeselect(shouldSelect: Boolean,
                                  indices: List<Int>,
@@ -214,12 +224,11 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     fun expand(item: ITEM) = expand(listOf(item))
 
     /**
-     * convenience function to expand items.
+     * convenience function to expand all items.
      *
-     * NOTE: by default this function does NOT trigger [onItemExpanded].
-     * if you DO want it to trigger, pass TRUE for the optional argument.
+     * note that this function does NOT trigger [onItemExpanded].
      */
-    fun expandAll(triggerListener: Boolean = false) = expand(mItems, triggerListener)
+    fun expandAll() = expand(mItems, false)
 
     @JvmName("collapseListIndices")
     fun collapse(indices: List<Int>, triggerListener: Boolean = true) =
@@ -230,52 +239,86 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     fun collapse(item: ITEM) = collapse(listOf(item))
 
     /**
-     * convenience function to collapse items.
+     * convenience function to collapse all items.
      *
-     * NOTE: by default this function does NOT trigger [onItemCollapsed].
-     * if you DO want it to trigger, pass TRUE for the optional argument.
+     * note that this function does NOT trigger [onItemCollapsed].
      */
-    fun collapseAll(triggerListener: Boolean = false) = collapse(mItems, triggerListener)
+    fun collapseAll() = collapse(mItems, false)
 
     private fun expandOrCollapse(shouldExpand: Boolean,
                                  indices: List<Int>,
                                  triggerListener: Boolean)
     {
+        if(isInSelectionMode())
+            return
+
+        if(onlyOneItemExpanded)
+
+
+        //todo this is getting too nested... see if you can improve it
         indices.forEach { position ->
             if (isInBounds(position))
             {
-                mItems[position].apply {
+                mItems[position].let {
 
                     //only expand/collapse if not already expanded/collapsed
                     //so we don't trigger unnecessary listeners and ui updates
-                    if(this is DxItemExpandable)
+                    if(it is DxItemExpandable &&
+                        shouldExpand != it.mIsExpanded)
                     {
-                        //todo can i move this if outside of the forEach function??????
-                        if(isInSelectionMode()/* && !expandAndCollapseItemsInSelectionMode*/)
-                            return@forEach
+                        it.mIsExpanded = shouldExpand
 
-
-                        //only expand/collapse if actually needed
-                        //to avoid triggering listener multiple times
-                        if(shouldExpand != mIsExpanded)
+                        if (triggerListener)
                         {
-                            mIsExpanded = shouldExpand
-
-                            if(triggerListener)
-                            {
-                                if (shouldExpand)
-                                    onItemExpanded?.invoke(position, this)
-                                else
-                                    onItemCollapsed?.invoke(position, this)
-                            }
-
-                            notifyItemChanged(position)
+                            if (shouldExpand)
+                                onItemExpanded?.invoke(position, it)
+                            else
+                                onItemCollapsed?.invoke(position, it)
                         }
+
+                        notifyItemChanged(position)
                     }
                 }
             }
         }
     }
+
+//    private fun checkOnlyOneItemExpanded()
+//    {
+//        if(onlyOneItemExpanded)
+//        {
+//            val allExceptLast =
+//                getAllExpandedItems().toMutableList().apply { remove(mLastExpandedItem) }
+//
+//            if(allExceptLast.size > 0)
+//                collapse(allExceptLast)
+//        }
+//
+//        //////////////////////////////////////////////////////////////
+//        if(!onlyOneItemExpanded)
+//            return
+//
+//        if(mExpandedItemToCollapse == null)
+//        {
+//            //if we're here then this is the first time we're trying to collapse
+//            //the previous expanded item (which doesn't exist yet),
+//            //so just set the variable for next time.
+//            mExpandedItemToCollapse = mLastExpandedItem
+//            return
+//        }
+//
+//        mExpandedItemToCollapse.apply {
+//            //we must calculate position every time.
+//            //see comment on mExpandedItemToCollapse for explanation
+//            val index = mItems.indexOf(this as DxItem)
+//
+//            mIsExpanded = false
+//            //using mItems[index] and not "this" because "this"
+//            //causes a compile error
+//            onItemCollapsed?.invoke(index, mItems[index])
+//            notifyItemChanged(index)
+//        }
+//    }
 
     private fun getIndicesForItems(items: List<ITEM>) = items.map { mItems.indexOf(it) }
 

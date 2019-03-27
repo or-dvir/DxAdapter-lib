@@ -30,6 +30,8 @@ class ActivityExpandable : AppCompatActivity()
 
         val expandableAdapter = MyAdapterExpandable(list).apply {
 
+            onlyOneItemExpanded = true
+
             onItemCollapsed = { adapterPosition, item ->
                 toast("collapsed item ${item.mText}")
             }
@@ -37,20 +39,13 @@ class ActivityExpandable : AppCompatActivity()
             onItemExpanded = { adapterPosition, item ->
                 toast("expanded item ${item.mText}")
 
-                if calling expandAll() with this in effect (AND triggering the listener)
-                then only the last item in the list would eventually be expanded
-                and the listener will be called for EVERY ITEM ON THE LIST!!!!!!
-
-                maybe have a variable in adapter onlyOneItemExpandable
-                and when a function is called to expand multiple items, if that variabel is true,
-                simply do nothing????
-                //how to have only 1 item expanded
-                val allExceptThisOne =
-                    getAllExpandedItems().toMutableList().apply { remove(item) }
-
-                //list could be long... so prevent a lot of calls to the listener
-                //with the optional variable
-                collapse(allExceptThisOne, false)
+                //how to get only one item expanded at a time
+//                val allExceptThisOne =
+//                    getAllExpandedItems().toMutableList().apply { remove(item) }
+//
+//                //list could be long... so prevent a lot of calls to the listener
+//                //with the optional variable
+//                collapse(allExceptThisOne, false)
             }
         }
 
@@ -66,8 +61,8 @@ class ActivityExpandable : AppCompatActivity()
 
                 setItemsSwipeable(ItemTouchHelper.RIGHT)
                 { item, position, direction ->
-                    //just to prevent item being removed from the screen completly.
-                    //do whatever you want here
+                    //just to prevent item being removed from the screen completely.
+                    //you can do whatever you want here
                     expandableAdapter.notifyItemChanged(position)
                 }
             }

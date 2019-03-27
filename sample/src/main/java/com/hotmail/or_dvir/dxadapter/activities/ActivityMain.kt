@@ -166,7 +166,7 @@ class ActivityMain : AppCompatActivity()
                                                         Color.CYAN,
                                                         getDrawable(R.drawable.ic_arrow_left))
 
-                //todo wne documenting add a note that initializing swipeBackgroundLeft/right
+                //todo when documenting add a note that initializing swipeBackgroundLeft/right
                 //todo does not automatically mean that swipe is enabled.
                 //todo the user MUST call setItemsSwipeable() to enable swiping
                 //todo maybe i can make it such that swipeBackgroundLeft/right is part of the function?
