@@ -28,7 +28,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
 
     private val mTextRect = Rect()
     private var mDoesBackFit = false
-
     private var mIconTop = 0
     private var mIconBottom = 0
     private var mIconLeft = 0
@@ -39,6 +38,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
     private var mSwipeBackgroundForDrawing: DxSwipeBackground? = null
     private var mSwipeBackgroundLeft: DxSwipeBackground? = null
     private var mSwipeBackgroundRight: DxSwipeBackground? = null
+    private var onItemSwiped: Pair<Int, onItemSwipedListener<ITEM>>? = null
 
     /**
      * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
@@ -73,8 +73,6 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      */
     var onItemMove: onItemsMoveListener<ITEM>? = null
 
-    private var onItemSwiped: Pair<Int, onItemSwipedListener<ITEM>>? = null
-
     /**
      * @param swipeDirections Int: the direction of allowed swiping. one or more of:
      * [LEFT][ItemTouchHelper.LEFT], [RIGHT][ItemTouchHelper.RIGHT],
@@ -84,8 +82,8 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
      *     a callback to invoke when an item is swiped.
      */
     fun setItemsSwipeable(swipeDirections: Int,
-                          swipeBackgroundRight: DxSwipeBackground,
-                          swipeBackgroundLeft: DxSwipeBackground,
+                          swipeBackgroundRight: DxSwipeBackground?,
+                          swipeBackgroundLeft: DxSwipeBackground?,
                           onSwipeListener: onItemSwipedListener<ITEM>)
     {
         onItemSwiped = Pair(swipeDirections, onSwipeListener)
@@ -292,6 +290,5 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
     override fun getSwipeThreshold(viewHolder: ViewHolder) =
         swipeThreshold ?: super.getSwipeThreshold(viewHolder)
 
-    //todo allow swiping with a handle??? similar to drag and drop with a handle - look online for examples
     override fun isItemViewSwipeEnabled() = onItemSwiped?.first != null
 }

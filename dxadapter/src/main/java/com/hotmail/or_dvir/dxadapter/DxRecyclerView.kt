@@ -13,6 +13,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 {
     //todo test these listeners if the adapter changes during runtime!!!!
 
+    //todo get rid of all Pair and Triple and add setter methods. this is less confusing for the user
     /**
      * * [IOnItemVisibilityChanged.onVisible] will trigger immediately as the [DxRecyclerView] loads
      * (assuming the adapter contains at least 1 item).

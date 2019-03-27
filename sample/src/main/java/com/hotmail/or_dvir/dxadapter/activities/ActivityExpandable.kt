@@ -45,14 +45,14 @@ class ActivityExpandable : AppCompatActivity()
         val itemTouchCallback =
             DxItemTouchCallback(expandableAdapter).apply {
 
-                swipeBackgroundRight = DxSwipeBackground("right swipe",
+                val swipeBackgroundRight = DxSwipeBackground("right swipe",
                                                          60,
                                                          30,
                                                          Color.BLACK,
                                                          Color.RED,
                                                          getDrawable(R.drawable.ic_arrow_right))
 
-                setItemsSwipeable(ItemTouchHelper.RIGHT)
+                setItemsSwipeable(ItemTouchHelper.RIGHT, swipeBackgroundRight, null)
                 { item, position, direction ->
                     //just to prevent item being removed from the screen completely.
                     //you can do whatever you want here

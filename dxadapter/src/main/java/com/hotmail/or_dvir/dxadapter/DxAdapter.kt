@@ -168,7 +168,6 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     fun selectAll() = select(mItems, false)
 
-    //todo add documentation that when selecting/deselecting all items listeners will NOT be triggered!!!
     @JvmName("deselectListIndices")
     fun deselect(indices: List<Int>, triggerListener: Boolean = true) =
         selectOrDeselect(false, indices, triggerListener)
