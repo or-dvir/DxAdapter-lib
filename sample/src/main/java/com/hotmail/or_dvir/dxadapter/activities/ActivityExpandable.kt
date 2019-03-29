@@ -14,10 +14,11 @@ import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterExpandable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.activity_filter.*
+import or_dvir.hotmail.com.dxutils.setHomeUpEnabled
 import org.jetbrains.anko.toast
 
-class ActivityExpandable : AppCompatActivity()
-{
+class ActivityExpandable : BaseActivity()
+    {
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)

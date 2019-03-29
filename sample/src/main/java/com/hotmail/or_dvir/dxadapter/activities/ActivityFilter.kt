@@ -12,7 +12,7 @@ import com.hotmail.or_dvir.dxadapter.adapters.MyAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.activity_filter.*
 
-class ActivityFilter : AppCompatActivity()
+class ActivityFilter : BaseActivity()
 {
 
     override fun onCreate(savedInstanceState: Bundle?)

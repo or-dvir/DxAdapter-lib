@@ -13,7 +13,7 @@ import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
 import kotlinx.android.synthetic.main.activity_multi_type.*
 
-class ActivityMultiType : AppCompatActivity()
+class ActivityMultiType : BaseActivity()
 {
     override fun onCreate(savedInstanceState: Bundle?)
     {

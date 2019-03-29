@@ -13,7 +13,7 @@ import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterInnerViews
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithViews
 import kotlinx.android.synthetic.main.activity_inner_views.*
 
-class ActivityInnerViews : AppCompatActivity()
+class ActivityInnerViews : BaseActivity()
 {
     lateinit var mAdapter: MyAdapterInnerViews
     lateinit var mItemTouchHelper: ItemTouchHelper

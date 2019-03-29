@@ -2,6 +2,7 @@ package com.hotmail.or_dvir.dxadapter.activities
 
 import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
 import android.support.v7.widget.DividerItemDecoration
@@ -11,8 +12,6 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import co.zsmb.materialdrawerkt.builders.drawer
-import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyItem
@@ -58,7 +57,12 @@ class ActivityMain : AppCompatActivity()
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initializeDrawer()
+//        initializeDrawer()
+
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
 
         val myListItems = mutableListOf<MyItem>()
 
@@ -258,12 +262,20 @@ class ActivityMain : AppCompatActivity()
             onScrollingDownListener = Pair(50, { fab.hide() })
             onScrollingUpListener = Pair(50, { fab.show() })
         }
-    }
 
-    private fun initializeDrawer()
-    {
-        drawer {
-            primaryItem { "hello" }
+        nav_view.setNavigationItemSelectedListener {
+
+            when (it.itemId)
+            {
+                R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
+                R.id.multiTypeSample -> startActivity<ActivityMultiType>()
+                R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
+                R.id.filterSample -> startActivity<ActivityFilter>()
+                R.id.expandableSample -> startActivity<ActivityExpandable>()
+            }
+
+            drawer_layout.closeDrawers()
+            true
         }
     }
 
@@ -271,6 +283,14 @@ class ActivityMain : AppCompatActivity()
     {
         when (item.itemId)
         {
+            android.R.id.home -> {
+                drawer_layout.apply {
+                    if(isDrawerOpen(GravityCompat.START))
+                        closeDrawers()
+                    else
+                        openDrawer(GravityCompat.START)
+                }
+            }
             R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
             R.id.multiTypeSample -> startActivity<ActivityMultiType>()
             R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
@@ -279,12 +299,6 @@ class ActivityMain : AppCompatActivity()
             else -> super.onOptionsItemSelected(item)
         }
 
-        return true
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean
-    {
-        menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 }

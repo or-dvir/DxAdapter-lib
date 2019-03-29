@@ -2,29 +2,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/innerViewsSample"
-        android:title="inner views sample"
-        app:showAsAction="never"/>
+    <group android:id="@+id/line1">
+        <item
+            android:id="@+id/innerViewsSample"
+            android:title="Inner Views Sample"
+            app:showAsAction="never"/>
+    </group>
 
-    <item
-        android:id="@+id/multiTypeSample"
-        android:title="multi-type sample"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/stickyHeaderSample"
-        android:title="sticky header sample"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/filterSample"
-        android:title="filter sample"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/expandableSample"
-        android:title="expandable sample"
-        app:showAsAction="never"/>
-
+    <group android:id="@+id/line2">
+        <item
+            android:id="@+id/multiTypeSample"
+            android:title="Multi-Type Sample"
+            app:showAsAction="never"/>
+    </group>
+    <group android:id="@+id/line3">
+        <item
+            android:id="@+id/stickyHeaderSample"
+            android:title="Sticky Header Sample"
+            app:showAsAction="never"/>
+    </group>
+    <group android:id="@+id/line4">
+        <item
+            android:id="@+id/filterSample"
+            android:title="Filter Sample"
+            app:showAsAction="never"/>
+    </group>
+    <group android:id="@+id/line5">
+        <item
+            android:id="@+id/expandableSample"
+            android:title="Expandable Sample"
+            app:showAsAction="never"/>
+    </group>
 </menu>

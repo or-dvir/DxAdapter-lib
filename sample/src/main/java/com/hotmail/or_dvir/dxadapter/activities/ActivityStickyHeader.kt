@@ -13,7 +13,7 @@ import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.activity_multi_type.*
 
-class ActivityStickyHeader : AppCompatActivity()
+class ActivityStickyHeader : BaseActivity()
 {
     private lateinit var mItemTouchHelper: ItemTouchHelper
 
