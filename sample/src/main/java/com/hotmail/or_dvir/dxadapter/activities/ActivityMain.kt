@@ -11,6 +11,8 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import co.zsmb.materialdrawerkt.builders.drawer
+import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyItem
@@ -56,10 +58,11 @@ class ActivityMain : AppCompatActivity()
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initializeDrawer()
 
         val myListItems = mutableListOf<MyItem>()
 
-        for(i in 1..100)
+        for (i in 1..100)
         {
             myListItems.add(MyItem(i.toString()))
         }
@@ -153,18 +156,18 @@ class ActivityMain : AppCompatActivity()
                 //if you don't want icon, pass null
                 //todo if i dont want text, no point in passing text color!!!
                 val backgroundRight = DxSwipeBackground("right swipe",
-                                                         60, //todo before release, change this to SP from dimen!!!
-                                                         30, //todo before release, change this to DP from dimen!!!
-                                                         Color.BLACK,
-                                                         Color.RED,
-                                                         getDrawable(R.drawable.ic_arrow_right))
-
-                val backgroundLeft = DxSwipeBackground("left swipe",
                                                         60, //todo before release, change this to SP from dimen!!!
                                                         30, //todo before release, change this to DP from dimen!!!
                                                         Color.BLACK,
-                                                        Color.CYAN,
-                                                        getDrawable(R.drawable.ic_arrow_left))
+                                                        Color.RED,
+                                                        getDrawable(R.drawable.ic_arrow_right))
+
+                val backgroundLeft = DxSwipeBackground("left swipe",
+                                                       60, //todo before release, change this to SP from dimen!!!
+                                                       30, //todo before release, change this to DP from dimen!!!
+                                                       Color.BLACK,
+                                                       Color.CYAN,
+                                                       getDrawable(R.drawable.ic_arrow_left))
 
                 //todo when documenting add a note that initializing swipeBackgroundLeft/right
                 //todo does not automatically mean that swipe is enabled.
@@ -234,7 +237,8 @@ class ActivityMain : AppCompatActivity()
         }
 
         rv.apply {
-            addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
+            addItemDecoration(DividerItemDecoration(this@ActivityMain,
+                                                    DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
             adapter = mSampleAdapter
             mItemTouchHelper.attachToRecyclerView(this)
@@ -253,6 +257,13 @@ class ActivityMain : AppCompatActivity()
 
             onScrollingDownListener = Pair(50, { fab.hide() })
             onScrollingUpListener = Pair(50, { fab.show() })
+        }
+    }
+
+    private fun initializeDrawer()
+    {
+        drawer {
+            primaryItem { "hello" }
         }
     }
 
