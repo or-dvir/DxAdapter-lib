@@ -9,7 +9,7 @@ import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
-import kotlinx.android.synthetic.main.my_item_with_image.view.*
+import kotlinx.android.synthetic.main.my_item_image_vertical.view.*
 
 //for multi-type adapter, the item type and view holder type need to be shared
 //between all supported items of this adapter. i use DxItem and RecyclerViewHolder
@@ -46,7 +46,7 @@ class MyMultiTypeAdapter(mItems: MutableList<DxItem>)
         return when (viewType)
         {
             R.id.itemType_MyItem -> R.layout.my_item
-            R.id.itemType_MyItemWithImage -> R.layout.my_item_with_image
+            R.id.itemType_MyItemWithImage -> R.layout.my_item_image_vertical
             else -> 0 //just for the compiler. handle this however you see fit
         }
     }

@@ -46,6 +46,32 @@ abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
     abstract fun expandAndCollapseOnItemClick(): Boolean
 }
 
+/**
+ * @property sensitivityAll Int speed sensitivity of all the listeners. The larger the number, the faster the
+ * user has to scroll for the listeners to trigger.
+ *
+ * It's possible to set individual scroll listeners sensitivity using the optional parameters
+ */
+class DxScrollListener(internal val sensitivityAll: Int,
+                       internal val sensitivityUp: Int = sensitivityAll,
+                       internal val sensitivityDown: Int = sensitivityAll,
+                       internal val sensitivityLeft: Int = sensitivityAll,
+                       internal val sensitivityRight: Int = sensitivityAll)
+{
+    var onScrollUp: emptyListener? = null
+    var onScrollDown: emptyListener? = null
+    var onScrollLeft: emptyListener? = null
+    var onScrollRight: emptyListener? = null
+}
+
+internal enum class DxScrollDirection
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}
+
 //todo add documentation!!!
 class DxSwipeBackground (internal var mText: String,
                          private val mTextSizePx: Int,

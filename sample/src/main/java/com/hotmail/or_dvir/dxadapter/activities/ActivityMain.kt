@@ -57,7 +57,6 @@ class ActivityMain : AppCompatActivity()
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        initializeDrawer()
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -67,9 +66,7 @@ class ActivityMain : AppCompatActivity()
         val myListItems = mutableListOf<MyItem>()
 
         for (i in 1..100)
-        {
             myListItems.add(MyItem(i.toString()))
-        }
 
         mSampleAdapter = MyAdapter(myListItems).apply {
             onItemClick = { view, position, item ->
@@ -100,7 +97,6 @@ class ActivityMain : AppCompatActivity()
 //            selectedItemBackgroundColor = resources.getColor(android.R.color.holo_blue_dark)
 
             //default is true.
-            //however this requires a long-click listener to work
 //            defaultItemSelectionBehavior = false
 
             //default is false
@@ -259,8 +255,11 @@ class ActivityMain : AppCompatActivity()
                 override fun onInvisible() = Log.i("sample", "last item not visible")
             }
 
-            onScrollingDownListener = Pair(50, { fab.hide() })
-            onScrollingUpListener = Pair(50, { fab.show() })
+
+            onScrollListener = DxScrollListener(50).apply {
+                onScrollDown = { fab.hide() }
+                onScrollUp = { fab.show() }
+            }
         }
 
         nav_view.setNavigationItemSelectedListener {
@@ -272,6 +271,7 @@ class ActivityMain : AppCompatActivity()
                 R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
                 R.id.filterSample -> startActivity<ActivityFilter>()
                 R.id.expandableSample -> startActivity<ActivityExpandable>()
+                R.id.horizontalSample -> startActivity<ActivityHorizontalRv>()
             }
 
             drawer_layout.closeDrawers()

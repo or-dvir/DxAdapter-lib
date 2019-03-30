@@ -11,22 +11,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ActivityExpandable"></activity>
-        <activity android:name=".activities.ActivityFilter"></activity>
+        <activity android:name=".activities.ActivityHorizontalRv">
+        </activity>
+        <activity android:name=".activities.ActivityExpandable"/>
+        <activity android:name=".activities.ActivityFilter"/>
         <activity
             android:name=".activities.ActivityStickyHeader"
-            android:label="Sticky Header" />
+            android:label="Sticky Header"/>
         <activity
             android:name=".activities.ActivityMultiType"
-            android:label="Multi Type" />
+            android:label="Multi Type"/>
         <activity
             android:name=".activities.ActivityInnerViews"
-            android:label="Inner Views" />
+            android:label="Inner Views"/>
         <activity android:name=".activities.ActivityMain">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
     </application>

@@ -30,12 +30,7 @@ internal typealias onItemSwipedListener<ITEM> = (item: ITEM,
 
 internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
 
-/**
- * first: scroll sensitivity to trigger the listener
- *
- * second: the listener itself
- */
-internal typealias scrollUpDownPair = Pair<Int, () -> Any>
+internal typealias emptyListener = () -> Unit
 
 internal typealias actionModeTitleProvider = () -> String
 

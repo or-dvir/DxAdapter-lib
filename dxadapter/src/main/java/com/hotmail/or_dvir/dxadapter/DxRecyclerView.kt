@@ -29,28 +29,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
      */
     var lastItemVisibilityListener: IOnItemVisibilityChanged? = null
 
-    /**
-     * NOTE: depending on the sensitivity,
-     * this will trigger MANY times while scrolling.
-     *
-     * [Pair.first] = speed sensitivity of the listener.
-     * the larger the number, the faster the user has to scroll for the
-     * listener to trigger
-     *
-     * [Pair.second] = the listener itself
-     */
-    var onScrollingDownListener: scrollUpDownPair? = null
-    /**
-     * NOTE: depending on the sensitivity,
-     * this will trigger MANY times while scrolling.
-     *
-     * [Pair.first] = speed sensitivity of the listener.
-     * the larger the number, the faster the user has to scroll for the
-     * listener to trigger
-     *
-     * [Pair.second] = the listener itself
-     */
-    var onScrollingUpListener: scrollUpDownPair? = null
+    var onScrollListener: DxScrollListener? = null
 
     private var notifiedFirstVisible = false
     private var notifiedFirstInvisible = false
@@ -88,17 +67,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                 {
                     super.onScrolled(recyclerView, dx, dy)
 
-                    //todo what about HORIZONTAL recycler view? should probably use dx
-
-                    when
-                    {
-                        //user is dragging up, so list is scrolling down.
-                        dy > 0 ->
-                            onScrollingDownListener?.let { invokeScrollUpDownListener(dy, it) }
-                        //user is dragging down, so list is scrolling up.
-                        dy < 0 ->
-                            onScrollingUpListener?.let { invokeScrollUpDownListener(dy, it) }
-                    }
+                    triggerScrollListeners(dx, dy)
 
                     //todo don't forget about staggered grid!!!!!!!
                     mLayManLinear?.apply {
@@ -167,10 +136,32 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
         }
     }
 
-    private fun invokeScrollUpDownListener(dy: Int, pair: scrollUpDownPair)
+    private fun triggerScrollListeners(dx: Int, dy: Int)
     {
-        if(abs(dy) > pair.first)
-            pair.second.invoke()
+        when
+        {
+            dx > 0 -> invokeScrollListener(dx, DxScrollDirection.RIGHT)
+            dx < 0 -> invokeScrollListener(dx, DxScrollDirection.LEFT)
+
+            dy > 0 -> invokeScrollListener(dy, DxScrollDirection.DOWN)
+            dy < 0 -> invokeScrollListener(dy, DxScrollDirection.UP)
+        }
+    }
+
+    private fun invokeScrollListener(scrollValue: Int,
+                                     direction: DxScrollDirection)
+    {
+        val absVal = abs(scrollValue)
+
+        onScrollListener?.apply {
+            when (direction)
+            {
+                DxScrollDirection.UP -> if (absVal > sensitivityUp) onScrollUp?.invoke()
+                DxScrollDirection.DOWN -> if (absVal > sensitivityDown) onScrollDown?.invoke()
+                DxScrollDirection.LEFT -> if (absVal > sensitivityLeft) onScrollLeft?.invoke()
+                DxScrollDirection.RIGHT -> if (absVal > sensitivityRight) onScrollRight?.invoke()
+            }
+        }
     }
 
     override fun onDetachedFromWindow()
