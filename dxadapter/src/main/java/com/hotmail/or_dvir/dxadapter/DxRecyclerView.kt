@@ -76,18 +76,20 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
     private fun triggerVisibilityListeners()
     {
-        //todo don't forget about staggered grid!!!!!!!
+        var visiblePos: Int
+
+        //todo don't forget about grid\staggered grid!!!!!!!
         mLayManLinear?.apply {
             firstItemVisibilityListener?.let {
-                val firstPos = findFirstVisibleItemPosition()
+                visiblePos = findFirstVisibleItemPosition()
 
                 //if no items, we can immediately return
-                if (firstPos == NO_POSITION)
+                if (visiblePos == NO_POSITION)
                     return@let
 
                 when
                 {
-                    firstPos == 0 ->
+                    visiblePos == 0 ->
                     {
                         if (!notifiedFirstVisible)
                         {
@@ -108,16 +110,16 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
             }
 
             lastItemVisibilityListener?.let {
-                val lastPos = findLastVisibleItemPosition()
+                visiblePos = findLastVisibleItemPosition()
                 val numItems = adapter?.itemCount
 
                 //if no items or no adapter is attached, we can immediately return
-                if (lastPos == NO_POSITION || numItems == null)
+                if (visiblePos == NO_POSITION || numItems == null)
                     return@let
 
                 when
                 {
-                    lastPos == (numItems -1) ->
+                    visiblePos == (numItems -1) ->
                     {
                         if (!notifiedLastVisible)
                         {
