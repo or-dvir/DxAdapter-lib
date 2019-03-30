@@ -15,19 +15,20 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
     //todo get rid of all Pair and Triple and add setter methods. this is less confusing for the user
     /**
-     * * [IOnItemVisibilityChanged.onVisible] will trigger immediately as the [DxRecyclerView] loads
+     * * [DxItemVisibilityListener.onItemVisible] will trigger immediately as the [DxRecyclerView] loads
      * (assuming the adapter contains at least 1 item).
-     * * if your entire list fits inside the screen, [IOnItemVisibilityChanged.onInvisible] will NEVER trigger.
+     * * if the entire list fits in the screen, [DxItemVisibilityListener.onItemInvisible] will NEVER trigger.
      */
-    var firstItemVisibilityListener: IOnItemVisibilityChanged? = null
+    var firstItemVisibilityListener: DxItemVisibilityListener? = null
+
     /**
-     * * [IOnItemVisibilityChanged.onInvisible] will trigger immediately as the [DxRecyclerView] loads
-     * (assuming it does NOT fit inside the screen).
-     * * if your entire list fits inside the screen, [IOnItemVisibilityChanged.onVisible]
+     * * [DxItemVisibilityListener.onItemInvisible] will trigger immediately as the [DxRecyclerView] loads
+     * (assuming it does NOT fit in the screen).
+     * * if the entire list fits in the screen, [DxItemVisibilityListener.onItemVisible]
      * will trigger immediately as the [DxRecyclerView] loads,
      * and [IOnItemVisibilityChanged.onInvisible] will NEVER trigger.
      */
-    var lastItemVisibilityListener: IOnItemVisibilityChanged? = null
+    var lastItemVisibilityListener: DxItemVisibilityListener? = null
 
     var onScrollListener: DxScrollListener? = null
 
@@ -66,73 +67,75 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int)
                 {
                     super.onScrolled(recyclerView, dx, dy)
-
                     triggerScrollListeners(dx, dy)
-
-                    //todo don't forget about staggered grid!!!!!!!
-                    mLayManLinear?.apply {
-                        //todo when documenting, note the order of the callbacks!!!
-                        firstItemVisibilityListener?.let {
-                            val firstPos = findFirstVisibleItemPosition()
-
-                            //if no items, we can immediately return
-                            if (firstPos == NO_POSITION)
-                                return@apply
-
-                            when
-                            {
-                                firstPos == 0 ->
-                                {
-                                    if (!notifiedFirstVisible)
-                                    {
-                                        it.onVisible()
-                                        notifiedFirstVisible = true
-                                        notifiedFirstInvisible = false
-                                    }
-                                }
-
-                                //if we get here, firstPos is NOT 0
-                                !notifiedFirstInvisible ->
-                                {
-                                    it.onInvisible()
-                                    notifiedFirstVisible = false
-                                    notifiedFirstInvisible = true
-                                }
-                            }
-                        }
-
-                        lastItemVisibilityListener?.let {
-                            val lastPos = findLastVisibleItemPosition()
-                            val numItems = adapter?.itemCount
-
-                            //if no items or no adapter is attached, we can immediately return
-                            if (lastPos == NO_POSITION || numItems == null)
-                                return@apply
-
-                            when
-                            {
-                                lastPos == (numItems -1) ->
-                                {
-                                    if (!notifiedLastVisible)
-                                    {
-                                        it.onVisible()
-                                        notifiedLastVisible = true
-                                        notifiedLastInvisible = false
-                                    }
-                                }
-
-                                //if we get here, lastPos is NOT (numItems -1)
-                                !notifiedLastInvisible ->
-                                {
-                                    it.onInvisible()
-                                    notifiedLastVisible = false
-                                    notifiedLastInvisible = true
-                                }
-                            }
-                        }
-                    }
+                    triggerVisibilityListeners()
                 }
             })
+        }
+    }
+
+    private fun triggerVisibilityListeners()
+    {
+        //todo don't forget about staggered grid!!!!!!!
+        mLayManLinear?.apply {
+            firstItemVisibilityListener?.let {
+                val firstPos = findFirstVisibleItemPosition()
+
+                //if no items, we can immediately return
+                if (firstPos == NO_POSITION)
+                    return@let
+
+                when
+                {
+                    firstPos == 0 ->
+                    {
+                        if (!notifiedFirstVisible)
+                        {
+                            it.onItemVisible?.invoke()
+                            notifiedFirstVisible = true
+                            notifiedFirstInvisible = false
+                        }
+                    }
+
+                    //if we get here, firstPos is NOT 0
+                    !notifiedFirstInvisible ->
+                    {
+                        it.onItemInvisible?.invoke()
+                        notifiedFirstVisible = false
+                        notifiedFirstInvisible = true
+                    }
+                }
+            }
+
+            lastItemVisibilityListener?.let {
+                val lastPos = findLastVisibleItemPosition()
+                val numItems = adapter?.itemCount
+
+                //if no items or no adapter is attached, we can immediately return
+                if (lastPos == NO_POSITION || numItems == null)
+                    return@let
+
+                when
+                {
+                    lastPos == (numItems -1) ->
+                    {
+                        if (!notifiedLastVisible)
+                        {
+                            it.onItemVisible?.invoke()
+                            notifiedLastVisible = true
+                            notifiedLastInvisible = false
+                        }
+                    }
+
+                    //if we get here, lastPos is NOT (numItems -1)
+                    !notifiedLastInvisible ->
+                    {
+                        it.onItemInvisible?.invoke()
+                        notifiedLastVisible = false
+                        notifiedLastInvisible = true
+                    }
+                }
+            }
         }
     }
 

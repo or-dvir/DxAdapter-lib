@@ -24,15 +24,3 @@ interface IDxStickyHeader
      */
     fun isHeader(adapterPosition: Int): Boolean
 }
-
-interface IOnItemVisibilityChanged
-{
-    /**
-     * triggers when this item becomes PARTIALLY visible
-     */
-    fun onVisible(): Any
-    /**
-     * triggers when this item becomes COMPLETELY invisible
-     */
-    fun onInvisible(): Any
-}

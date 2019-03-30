@@ -5,8 +5,8 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import com.hotmail.or_dvir.dxadapter.DxItemVisibilityListener
 import com.hotmail.or_dvir.dxadapter.DxScrollListener
-import com.hotmail.or_dvir.dxadapter.IOnItemVisibilityChanged
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterHorizontal
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
@@ -31,21 +31,19 @@ class ActivityHorizontalRv : BaseActivity()
             layoutManager = LinearLayoutManager(this@ActivityHorizontalRv, RecyclerView.HORIZONTAL, false)
             adapter = adapterHorizontal
 
-            firstItemVisibilityListener = object : IOnItemVisibilityChanged
-            {
-                override fun onVisible() = Log.i("sample horizontal", "first item visible")
-                override fun onInvisible() = Log.i("sample horizontal", "first item not visible")
+            firstItemVisibilityListener = DxItemVisibilityListener().apply {
+                onItemVisible = { Log.i("sample", "first item visible") }
+                onItemInvisible = { Log.i("sample", "first item not visible") }
             }
 
-            lastItemVisibilityListener = object : IOnItemVisibilityChanged
-            {
-                override fun onVisible() = Log.i("sample horizontal", "last item visible")
-                override fun onInvisible() = Log.i("sample horizontal", "last item not visible")
+            lastItemVisibilityListener = DxItemVisibilityListener().apply {
+                onItemVisible = { Log.i("sample", "last item visible") }
+                onItemInvisible = { Log.i("sample", "last item not visible") }
             }
 
             onScrollListener = DxScrollListener(50).apply {
-                onScrollLeft = { Log.i("sample horizontal", "scroll left") }
-                onScrollRight = { Log.i("sample horizontal", "scroll right") }
+                onScrollLeft = { Log.i("sample", "scroll left") }
+                onScrollRight = { Log.i("sample", "scroll right") }
             }
         }
     }

@@ -64,6 +64,12 @@ class DxScrollListener(internal val sensitivityAll: Int,
     var onScrollRight: emptyListener? = null
 }
 
+class DxItemVisibilityListener
+{
+    var onItemVisible: emptyListener? = null
+    var onItemInvisible: emptyListener? = null
+}
+
 internal enum class DxScrollDirection
 {
     UP,
