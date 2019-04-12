@@ -68,30 +68,39 @@ class ActivityMain : AppCompatActivity()
         for (i in 1..100)
             myListItems.add(MyItem(i.toString()))
 
-        mSampleAdapter = MyAdapter(myListItems).apply {
-            onItemClick = { view, position, item ->
-                toast("clicked ${item.mText}. position $position")
-            }
+        mSampleAdapter =
+            MyAdapter(myListItems,
+                      onItemSelectionChanged = { adapterPosition, item, isSelected ->
+                          //MUST be called in order for DxActionMode to function as intended
+                          mActionModeHelper.updateActionMode(this@ActivityMain)
 
-            onItemLongClick = { view, position, item ->
-                toast("long clicked ${item.mText}. position $position")
-                true
-            }
+                          val txt =
+                              if (isSelected)
+                                  "selected"
+                              else
+                                  "deselected"
 
-            onItemSelectionChanged = { position, item, isSelected ->
+                          Log.i("sample", "${item.mText} (position $adapterPosition) $txt")
+                      }).apply {
 
-                //MUST be called in order for DxActionMode to function as intended
-                mActionModeHelper.updateActionMode(this@ActivityMain)
+                onItemClick = { view, position, item ->
 
-                val txt =
-                    if (isSelected)
-                        "selected"
-                    else
-                        "deselected"
+                    isInSelectionMode() is false when deselecting last item!!!
 
-                Log.i("sample", "${item.mText} (position $position) $txt")
-            }
+                    //option to perform the action only if not in selection mode
+//                    if(!isInSelectionMode())
+                        toast("clicked ${item.mText}. position $position")
+                }
 
+                onItemLongClick = { view, position, item ->
+                    //option to perform the action only if not in selection mode
+//                    if(!isInSelectionMode())
+                        toast("long clicked ${item.mText}. position $position")
+
+                    true
+                }
+
+                //todo test all of these!!!
             //default is accent color (if not provided, primary color is used).
             //note: this must be @ColorInt
 //            selectedItemBackgroundColor = resources.getColor(android.R.color.holo_blue_dark)

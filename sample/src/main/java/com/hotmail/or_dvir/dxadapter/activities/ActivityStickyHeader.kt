@@ -40,7 +40,7 @@ class ActivityStickyHeader : BaseActivity()
 
         //todo this is for Testing. decide to change this or leave it when done Testing
         val stickyHeaderAdapter = MyHeaderAdapter(list).apply {
-            defaultItemSelectionBehavior = false
+//            defaultItemSelectionBehavior = false
         }
         //todo this is for Testing. decide to change this or leave it when done Testing
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {

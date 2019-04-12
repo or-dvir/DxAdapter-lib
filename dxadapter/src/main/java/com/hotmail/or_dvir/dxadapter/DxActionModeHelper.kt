@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxSelectable
 
 /**
  * A helper class that provides default behavior for [ActionMode].
@@ -24,6 +25,9 @@ class DxActionModeHelper<ITEM : DxItem>(
     private val titleProvider: actionModeTitleProvider,
     private val callback: ActionMode.Callback)
 {
+    //todo when documenting add a comment that says this is intended to work with IDxSelectable
+    //todo and will not work as intended otherwise
+
     //make this public in case the user wants access to it (for example to call finish())
     var actionMode: ActionMode? = null
     private val mMyCallback = object : ActionMode.Callback
@@ -48,10 +52,14 @@ class DxActionModeHelper<ITEM : DxItem>(
             //deselect() will trigger the selection listener, which should call updateActionMode()
             //(if user followed instructions), which will eventually call finish() on the actionMode,
             //which will bring us back here.
-            adapter.apply {
-                getAllSelectedIndices().forEach {
-                    mItems[it].mIsSelected = false
-                    notifyItemChanged(it)
+
+            if (adapter is IDxSelectable<*>)
+            {
+                (adapter as IDxSelectable<*>).apply {
+                    getAllSelectedIndices().forEach {
+                        mAdapterItems[it].mIsSelected = false
+                        dxNotifyItemChanged(it)
+                    }
                 }
             }
 
@@ -77,10 +85,13 @@ class DxActionModeHelper<ITEM : DxItem>(
         //i say "should" because we are assuming that this function is called from inside
         //onItemSelectionChanged in the adapter
 
-        when (adapter.getNumSelectedItems())
+        if (adapter is IDxSelectable<*>)
         {
-            1 -> actionMode = actionMode ?: act.startSupportActionMode(mMyCallback)
-            0 -> actionMode?.finish()
+            when (adapter.getNumSelectedItems())
+            {
+                1 -> actionMode = actionMode ?: act.startSupportActionMode(mMyCallback)
+                0 -> actionMode?.finish()
+            }
         }
 
         actionMode?.title = titleProvider.invoke()

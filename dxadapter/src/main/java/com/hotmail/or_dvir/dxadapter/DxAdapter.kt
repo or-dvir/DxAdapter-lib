@@ -14,15 +14,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxBase
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxSelectable
 
 abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
-      Filterable
+      Filterable,
+      IDxBase<ITEM>
 {
     //todo find a way so that the user does NOT have to extend DxItem
 
     //todo this class is getting too big.
     //todo separate adapter features (select/expand/etc) to separate classes
+
+    override val mAdapterItems = mItems
 
     //click listeners
     var onItemClick: onItemClickListener<ITEM>? = null
@@ -37,31 +42,31 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     var onlyOneItemExpanded = false
 
-    /**
-     * default value: FALSE
-     *
-     * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
-     * would also trigger the click listener and long-click listener.
-     */
-    var triggerClickListenersInSelectionMode = false
+//    /**
+//     * default value: FALSE
+//     *
+//     * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
+//     * would also trigger the click listener and long-click listener.
+//     */
+//    var triggerClickListenersInSelectionMode = false
 
     //selection listener
-    var onItemSelectionChanged: onItemSelectStateChangedListener<ITEM>? = null
+//    var onItemSelectionChanged: onItemSelectStateChangedListener<ITEM>? = null
 
-    @ColorInt
-    var selectedItemBackgroundColor: Int? = null
+//    @ColorInt
+//    var selectedItemBackgroundColor: Int? = null
 
-    /**
-     * default value: TRUE
-     *
-     * if TRUE, long-clicking an item will select it and any subsequent regular-click on any item
-     * will select\deselect the clicked item.
-     *
-     * if FALSE, you must manage item selection yourself using [select] and [deselect].
-     *
-     * @see [triggerClickListenersInSelectionMode]
-     */
-    var defaultItemSelectionBehavior = true
+//    /**
+//     * default value: TRUE
+//     *
+//     * if TRUE, long-clicking an item will select it and any subsequent regular-click on any item
+//     * will select\deselect the clicked item.
+//     *
+//     * if FALSE, you must manage item selection yourself using [select] and [deselect].
+//     *
+//     * @see [triggerClickListenersInSelectionMode]
+//     */
+//    var defaultItemSelectionBehavior = true
 
     //expansion listeners
     var onItemExpanded: positionAndItemListener<ITEM>? = null
@@ -111,7 +116,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
     override fun getItemViewType(position: Int) = mItems[position].getViewType()
     override fun getItemCount(): Int = mItems.size
-    private fun isInBounds(position: Int) = position in (0 until mItems.size)
+//    private fun isInBounds(position: Int) = position in (0 until mItems.size)
 
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
@@ -149,62 +154,62 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
     //todo any other important methods i should override??????
 
-    fun getAllSelectedItems() = mItems.filter { it.mIsSelected }
-    fun getNumSelectedItems() = getAllSelectedItems().size
-    fun getAllSelectedIndices() = getIndicesForItems(getAllSelectedItems())
+//    fun getAllSelectedItems() = mItems.filter { it.mIsSelected }
+//    fun getNumSelectedItems() = getAllSelectedItems().size
+//    fun getAllSelectedIndices() = getIndicesForItems(getAllSelectedItems())
 
-    @JvmName("selectListIndices")
-    fun select(indices: List<Int>, triggerListener: Boolean = true) =
-        selectOrDeselect(true, indices, triggerListener)
-    fun select(index: Int) = select(listOf(index))
-    fun select(items: List<ITEM>, triggerListener: Boolean = true) =
-        select(getIndicesForItems(items), triggerListener)
-    fun select(item: ITEM) = select(listOf(item))
-
-    /**
-     * convenience function to select all items.
-     *
-     * note that this function does NOT trigger [onItemSelectStateChangedListener].
-     */
-    fun selectAll() = select(mItems, false)
-
-    @JvmName("deselectListIndices")
-    fun deselect(indices: List<Int>, triggerListener: Boolean = true) =
-        selectOrDeselect(false, indices, triggerListener)
-    fun deselect(index: Int) = deselect(listOf(index))
-    fun deselect(items: List<ITEM>, triggerListener: Boolean = true) =
-        deselect(getIndicesForItems(items), triggerListener)
-    fun deselect(item: ITEM) = deselect(listOf(item))
-
-    /**
-     * convenience function to deselect all items.
-     *
-     * note that this function does NOT trigger [onItemSelectStateChangedListener].
-     */
-    fun deselectAll() = deselect(mItems, false)
-
-    private fun selectOrDeselect(shouldSelect: Boolean,
-                                 indices: List<Int>,
-                                 triggerListener: Boolean)
-    {
-        indices.forEach { position ->
-            if (isInBounds(position))
-            {
-                mItems[position].apply {
-                    //only select/deselect if actually needed
-                    //to avoid triggering listener multiple times
-                    if(isSelectable() && shouldSelect != mIsSelected)
-                    {
-                        mIsSelected = shouldSelect
-                        if(triggerListener)
-                            onItemSelectionChanged?.invoke(position, this, shouldSelect)
-
-                        notifyItemChanged(position)
-                    }
-                }
-            }
-        }
-    }
+//    @JvmName("selectListIndices")
+//    fun select(indices: List<Int>, triggerListener: Boolean = true) =
+//        selectOrDeselect(true, indices, triggerListener)
+//    fun select(index: Int) = select(listOf(index))
+//    fun select(items: List<ITEM>, triggerListener: Boolean = true) =
+//        select(getIndicesForItems(items), triggerListener)
+//    fun select(item: ITEM) = select(listOf(item))
+//
+//    /**
+//     * convenience function to select all items.
+//     *
+//     * note that this function does NOT trigger [onItemSelectStateChangedListener].
+//     */
+//    fun selectAll() = select(mItems, false)
+//
+//    @JvmName("deselectListIndices")
+//    fun deselect(indices: List<Int>, triggerListener: Boolean = true) =
+//        selectOrDeselect(false, indices, triggerListener)
+//    fun deselect(index: Int) = deselect(listOf(index))
+//    fun deselect(items: List<ITEM>, triggerListener: Boolean = true) =
+//        deselect(getIndicesForItems(items), triggerListener)
+//    fun deselect(item: ITEM) = deselect(listOf(item))
+//
+//    /**
+//     * convenience function to deselect all items.
+//     *
+//     * note that this function does NOT trigger [onItemSelectStateChangedListener].
+//     */
+//    fun deselectAll() = deselect(mItems, false)
+//
+//    private fun selectOrDeselect(shouldSelect: Boolean,
+//                                 indices: List<Int>,
+//                                 triggerListener: Boolean)
+//    {
+//        indices.forEach { position ->
+//            if (isInBounds(position))
+//            {
+//                mItems[position].apply {
+//                    //only select/deselect if actually needed
+//                    //to avoid triggering listener multiple times
+//                    if(isSelectable() && shouldSelect != mIsSelected)
+//                    {
+//                        mIsSelected = shouldSelect
+//                        if(triggerListener)
+//                            onItemSelectionChanged?.invoke(position, this, shouldSelect)
+//
+//                        notifyItemChanged(position)
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     //todo make sure every function has good documentation!!!
 
@@ -255,11 +260,16 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
      */
     fun collapseAll() = collapse(mItems, false)
 
+    override fun dxNotifyItemChanged(position: Int)
+    {
+        notifyItemChanged(position)
+    }
+
     private fun expandOrCollapse(shouldExpand: Boolean,
                                  indices: List<Int>,
                                  triggerListener: Boolean)
     {
-        if(isInSelectionMode())
+        if(this is IDxSelectable<*> && isInSelectionMode())
             return
 
         val tempIndices =
@@ -313,21 +323,22 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
         }
     }
 
-    private fun getIndicesForItems(items: List<ITEM>) = items.map { mItems.indexOf(it) }
+//    private fun getIndicesForItems(items: List<ITEM>) = items.map { mItems.indexOf(it) }
 
-    /**
-     * "selection mode" means at least one item is selected
-     */
-    private fun isInSelectionMode() = mItems.find { it.mIsSelected } != null
+//    /**
+//     * "selection mode" means at least one item is selected
+//     */
+//    private fun isInSelectionMode() = mItems.find { it.mIsSelected } != null
 
-    @ColorInt
-    private fun getThemeAccentColorInt(context: Context): Int
-    {
-        val value = TypedValue()
-        context.theme.resolveAttribute(android.R.attr.colorAccent, value, true)
-        return value.data
-    }
+//    @ColorInt
+//    private fun getThemeAccentColorInt(context: Context): Int
+//    {
+//        val value = TypedValue()
+//        context.theme.resolveAttribute(android.R.attr.colorAccent, value, true)
+//        return value.data
+//    }
 
+    @CallSuper
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
     {
         val context = parent.context
@@ -336,23 +347,27 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                 .from(context)
                 .inflate(getItemLayoutRes(parent, viewType), parent, false)
 
-        //only change the background if user chose default behavior.
-        //this is to prevent overriding users' custom background (if set)
-        if(defaultItemSelectionBehavior)
-        {
-            //todo when documenting, mention that the background will be overridden when item is "selected",
-            //todo meaning that it will change the background to the selected color.
-            //todo if user has custom selection background that is NOT a color, he should NOT use defaultItemSelectionBehavior
-            //todo but then must handle other things by himself.
-            StateListDrawable().apply {
-                //selected
-                addState(intArrayOf(android.R.attr.state_selected),
-                         ColorDrawable(selectedItemBackgroundColor ?: getThemeAccentColorInt(context)))
-                //not selected
-                addState(intArrayOf(-android.R.attr.state_selected), itemView.background)
-                itemView.background = this
-            }
-        }
+        if(this is IDxSelectable<*>)
+            dxOnCreateViewHolder(context, parent, viewType, itemView)
+        //todo add all the rest of the interfaces here!!!!
+
+//        //only change the background if user chose default behavior.
+//        //this is to prevent overriding users' custom background (if set)
+//        if(defaultItemSelectionBehavior)
+//        {
+//            //todo when documenting, mention that the background will be overridden when item is "selected",
+//            //todo meaning that it will change the background to the selected color.
+//            //todo if user has custom selection background that is NOT a color, he should NOT use defaultItemSelectionBehavior
+//            //todo but then must handle other things by himself.
+//            StateListDrawable().apply {
+//                //selected
+//                addState(intArrayOf(android.R.attr.state_selected),
+//                         ColorDrawable(selectedItemBackgroundColor ?: getThemeAccentColorInt(context)))
+//                //not selected
+//                addState(intArrayOf(-android.R.attr.state_selected), itemView.background)
+//                itemView.background = this
+//            }
+//        }
 
         val holder = createAdapterViewHolder(itemView, parent, viewType)
 
@@ -380,26 +395,30 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                 expandOrCollapse(!clickedItem.mIsExpanded, listOf(clickedPosition), true)
 
 
-            //todo when documenting this library, notice the order of the calls
-            //todo first selection listener or first click listener????
-            //todo example: if first selection, then click listener is AFTER the item has been selected/deselected
+            if(this@DxAdapter is IDxSelectable<*>)
+                dxOnItemClicked(clickedPosition)
+            //todo dont forget the rest of the interfaces!!!
 
-            val selectionModeBefore = isInSelectionMode()
-
-            //change selection state only if user asked for default behavior AND
-            //we are already in selection mode (because default selection mode start with a LONG-click)
-            if(defaultItemSelectionBehavior && selectionModeBefore)
-            {
-                //reverse the selection
-                selectOrDeselect(!clickedItem.isSelectable(),
-                                 listOf(clickedPosition),
-                                 true)
-            }
+//            //todo when documenting this library, notice the order of the calls
+//            //todo first selection listener or first click listener????
+//            //todo example: if first selection, then click listener is AFTER the item has been selected/deselected
+//
+//            val selectionModeBefore = isInSelectionMode()
+//
+//            //change selection state only if user asked for default behavior AND
+//            //we are already in selection mode (because default selection mode start with a LONG-click)
+//            if(defaultItemSelectionBehavior && selectionModeBefore)
+//            {
+//                //reverse the selection
+//                selectOrDeselect(!clickedItem.isSelectable(),
+//                                 listOf(clickedPosition),
+//                                 true)
+//            }
 
             //if we were NOT in selection mode before -> regular click -> trigger the listener.
             //if we WERE in selection mode before and the user
             //requested it (right operand of the "OR" condition) -> trigger the listener.
-            if(!selectionModeBefore || triggerClickListenersInSelectionMode)
+//            if(!selectionModeBefore || triggerClickListenersInSelectionMode)
                 onItemClick?.invoke(view, clickedPosition, clickedItem)
         }
 
@@ -412,30 +431,47 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             //because below we are changing the selected state of the clicked item
             //and the variable would not be updated according to the new state
 
+            if(this@DxAdapter is IDxSelectable<*>)
+            {
+                val selected = dxOnItemLongClicked(clickedPosition)
+
+                //only select an item on long-click if defaultItemSelectionBehavior AND
+                //we are not already in selection mode (if we ARE already in selection mode,
+                //selection is handled by REGULAR clicks)
+                if (defaultItemSelectionBehavior &&
+                    !isInSelectionMode())
+                {
+                    collapseAll()
+                }
+
+            }
+            //todo dont forget the rest of the interfaces!!!
+
             //todo when documenting this library, notice the order of the calls
             //todo first selection listener or first long-click listener????
 
-            //only select an item on long-click if defaultItemSelectionBehavior AND
-            //we are not already in selection mode (if we ARE already in selection mode,
-            //selection is handled by REGULAR clicks)
-            if (defaultItemSelectionBehavior &&
-                !isInSelectionMode())
-            {
-                collapseAll()
-                select(clickedPosition)
-            }
+//            //only select an item on long-click if defaultItemSelectionBehavior AND
+//            //we are not already in selection mode (if we ARE already in selection mode,
+//            //selection is handled by REGULAR clicks)
+//            if (defaultItemSelectionBehavior &&
+//                !isInSelectionMode())
+//            {
+//                collapseAll()
+//                select(clickedPosition)
+//            }
 
-            onItemLongClick?.let {
-                //if we are NOT in selection mode -> regular long-click -> trigger the listener.
-                //if we ARE in selection mode and the user
-                //requested it (right operand of the "OR" condition) -> trigger the listener.
-                if (!isInSelectionMode() || triggerClickListenersInSelectionMode)
-                    it.invoke(view, clickedPosition, clickedItem)
-
-                //in any other case we need a boolean return value
-                else
-                    true
-            } ?: true
+            onItemLongClick?.invoke(view, clickedPosition, clickedItem) ?: true
+//            onItemLongClick?.let {
+//                //if we are NOT in selection mode -> regular long-click -> trigger the listener.
+//                //if we ARE in selection mode and the user
+//                //requested it (right operand of the "OR" condition) -> trigger the listener.
+//                if (!isInSelectionMode() || triggerClickListenersInSelectionMode)
+//                    it.invoke(view, clickedPosition, clickedItem)
+//
+//                //in any other case we need a boolean return value
+//                else
+//                    true
+//            } ?: true
         }
 
         return holder

@@ -14,7 +14,7 @@ internal typealias onItemClickListener<ITEM> = (view: View, adapterPosition: Int
 
 internal typealias  positionAndItemListener<ITEM> = (adapterPosition: Int, item: ITEM) -> Unit
 
-internal typealias onItemSelectStateChangedListener<ITEM> =
+typealias onItemSelectStateChangedListener<ITEM> =
         (adapterPosition: Int, item: ITEM, isSelected: Boolean) -> Unit
 
 internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>

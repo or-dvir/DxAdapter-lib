@@ -2,6 +2,7 @@ package com.hotmail.or_dvir.dxadapter
 
 import android.support.annotation.LayoutRes
 import android.view.View
+import android.support.annotation.ColorInt
 
 interface IDxStickyHeader
 {
