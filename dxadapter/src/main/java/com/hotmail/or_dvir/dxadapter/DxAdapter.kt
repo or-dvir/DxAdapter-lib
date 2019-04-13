@@ -395,9 +395,21 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                 expandOrCollapse(!clickedItem.mIsExpanded, listOf(clickedPosition), true)
 
 
+            var triggerListener = true
             if(this@DxAdapter is IDxSelectable<*>)
+            {
+                //need the state BEFORE changing the selection in dxOnItemClicked
+                //in case it's the last item being deselected
+                val selectionModeBefore = isInSelectionMode()
                 dxOnItemClicked(clickedPosition)
-            //todo dont forget the rest of the interfaces!!!
+
+                if(selectionModeBefore)
+                    triggerListener = triggerClickListenersInSelectionMode
+            }
+            //todo don't forget the rest of the interfaces!!!
+
+            if(triggerListener)
+                onItemClick?.invoke(view, clickedPosition, clickedItem)
 
 //            //todo when documenting this library, notice the order of the calls
 //            //todo first selection listener or first click listener????
@@ -415,11 +427,11 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 //                                 true)
 //            }
 
-            //if we were NOT in selection mode before -> regular click -> trigger the listener.
-            //if we WERE in selection mode before and the user
-            //requested it (right operand of the "OR" condition) -> trigger the listener.
+//            //if we were NOT in selection mode before -> regular click -> trigger the listener.
+//            //if we WERE in selection mode before and the user
+//            //requested it (right operand of the "OR" condition) -> trigger the listener.
 //            if(!selectionModeBefore || triggerClickListenersInSelectionMode)
-                onItemClick?.invoke(view, clickedPosition, clickedItem)
+//                onItemClick?.invoke(view, clickedPosition, clickedItem)
         }
 
         itemView.setOnLongClickListener { view ->
@@ -431,9 +443,13 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             //because below we are changing the selected state of the clicked item
             //and the variable would not be updated according to the new state
 
+            var triggerListener = true
             if(this@DxAdapter is IDxSelectable<*>)
             {
-                val selected = dxOnItemLongClicked(clickedPosition)
+                dxOnItemLongClicked(clickedPosition)
+
+                if(isInSelectionMode())
+                    triggerListener = triggerClickListenersInSelectionMode
 
                 //only select an item on long-click if defaultItemSelectionBehavior AND
                 //we are not already in selection mode (if we ARE already in selection mode,
@@ -443,9 +459,13 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                 {
                     collapseAll()
                 }
-
             }
             //todo dont forget the rest of the interfaces!!!
+
+            if (triggerListener)
+                onItemLongClick?.invoke(view, clickedPosition, clickedItem) ?: true
+            else
+                true
 
             //todo when documenting this library, notice the order of the calls
             //todo first selection listener or first long-click listener????
@@ -460,7 +480,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 //                select(clickedPosition)
 //            }
 
-            onItemLongClick?.invoke(view, clickedPosition, clickedItem) ?: true
+//            onItemLongClick?.invoke(view, clickedPosition, clickedItem) ?: true
 //            onItemLongClick?.let {
 //                //if we are NOT in selection mode -> regular long-click -> trigger the listener.
 //                //if we ARE in selection mode and the user

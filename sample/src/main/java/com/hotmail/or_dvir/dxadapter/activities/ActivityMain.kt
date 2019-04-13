@@ -84,19 +84,11 @@ class ActivityMain : AppCompatActivity()
                       }).apply {
 
                 onItemClick = { view, position, item ->
-
-                    isInSelectionMode() is false when deselecting last item!!!
-
-                    //option to perform the action only if not in selection mode
-//                    if(!isInSelectionMode())
-                        toast("clicked ${item.mText}. position $position")
+                    toast("clicked ${item.mText}. position $position")
                 }
 
                 onItemLongClick = { view, position, item ->
-                    //option to perform the action only if not in selection mode
-//                    if(!isInSelectionMode())
-                        toast("long clicked ${item.mText}. position $position")
-
+                    toast("long clicked ${item.mText}. position $position")
                     true
                 }
 

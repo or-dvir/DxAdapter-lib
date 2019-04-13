@@ -6,7 +6,6 @@ import android.graphics.drawable.StateListDrawable
 import android.support.annotation.ColorInt
 import android.view.View
 import android.view.ViewGroup
-import com.hotmail.or_dvir.dxadapter.DxActionModeHelper
 import com.hotmail.or_dvir.dxadapter.DxItem
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 
@@ -27,6 +26,8 @@ interface IDxSelectable<ITEM: DxItem> : IDxBase<ITEM>
     /**
      * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
      * would also trigger the click listener and long-click listener.
+     *
+     * if FALSE, those listeners will NOT be triggered if in "selection mode"
      */
     val triggerClickListenersInSelectionMode: Boolean
 

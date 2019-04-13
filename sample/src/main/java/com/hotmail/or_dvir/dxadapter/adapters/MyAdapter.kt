@@ -17,7 +17,7 @@ class MyAdapter(mItems: MutableList<MyItem>,
       IDxSelectable<MyItem>
 {
     override val defaultItemSelectionBehavior = true
-    override val triggerClickListenersInSelectionMode = true
+    override val triggerClickListenersInSelectionMode = false
     //setting this to null means accent color will be used
     override val selectedItemBackgroundColor: Int? = null
 
