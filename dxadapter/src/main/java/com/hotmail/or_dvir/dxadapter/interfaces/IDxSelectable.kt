@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.DxItem
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 
-interface IDxSelectable<ITEM: DxItem> : IDxBase<ITEM>
+interface IDxSelectable<ITEM: DxItem>: IDxBase<ITEM>
 {
     /**
      * default value: TRUE
@@ -97,26 +97,26 @@ interface IDxSelectable<ITEM: DxItem> : IDxBase<ITEM>
     }
 
     /**
-     * @return Boolean true if item was selected, false otherwise
+     * @return Boolean whether or not we need to trigger long-click listener
      */
-    fun dxOnItemLongClicked(position: Int): Boolean
+    fun dxSelectableItemLongClicked(position: Int): Boolean
     {
         //only select an item on long-click if defaultItemSelectionBehavior AND
         //we are not already in selection mode (if we ARE already in selection mode,
         //selection is handled by REGULAR clicks)
-        if (defaultItemSelectionBehavior &&
-            !isInSelectionMode())
-        {
-            //todo handle collapse!!!!!!!!!!!!
-//            collapseAll()
+        if (defaultItemSelectionBehavior && !isInSelectionMode())
             select(position)
-            return true
-        }
 
-        return false
+        return if (isInSelectionMode())
+            triggerClickListenersInSelectionMode
+        else
+            true
     }
 
-    fun dxOnItemClicked(position: Int)
+    /**
+     * @return Boolean whether or not we need to trigger click listener
+     */
+    fun dxSelectableItemClicked(position: Int, wasInSelectionModeBefore: Boolean): Boolean
     {
         val item = mAdapterItems[position]
 
@@ -133,6 +133,11 @@ interface IDxSelectable<ITEM: DxItem> : IDxBase<ITEM>
                              listOf(position),
                              true)
         }
+
+        return if (wasInSelectionModeBefore)
+            triggerClickListenersInSelectionMode
+        else
+            true
     }
 
     fun dxOnCreateViewHolder(context: Context,

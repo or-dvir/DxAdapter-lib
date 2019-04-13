@@ -17,6 +17,10 @@ internal typealias  positionAndItemListener<ITEM> = (adapterPosition: Int, item:
 typealias onItemSelectStateChangedListener<ITEM> =
         (adapterPosition: Int, item: ITEM, isSelected: Boolean) -> Unit
 
+typealias onItemExpandStateChangedListener<ITEM> =
+            (adapterPosition: Int, item: ITEM, isExpanded: Boolean) -> Unit
+
+
 internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
 
 internal typealias onItemsMoveListener<ITEM> = (draggedItem: ITEM,

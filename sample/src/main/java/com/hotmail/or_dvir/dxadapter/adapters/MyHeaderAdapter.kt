@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.hotmail.or_dvir.dxadapter.*
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxStickyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.my_header.view.*
@@ -12,7 +13,7 @@ import kotlinx.android.synthetic.main.my_header.view.*
 //see notes for item/viewHolder type in MyMultiTypeAdapter class
 class MyHeaderAdapter(private val mItems: MutableList<DxItem>)
     : DxAdapter<DxItem, RecyclerViewHolder>(mItems),
-    IDxStickyHeader
+      IDxStickyHeader
 {
     //convenience method so that the binding logic of a header view
     //is done in a single method (removes duplicate code)

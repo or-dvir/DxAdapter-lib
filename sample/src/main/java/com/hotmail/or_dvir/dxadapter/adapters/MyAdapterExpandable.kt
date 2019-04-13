@@ -2,20 +2,29 @@ package com.hotmail.or_dvir.dxadapter.adapters
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import com.hotmail.or_dvir.dxadapter.DxAdapter
-import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
+import com.hotmail.or_dvir.dxadapter.*
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxExpandable
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.my_item_expandable.view.*
 
 //this is essentially the same as MyMultiTypeAdapter where one of the types is a header.
 //see notes for item/viewHolder type in MyMultiTypeAdapter class
-class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>)
-    : DxAdapter<MyItemExpandable, MyAdapterExpandable.ViewHolder>(mItems)
+class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
+                          override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>? = null)
+    : DxAdapter<MyItemExpandable, MyAdapterExpandable.ViewHolder>(mItems),
+      IDxExpandable<MyItemExpandable>,
+      IDxSelectable<MyItemExpandable>
 {
+    override val defaultItemSelectionBehavior = true
+    override val triggerClickListenersInSelectionMode = false
+    override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItemExpandable>? = null
+    //setting this to null means accent color will be used
+    override val selectedItemBackgroundColor: Int? = null
+    override val onlyOneItemExpanded = false
+
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemExpandable)
     {
         holder.apply {

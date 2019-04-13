@@ -21,6 +21,8 @@ import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
 {
+    //todo fix all documentation after moving everything into interfaces/separate classes
+
     //todo when documenting, note that this library was meant for kotlin and was not tested in java
 
     //todo test module with leak canary!!!!!!!
@@ -81,28 +83,29 @@ class ActivityMain : AppCompatActivity()
                                   "deselected"
 
                           Log.i("sample", "${item.mText} (position $adapterPosition) $txt")
-                      }).apply {
+                      })
+                .apply {
 
-                onItemClick = { view, position, item ->
-                    toast("clicked ${item.mText}. position $position")
-                }
+                    onItemClick = { view, position, item ->
+                        toast("clicked ${item.mText}. position $position")
+                    }
 
-                onItemLongClick = { view, position, item ->
-                    toast("long clicked ${item.mText}. position $position")
-                    true
-                }
+                    onItemLongClick = { view, position, item ->
+                        toast("long clicked ${item.mText}. position $position")
+                        true
+                    }
 
-                //todo test all of these!!!
-            //default is accent color (if not provided, primary color is used).
-            //note: this must be @ColorInt
+                    //todo test all of these!!!
+                    //default is accent color (if not provided, primary color is used).
+                    //note: this must be @ColorInt
 //            selectedItemBackgroundColor = resources.getColor(android.R.color.holo_blue_dark)
 
-            //default is true.
+                    //default is true.
 //            defaultItemSelectionBehavior = false
 
-            //default is false
+                    //default is false
 //            triggerClickListenersInSelectionMode = true
-        }
+                }
 
         mActionModeHelper =
             DxActionModeHelper(mSampleAdapter,

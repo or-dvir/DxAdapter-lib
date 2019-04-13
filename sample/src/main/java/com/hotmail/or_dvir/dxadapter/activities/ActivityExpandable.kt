@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
 import com.hotmail.or_dvir.dxadapter.DxItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.DxSwipeBackground
@@ -29,19 +30,24 @@ class ActivityExpandable : BaseActivity()
         for(i in 1..100)
             list.add(MyItemExpandable(i.toString(),"expandable item $i"))
 
-        val expandableAdapter = MyAdapterExpandable(list).apply {
+        val expandableAdapter =
+            MyAdapterExpandable(list,
+                                onItemExpandStateChanged = { adapterPosition, item, isExpanded ->
 
-            //please read documentation for special notes on this variable
-//            onlyOneItemExpanded = true
+                                    val txt =
+                                        if (isExpanded)
+                                            "expanded"
+                                        else
+                                            "collapsed"
 
-            onItemCollapsed = { adapterPosition, item ->
-                toast("collapsed item ${item.mText}")
-            }
-
-            onItemExpanded = { adapterPosition, item ->
-                toast("expanded item ${item.mText}")
-            }
-        }
+                                    toast("$txt item ${item.mText}")
+                                })
+                .apply {
+                    onItemLongClick = { view, adapterPosition, item ->
+                        toast("long click")
+                        true
+                    }
+                }
 
         val itemTouchCallback =
             DxItemTouchCallback(expandableAdapter).apply {

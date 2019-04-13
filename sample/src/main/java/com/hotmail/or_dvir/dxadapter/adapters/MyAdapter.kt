@@ -4,10 +4,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.hotmail.or_dvir.dxadapter.DxAdapter
-import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
 import com.hotmail.or_dvir.dxadapter.interfaces.IDxSelectable
+import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 import kotlinx.android.synthetic.main.my_item.view.*
 
