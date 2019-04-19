@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.DxItem
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 
-interface IDxSelectable<ITEM: DxItem>: IDxBase<ITEM>
+interface IAdapterSelectable<ITEM: DxItem>: IAdapterBase<ITEM>
 {
     /**
      * default value: TRUE

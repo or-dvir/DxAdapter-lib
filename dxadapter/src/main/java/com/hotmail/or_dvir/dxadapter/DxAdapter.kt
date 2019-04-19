@@ -9,14 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxBase
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxExpandable
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxSelectable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterBase
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterExpandable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemExpandable
 
 abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
       Filterable,
-      IDxBase<ITEM>
+      IAdapterBase<ITEM>
 {
     //todo find a way so that the user does NOT have to extend DxItem
 
@@ -78,10 +79,10 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             holder.itemView.let {
                 it.isSelected = item.mIsSelected
 
-                if (item is DxItemExpandable)
+                if (item is IItemExpandable)
                 {
                     it.findViewById<View>(item.getExpandableViewId()).visibility =
-                        if (item.mIsExpanded)
+                        if (item.isExpanded)
                             View.VISIBLE
                         else
                             View.GONE
@@ -120,7 +121,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
                 .from(context)
                 .inflate(getItemLayoutRes(parent, viewType), parent, false)
 
-        if(this is IDxSelectable<*>)
+        if(this is IAdapterSelectable<*>)
             dxOnCreateViewHolder(context, parent, viewType, itemView)
         //todo do i need rest of the interfaces here!!!!
 
@@ -150,7 +151,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
             var selectionBefore = false
             var triggerListener = true
-            if(this@DxAdapter is IDxSelectable<*>)
+            if(this@DxAdapter is IAdapterSelectable<*>)
             {
                 selectionBefore = isInSelectionMode()
                 triggerListener = dxSelectableItemClicked(clickedPosition, selectionBefore)
@@ -161,7 +162,7 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
 
             //handle expand/collapse
 
-            if (this@DxAdapter is IDxExpandable<*>)
+            if (this@DxAdapter is IAdapterExpandable<*>)
                 dxExpandableItemClicked(clickedPosition, selectionBefore)
 
             //todo when documenting this library, notice the order of the calls
@@ -179,10 +180,10 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
             //and the variable would not be updated according to the new state
 
             var triggerListener = true
-            if(this@DxAdapter is IDxSelectable<*>)
+            if(this@DxAdapter is IAdapterSelectable<*>)
                 triggerListener = dxSelectableItemLongClicked(clickedPosition)
 
-            if(this@DxAdapter is IDxExpandable<*>)
+            if(this@DxAdapter is IAdapterExpandable<*>)
                 dxExpandableItemLongClicked(clickedPosition)
 
             //todo dont forget the rest of the interfaces!!!

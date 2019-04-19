@@ -26,24 +26,24 @@ abstract class DxItem(internal var mIsSelected: Boolean = false)
     open fun isSwipeable() = true
 }
 
-abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
-    : DxItem()
-{
-    var mIsExpanded: Boolean = mInitialExpandedState
-
-    /**
-     * @return Int the resource id of view (which is part of the list item) that is expandable
-     */
-    @IdRes
-    abstract fun getExpandableViewId(): Int
-
-    /**
-     * @return Boolean whether or not clicking the item should trigger expand/collapse.
-     * if false, you must trigger expand and collapse yourself using
-     * [DxAdapter.expand] and [DxAdapter.collapse].
-     */
-    abstract fun expandAndCollapseOnItemClick(): Boolean
-}
+//abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
+//    : DxItem()
+//{
+//    var isExpanded: Boolean = mInitialExpandedState
+//
+//    /**
+//     * @return Int the resource id of view (which is part of the list item) that is expandable
+//     */
+//    @IdRes
+//    abstract fun getExpandableViewId(): Int
+//
+//    /**
+//     * @return Boolean whether or not clicking the item should trigger expand/collapse.
+//     * if false, you must trigger expand and collapse yourself using
+//     * [DxAdapter.expand] and [DxAdapter.collapse].
+//     */
+//    abstract fun expandAndCollapseOnItemClick(): Boolean
+//}
 
 /**
  * @property sensitivityAll Int speed sensitivity of all the listeners. The larger the number, the faster the

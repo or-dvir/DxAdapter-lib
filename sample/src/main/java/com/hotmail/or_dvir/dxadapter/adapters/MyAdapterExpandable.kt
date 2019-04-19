@@ -5,8 +5,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.*
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxExpandable
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxSelectable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterExpandable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.my_item_expandable.view.*
 
@@ -15,8 +15,8 @@ import kotlinx.android.synthetic.main.my_item_expandable.view.*
 class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
                           override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>? = null)
     : DxAdapter<MyItemExpandable, MyAdapterExpandable.ViewHolder>(mItems),
-      IDxExpandable<MyItemExpandable>,
-      IDxSelectable<MyItemExpandable>
+      IAdapterExpandable<MyItemExpandable>,
+      IAdapterSelectable<MyItemExpandable>
 {
     override val defaultItemSelectionBehavior = true
     override val triggerClickListenersInSelectionMode = false
@@ -79,7 +79,7 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
             //would collapse/expand)
 
 //            iv.setOnItemClick {
-//                if(mItems[adapterPosition].mIsExpanded)
+//                if(mItems[adapterPosition].isExpanded)
 //                    collapse(adapterPosition)
 //                else
 //                    expand(adapterPosition)

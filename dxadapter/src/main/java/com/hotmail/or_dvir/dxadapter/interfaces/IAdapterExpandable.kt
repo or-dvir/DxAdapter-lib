@@ -1,10 +1,9 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
 import com.hotmail.or_dvir.dxadapter.DxItem
-import com.hotmail.or_dvir.dxadapter.DxItemExpandable
 import com.hotmail.or_dvir.dxadapter.onItemExpandStateChangedListener
 
-interface IDxExpandable<ITEM: DxItem>: IDxBase<ITEM>
+interface IAdapterExpandable<ITEM: DxItem>: IAdapterBase<ITEM>
 {
     /**
      * default value: FALSE
@@ -18,7 +17,7 @@ interface IDxExpandable<ITEM: DxItem>: IDxBase<ITEM>
     //expansion listeners
     var onItemExpandStateChanged: onItemExpandStateChangedListener<ITEM>?
 
-    fun getAllExpandedItems() = mAdapterItems.filter { it is DxItemExpandable && it.mIsExpanded }
+    fun getAllExpandedItems() = mAdapterItems.filter { it is IItemExpandable && it.isExpanded }
     fun getNumExpandedItems() = getAllExpandedItems().size
     fun getAllExpandedIndices() = getIndicesForItems(getAllExpandedItems())
 
@@ -69,7 +68,7 @@ interface IDxExpandable<ITEM: DxItem>: IDxBase<ITEM>
     {
 //        //if we are in selection mode and we want default behavior,
 //        //do not expand/collapse
-//        if(this is IDxSelectable<*> && isInSelectionMode() && defaultItemSelectionBehavior)
+//        if(this is IAdapterSelectable<*> && isInSelectionMode() && defaultItemSelectionBehavior)
 //            return
 
         val tempIndices =
@@ -88,10 +87,10 @@ interface IDxExpandable<ITEM: DxItem>: IDxBase<ITEM>
 
                     //only expand/collapse if not already expanded/collapsed
                     //so we don't trigger unnecessary listeners and ui updates
-                    if(this is DxItemExpandable &&
-                        shouldExpand != mIsExpanded)
+                    if(this is IItemExpandable &&
+                        shouldExpand != isExpanded)
                     {
-                        mIsExpanded = shouldExpand
+                        isExpanded = shouldExpand
 
                         if (triggerListener)
                             onItemExpandStateChanged?.invoke(position, this, shouldExpand)
@@ -125,20 +124,20 @@ interface IDxExpandable<ITEM: DxItem>: IDxBase<ITEM>
         //if we are in selection mode and we want default behavior,
         //and we were in selection mode before getting here (which is AFTER selection has changed),
         //clicks are meant for selection and not expand/collapse
-        if(this is IDxSelectable<*> && defaultItemSelectionBehavior && wasInSelectionModeBefore)
+        if(this is IAdapterSelectable<*> && defaultItemSelectionBehavior && wasInSelectionModeBefore)
             return
 
         val item = mAdapterItems[position]
 
-        if (item is DxItemExpandable && item.expandAndCollapseOnItemClick())
-            expandOrCollapse(!item.mIsExpanded, listOf(position), true)
+        if (item is IItemExpandable && item.expandCollapseOnItemClick())
+            expandOrCollapse(!item.isExpanded, listOf(position), true)
     }
 
     fun dxExpandableItemLongClicked(position: Int)
     {
         //if we just selected our first item and we want default behavior,
         //collapse all items
-        if (this is IDxSelectable<*> && defaultItemSelectionBehavior && getNumSelectedItems() == 1)
+        if (this is IAdapterSelectable<*> && defaultItemSelectionBehavior && getNumSelectedItems() == 1)
             collapseAll()
     }
 }

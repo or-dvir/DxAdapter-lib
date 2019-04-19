@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxSelectable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 
 /**
  * A helper class that provides default behavior for [ActionMode].
@@ -25,7 +25,7 @@ class DxActionModeHelper<ITEM : DxItem>(
     private val titleProvider: actionModeTitleProvider,
     private val callback: ActionMode.Callback)
 {
-    //todo when documenting add a comment that says this is intended to work with IDxSelectable
+    //todo when documenting add a comment that says this is intended to work with IAdapterSelectable
     //todo and will not work as intended otherwise
 
     //make this public in case the user wants access to it (for example to call finish())
@@ -53,9 +53,9 @@ class DxActionModeHelper<ITEM : DxItem>(
             //(if user followed instructions), which will eventually call finish() on the actionMode,
             //which will bring us back here.
 
-            if (adapter is IDxSelectable<*>)
+            if (adapter is IAdapterSelectable<*>)
             {
-                (adapter as IDxSelectable<*>).apply {
+                (adapter as IAdapterSelectable<*>).apply {
                     getAllSelectedIndices().forEach {
                         mAdapterItems[it].mIsSelected = false
                         dxNotifyItemChanged(it)
@@ -85,7 +85,7 @@ class DxActionModeHelper<ITEM : DxItem>(
         //i say "should" because we are assuming that this function is called from inside
         //onItemSelectionChanged in the adapter
 
-        if (adapter is IDxSelectable<*>)
+        if (adapter is IAdapterSelectable<*>)
         {
             when (adapter.getNumSelectedItems())
             {
