@@ -1,9 +1,8 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
-import com.hotmail.or_dvir.dxadapter.DxItem
 import com.hotmail.or_dvir.dxadapter.onItemExpandStateChangedListener
 
-interface IAdapterExpandable<ITEM: DxItem>: IAdapterBase<ITEM>
+interface IAdapterExpandable<ITEM: IDxItem>: IAdapterBase<ITEM>
 {
     /**
      * default value: FALSE
@@ -17,7 +16,8 @@ interface IAdapterExpandable<ITEM: DxItem>: IAdapterBase<ITEM>
     //expansion listeners
     var onItemExpandStateChanged: onItemExpandStateChangedListener<ITEM>?
 
-    fun getAllExpandedItems() = mAdapterItems.filter { it is IItemExpandable && it.isExpanded }
+    fun getAllExpandedItems() =
+        mAdapterItems.filter { it is IItemExpandable && it.isExpanded }
     fun getNumExpandedItems() = getAllExpandedItems().size
     fun getAllExpandedIndices() = getIndicesForItems(getAllExpandedItems())
 

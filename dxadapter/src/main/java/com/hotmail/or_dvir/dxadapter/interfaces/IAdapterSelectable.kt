@@ -6,10 +6,9 @@ import android.graphics.drawable.StateListDrawable
 import android.support.annotation.ColorInt
 import android.view.View
 import android.view.ViewGroup
-import com.hotmail.or_dvir.dxadapter.DxItem
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 
-interface IAdapterSelectable<ITEM: DxItem>: IAdapterBase<ITEM>
+interface IAdapterSelectable<ITEM: IDxItem>: IAdapterBase<ITEM>
 {
     /**
      * default value: TRUE
@@ -39,7 +38,7 @@ interface IAdapterSelectable<ITEM: DxItem>: IAdapterBase<ITEM>
     @get:ColorInt
     val selectedItemBackgroundColor: Int?
 
-    fun getAllSelectedItems() = mAdapterItems.filter { it.mIsSelected }
+    fun getAllSelectedItems() = mAdapterItems.filter { it is IItemSelectable && it.isSelected }
     fun getNumSelectedItems() = getAllSelectedItems().size
     fun getAllSelectedIndices() = getIndicesForItems(getAllSelectedItems())
 
@@ -64,7 +63,8 @@ interface IAdapterSelectable<ITEM: DxItem>: IAdapterBase<ITEM>
         deselectIndices(getIndicesForItems(items), triggerListener)
     fun deselect(item: ITEM) = deselect(listOf(item))
 
-    fun isInSelectionMode() = mAdapterItems.find { it.mIsSelected } != null
+    fun isInSelectionMode() =
+        mAdapterItems.find { it is IItemSelectable && it.isSelected } != null
 
     /**
      * convenience function to deselect all items.
@@ -83,9 +83,9 @@ interface IAdapterSelectable<ITEM: DxItem>: IAdapterBase<ITEM>
                 mAdapterItems[position].apply {
                     //only select/deselect if actually needed
                     //to avoid triggering listener multiple times
-                    if(isSelectable() && shouldSelect != mIsSelected)
+                    if(this is IItemSelectable && shouldSelect != isSelected)
                     {
-                        mIsSelected = shouldSelect
+                        isSelected = shouldSelect
                         if(triggerListener)
                             onItemSelectionChanged?.invoke(position, this, shouldSelect)
 
@@ -124,12 +124,15 @@ interface IAdapterSelectable<ITEM: DxItem>: IAdapterBase<ITEM>
         //todo first selection listener or first click listener????
         //todo example: if first selection, then click listener is AFTER the item has been selected/deselected
 
-        //change selection state only if user asked for default behavior AND
-        //we are already in selection mode (because default selection mode start with a LONG-click)
-        if(defaultItemSelectionBehavior && isInSelectionMode())
+        //change selection state only if the item is selectable (could be multi-type adapter!),
+        //AND user asked for default behavior,
+        //AND we are already in selection mode (because default selection mode start with a LONG-click)
+        if(item is IItemSelectable &&
+            defaultItemSelectionBehavior &&
+            isInSelectionMode())
         {
             //reverse the selection
-            selectOrDeselect(!item.mIsSelected,
+            selectOrDeselect(!item.isSelected,
                              listOf(position),
                              true)
         }

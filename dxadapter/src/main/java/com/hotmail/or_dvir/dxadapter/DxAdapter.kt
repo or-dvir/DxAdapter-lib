@@ -9,12 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterBase
-import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterExpandable
-import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
-import com.hotmail.or_dvir.dxadapter.interfaces.IItemExpandable
+import com.hotmail.or_dvir.dxadapter.interfaces.*
 
-abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
+abstract class DxAdapter<ITEM : IDxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
       Filterable,
       IAdapterBase<ITEM>
@@ -77,7 +74,8 @@ abstract class DxAdapter<ITEM : DxItem, VH : RecyclerViewHolder>(internal var mI
     {
         mItems[position].let { item ->
             holder.itemView.let {
-                it.isSelected = item.mIsSelected
+                if(item is IItemSelectable)
+                    it.isSelected = item.isSelected
 
                 if (item is IItemExpandable)
                 {

@@ -2,7 +2,7 @@ package com.hotmail.or_dvir.dxadapter.interfaces
 
 import android.support.annotation.IdRes
 
-interface IItemExpandable
+interface IItemExpandable: IDxItem
 {
     /**
      * other then giving an initial value, do NOT change this variable yourself!

@@ -32,7 +32,7 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
             et.setText(item.mSubText)
             cb.isChecked = item.isDone
 
-            if(item.mIsExpanded)
+            if(item.isExpanded)
                 iv.animate().rotation(180f).start()
             else
                 iv.animate().rotation(0f).start()

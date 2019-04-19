@@ -6,9 +6,12 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxItem
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 import kotlin.math.roundToInt
 
-class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>)
+class DxItemTouchCallback<ITEM: IDxItem>(private val mAdapter: DxAdapter<ITEM, *>)
     : ItemTouchHelper.Callback()
 {
     //todo test drag and drop and callbacks with grid layout manager!!!!
@@ -98,7 +101,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
         val dragFlags =
                 when
                 {
-                    !item.isDraggable() -> 0
+                    item !is IItemDraggable -> 0
                     isGridLayoutManager -> //enable drag in all directions
                         ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
                     else -> //only enable drag UP and DOWN
@@ -106,7 +109,7 @@ class DxItemTouchCallback<ITEM: DxItem>(private val mAdapter: DxAdapter<ITEM, *>
                 }
 
         val swipeFlags =
-            if (!item.isSwipeable() || onItemSwiped == null)
+            if (item !is IItemSwipeable || onItemSwiped == null)
                 0
             else
                 //for sure onItemSwiped is not null because of the "if" above

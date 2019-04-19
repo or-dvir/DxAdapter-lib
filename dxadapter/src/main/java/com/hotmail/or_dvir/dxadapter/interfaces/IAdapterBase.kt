@@ -3,9 +3,8 @@ package com.hotmail.or_dvir.dxadapter.interfaces
 import android.content.Context
 import android.support.annotation.ColorInt
 import android.util.TypedValue
-import com.hotmail.or_dvir.dxadapter.DxItem
 
-interface IAdapterBase<ITEM: DxItem>
+interface IAdapterBase<ITEM: IDxItem>
 {
     val mAdapterItems: List<ITEM>
     //todo note that this list could have variables that are -1 (result of indexOf() function)

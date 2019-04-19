@@ -1,14 +1,12 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.hotmail.or_dvir.dxadapter.DxItem
 import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterInnerViews
 import com.hotmail.or_dvir.dxadapter.adapters.MyMultiTypeAdapter
+import com.hotmail.or_dvir.dxadapter.interfaces.IDxItem
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
 import kotlinx.android.synthetic.main.activity_multi_type.*
@@ -20,9 +18,9 @@ class ActivityMultiType : BaseActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_multi_type)
 
-        //used DxItem for convenience. use any type you want as long as
+        //used IDxItem for convenience. use any type you want as long as
         //its shared between all list items
-        val list = mutableListOf<DxItem>()
+        val list = mutableListOf<IDxItem>()
 
         for(i in 1..100)
         {
