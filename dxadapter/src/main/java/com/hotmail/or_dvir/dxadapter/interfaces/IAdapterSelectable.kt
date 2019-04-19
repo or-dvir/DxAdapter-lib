@@ -30,7 +30,6 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
      */
     val triggerClickListenersInSelectionMode: Boolean
 
-    //todo should i have the listeners inside the adapter for convenience?
     //selection listener
     val onItemSelectionChanged: onItemSelectStateChangedListener<ITEM>?
 
