@@ -7,24 +7,19 @@ import android.support.annotation.ColorInt
 import android.support.annotation.IdRes
 import kotlin.math.roundToInt
 
-//NOTE:
-//cannot use interface instead of this class because we need to save the state
-//of the mIsSelected variable
-abstract class DxItem(internal var mIsSelected: Boolean = false)
-{
-    //todo think about a way to maybe convert everything (including "mIsSelected"!) to interfaces
-    //todo or aliases so that the user does NOT have to inherit from this class
-
-    /**
-     * to prevent bugs, it is recommended that you return an @idRes Int here
-     */
-    abstract fun getViewType(): Int
-
-    //todo when documenting, explain that these can be overridden to change behavior
-    open fun isDraggable() = true
-    open fun isSelectable() = true
-    open fun isSwipeable() = true
-}
+////NOTE:
+////cannot use interface instead of this class because we need to save the state
+////of the mIsSelected variable
+//abstract class DxItem(internal var mIsSelected: Boolean = false)
+//{
+//    //todo think about a way to maybe convert everything (including "mIsSelected"!) to interfaces
+//    //todo or aliases so that the user does NOT have to inherit from this class
+//
+//    /**
+//     * to prevent bugs, it is recommended that you return an @idRes Int here
+//     */
+//    abstract fun getViewType(): Int
+//}
 
 //abstract class DxItemExpandable(mInitialExpandedState: Boolean = false)
 //    : DxItem()
