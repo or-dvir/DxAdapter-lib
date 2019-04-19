@@ -5,7 +5,7 @@ import android.support.v7.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxItem
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSelectable
 
 /**
@@ -22,7 +22,7 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IItemSelectable
  * all items will be deselected. IMPORTANT: this does NOT trigger the selection
  * listener given to [DxAdapter]
  */
-class DxActionModeHelper<ITEM : IDxItem>(
+class DxActionModeHelper<ITEM : IItemBase>(
     private val adapter: DxAdapter<ITEM, *>,
     private val titleProvider: actionModeTitleProvider,
     private val callback: ActionMode.Callback)

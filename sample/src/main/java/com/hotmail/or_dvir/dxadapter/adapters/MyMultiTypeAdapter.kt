@@ -6,18 +6,18 @@ import android.widget.ImageView
 import com.hotmail.or_dvir.dxadapter.DxAdapter
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxItem
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
 import kotlinx.android.synthetic.main.my_item_image_vertical.view.*
 
 //for multi-type adapter, the item type and view holder type need to be shared
-//between all supported items of this adapter. i use IDxItem and RecyclerViewHolder
+//between all supported items of this adapter. i use IItemBase and RecyclerViewHolder
 //for convenience, but it can be any type that the items share
-class MyMultiTypeAdapter(mItems: MutableList<IDxItem>)
-    : DxAdapter<IDxItem, RecyclerViewHolder>(mItems)
+class MyMultiTypeAdapter(mItems: MutableList<IItemBase>)
+    : DxAdapter<IItemBase, RecyclerViewHolder>(mItems)
 {
-    override fun bindViewHolder(holder: RecyclerViewHolder, position: Int, item: IDxItem)
+    override fun bindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
     {
         when (item)
         {
@@ -29,7 +29,7 @@ class MyMultiTypeAdapter(mItems: MutableList<IDxItem>)
         }
     }
 
-    override fun unbindViewHolder(holder: RecyclerViewHolder, position: Int, item: IDxItem)
+    override fun unbindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
     {
         when (item)
         {

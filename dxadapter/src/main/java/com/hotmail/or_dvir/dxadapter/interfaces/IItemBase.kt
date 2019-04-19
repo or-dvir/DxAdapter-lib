@@ -1,6 +1,6 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
-interface IDxItem
+interface IItemBase
 {
     /**
      * to prevent bugs, this value should be a constant.
