@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.hotmail.or_dvir.dxadapter.*
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxItem
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IDxStickyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
@@ -12,8 +12,8 @@ import kotlinx.android.synthetic.main.my_header.view.*
 
 //this is essentially the same as MyMultiTypeAdapter where one of the types is a header.
 //see notes for item/viewHolder type in MyMultiTypeAdapter class
-class MyHeaderAdapter(private val mItems: MutableList<IDxItem>)
-    : DxAdapter<IDxItem, RecyclerViewHolder>(mItems),
+class MyHeaderAdapter(private val mItems: MutableList<IItemBase>)
+    : DxAdapter<IItemBase, RecyclerViewHolder>(mItems),
       IDxStickyHeader
 {
     //convenience method so that the binding logic of a header view
@@ -31,7 +31,7 @@ class MyHeaderAdapter(private val mItems: MutableList<IDxItem>)
 
     override fun getHeaderLayoutRes() = R.layout.my_header
 
-    override fun bindViewHolder(holder: RecyclerViewHolder, position: Int, item: IDxItem)
+    override fun bindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
     {
         when (item)
         {
@@ -43,7 +43,7 @@ class MyHeaderAdapter(private val mItems: MutableList<IDxItem>)
         }
     }
 
-    override fun unbindViewHolder(holder: RecyclerViewHolder, position: Int, item: IDxItem)
+    override fun unbindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
     {
         when (item)
         {

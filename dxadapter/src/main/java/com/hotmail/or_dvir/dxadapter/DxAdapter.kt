@@ -11,7 +11,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import com.hotmail.or_dvir.dxadapter.interfaces.*
 
-abstract class DxAdapter<ITEM : IDxItem, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
+abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
       Filterable,
       IAdapterBase<ITEM>

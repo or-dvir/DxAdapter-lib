@@ -4,7 +4,7 @@ import android.content.Context
 import android.support.annotation.ColorInt
 import android.util.TypedValue
 
-interface IAdapterBase<ITEM: IDxItem>
+interface IAdapterBase<ITEM: IItemBase>
 {
     val mAdapterItems: List<ITEM>
     //todo note that this list could have variables that are -1 (result of indexOf() function)

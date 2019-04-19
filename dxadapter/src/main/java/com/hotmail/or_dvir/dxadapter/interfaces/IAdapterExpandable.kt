@@ -2,7 +2,7 @@ package com.hotmail.or_dvir.dxadapter.interfaces
 
 import com.hotmail.or_dvir.dxadapter.onItemExpandStateChangedListener
 
-interface IAdapterExpandable<ITEM: IDxItem>: IAdapterBase<ITEM>
+interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
 {
     /**
      * default value: FALSE

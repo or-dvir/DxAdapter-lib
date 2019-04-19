@@ -6,12 +6,12 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxItem
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 import kotlin.math.roundToInt
 
-class DxItemTouchCallback<ITEM: IDxItem>(private val mAdapter: DxAdapter<ITEM, *>)
+class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>)
     : ItemTouchHelper.Callback()
 {
     //todo test drag and drop and callbacks with grid layout manager!!!!

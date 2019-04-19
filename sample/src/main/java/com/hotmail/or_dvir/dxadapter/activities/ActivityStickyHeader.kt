@@ -11,7 +11,7 @@ import com.hotmail.or_dvir.dxadapter.DxStickyHeaderItemDecoration
 import com.hotmail.or_dvir.dxadapter.DxSwipeBackground
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyHeaderAdapter
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxItem
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.activity_multi_type.*
@@ -25,9 +25,9 @@ class ActivityStickyHeader : BaseActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sticky_header)
 
-        //used IDxItem for convenience. use any type you want as long as
+        //used IItemBase for convenience. use any type you want as long as
         //its shared between all list items
-        val list = mutableListOf<IDxItem>()
+        val list = mutableListOf<IItemBase>()
         var headerCounter = 1
 
         for(i in 1..100)
