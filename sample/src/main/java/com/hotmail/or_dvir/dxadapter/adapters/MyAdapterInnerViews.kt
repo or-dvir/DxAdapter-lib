@@ -85,7 +85,7 @@ class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
                 }
 
                 //todo figure this out before releasing!!!!!
-                //for some reason this only works when put inside this function
+                // for some reason this only works when put inside this function
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)
                 {
                     s?.apply { mItems[adapterPosition].mText = toString() }

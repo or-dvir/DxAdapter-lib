@@ -103,8 +103,8 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
     }
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
-    //todo what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
-    //todo any other important methods i should override??????
+    // what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
+    // any other important methods i should override??????
 
     //todo make sure every function has good documentation!!!
 
@@ -164,8 +164,8 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
                 dxExpandableItemClicked(clickedPosition, selectionBefore)
 
             //todo when documenting this library, notice the order of the calls
-            //todo first selection listener or first click listener????
-            //todo example: if first selection, then click listener is AFTER the item has been selected/deselected
+            // first selection listener or first click listener????
+            // example: if first selection, then click listener is AFTER the item has been selected/deselected
         }
 
         itemView.setOnLongClickListener { view ->
@@ -192,7 +192,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
                 true
 
             //todo when documenting this library, notice the order of the calls
-            //todo first selection listener or first long-click listener????
+            // first selection listener or first long-click listener????
         }
 
         return holder

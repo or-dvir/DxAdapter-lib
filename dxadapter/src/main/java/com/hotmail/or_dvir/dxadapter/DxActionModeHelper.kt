@@ -28,7 +28,7 @@ class DxActionModeHelper<ITEM : IItemBase>(
     private val callback: ActionMode.Callback)
 {
     //todo when documenting add a comment that says this is intended to work with IAdapterSelectable
-    //todo and will not work as intended otherwise
+    // and will not work as intended otherwise
 
     //make this public in case the user wants access to it (for example to call finish())
     var actionMode: ActionMode? = null

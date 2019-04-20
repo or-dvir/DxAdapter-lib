@@ -120,8 +120,8 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
         val item = mAdapterItems[position]
 
         //todo when documenting this library, notice the order of the calls
-        //todo first selection listener or first click listener????
-        //todo example: if first selection, then click listener is AFTER the item has been selected/deselected
+        // first selection listener or first click listener????
+        // example: if first selection, then click listener is AFTER the item has been selected/deselected
 
         //change selection state only if the item is selectable (could be multi-type adapter!),
         //AND user asked for default behavior,
@@ -152,9 +152,9 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
         if(defaultItemSelectionBehavior)
         {
             //todo when documenting, mention that the background will be overridden when item is "selected",
-            //todo meaning that it will change the background to the selected color.
-            //todo if user has custom selection background that is NOT a color, he should NOT use defaultItemSelectionBehavior
-            //todo but then must handle other things by himself.
+            // meaning that it will change the background to the selected color.
+            // if user has custom selection background that is NOT a color, he should NOT use defaultItemSelectionBehavior
+            // but then must handle other things by himself.
             StateListDrawable().apply {
                 //selected
                 addState(intArrayOf(android.R.attr.state_selected),

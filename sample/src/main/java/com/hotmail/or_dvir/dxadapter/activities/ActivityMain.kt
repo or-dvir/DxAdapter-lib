@@ -23,6 +23,9 @@ class ActivityMain : AppCompatActivity()
 {
     //todo fix all documentation after moving everything into interfaces/separate classes
 
+    //todo now that i have separation of features, check in the entire project
+    // for nullable variables and see if you can make them non-nullable
+
     //todo when documenting, note that this library was meant for kotlin and was not tested in java
 
     //todo test module with leak canary!!!!!!!
@@ -30,17 +33,16 @@ class ActivityMain : AppCompatActivity()
     //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
 
     //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
-    //todo you have included ALL POSSIBLE OPTIONS in this sample
+    // you have included ALL POSSIBLE OPTIONS in this sample
 
     //todo have different activities for different features? if you put all in 1 activity it might confuse the user
 
     //todo check all documentations (including comments in code!!!) to make sure its accurate
-    //todo for example, click listeners are not needed anymore for default selection behavior
+    // for example, click listeners are not needed anymore for default selection behavior
 
     //todo test the code WITHOUT default click behavior!!!
 
-//    i stopped here
-//    https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-6a6f0c422efd#667e
+    //todo consider switching swiping logic to layout behind the item...
 
     private lateinit var mSampleAdapter: MyAdapter
     private lateinit var mItemTouchHelper: ItemTouchHelper
@@ -49,11 +51,11 @@ class ActivityMain : AppCompatActivity()
     //todo ripple effect is being overridden when applying stateListDrawable to our item
 
     //todo instead of writing what the default value for everything in the sample is,
-    //todo refer them to the documentation - that way it only has to change in one place
+    // refer them to the documentation - that way it only has to change in one place
 
     //todo BUG BUG BUG BUG BUG BUG BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //todo selecting an item, swiping it to the left (deleting) while selected
-    //todo -> action mode still active!!! what adapter thinks about number of selected items????
+    // selecting an item, swiping it to the left (deleting) while selected
+    // -> action mode still active!!! what adapter thinks about number of selected items????
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -178,10 +180,10 @@ class ActivityMain : AppCompatActivity()
                                                        getDrawable(R.drawable.ic_arrow_left))
 
                 //todo when documenting add a note that initializing swipeBackgroundLeft/right
-                //todo does not automatically mean that swipe is enabled.
-                //todo the user MUST call setItemsSwipeable() to enable swiping
-                //todo maybe i can make it such that swipeBackgroundLeft/right is part of the function?
-                //todo that way it would be less confusing to the user
+                // does not automatically mean that swipe is enabled.
+                // the user MUST call setItemsSwipeable() to enable swiping.
+                // maybe i can make it such that swipeBackgroundLeft/right is part of the function?
+                // that way it would be less confusing to the user
 
                 //IMPORTANT NOTE:
                 //the directions you provide in the first parameter
@@ -239,8 +241,8 @@ class ActivityMain : AppCompatActivity()
         //don't forget to attach it to your RecyclerView!
         mItemTouchHelper = DxItemTouchHelper(itemTouchCallback).apply {
             //todo what if i mix items in the adapter, and each has different handle?!
-            //todo make a method "getHandleId()"???? keep it like this and force the user
-            //todo so use the same id for all handles????
+            // make a method "getHandleId()"???? keep it like this and force the user
+            // so use the same id for all handles????
             setDragHandleId(R.id.myItemDragHandle)
         }
 

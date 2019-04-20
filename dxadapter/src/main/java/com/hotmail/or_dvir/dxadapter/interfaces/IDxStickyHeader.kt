@@ -9,7 +9,7 @@ interface IDxStickyHeader
      * @return the resource id of the header layout for the given position
      */
     //todo in order to allow multiple types of headers, add position parameter!!!
-    //todo note that this might require some changes in the adapter!!!
+    // note that this might require some changes in the adapter!!!
     @LayoutRes
     fun getHeaderLayoutRes(/*headerPosition: Int*/): Int
 
