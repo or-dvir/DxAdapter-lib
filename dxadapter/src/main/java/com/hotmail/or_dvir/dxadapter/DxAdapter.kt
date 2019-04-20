@@ -113,14 +113,12 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
     @CallSuper
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
     {
-        val context = parent.context
-
         val itemView = LayoutInflater
-                .from(context)
+                .from(parent.context)
                 .inflate(getItemLayoutRes(parent, viewType), parent, false)
 
         if(this is IAdapterSelectable<*>)
-            dxOnCreateViewHolder(context, parent, viewType, itemView)
+            dxOnCreateViewHolder(parent, viewType, itemView)
         //todo do i need rest of the interfaces here!!!!
 
         val holder = createAdapterViewHolder(itemView, parent, viewType)
@@ -182,7 +180,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
                 triggerListener = dxSelectableItemLongClicked(clickedPosition)
 
             if(this@DxAdapter is IAdapterExpandable<*>)
-                dxExpandableItemLongClicked(clickedPosition)
+                dxExpandableItemLongClicked()
 
             //todo dont forget the rest of the interfaces!!!
 

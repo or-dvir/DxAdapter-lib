@@ -25,11 +25,13 @@ class ActivityFilter : BaseActivity()
         for(i in 1..100)
             list.add(MyItem(i.toString()))
 
-        val filterAdapter = MyAdapter(list).apply {
-            dxFilter = { constraint ->
-                list.filter { it.mText.startsWith(constraint.trim(), true) }
+        val filterAdapter = MyAdapter(list,
+                                      onItemSelectionChanged = { _, _, isSelected -> /*do nothing*/ })
+            .apply {
+                dxFilter = { constraint ->
+                    list.filter { it.mText.startsWith(constraint.trim(), true) }
+                }
             }
-        }
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityFilter, DividerItemDecoration.VERTICAL))

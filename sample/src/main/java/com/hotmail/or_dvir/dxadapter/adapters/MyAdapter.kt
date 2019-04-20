@@ -12,7 +12,7 @@ import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 import kotlinx.android.synthetic.main.my_item.view.*
 
 class MyAdapter(mItems: MutableList<MyItem>,
-                override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItem>? = null)
+                override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItem>)
     : DxAdapter<MyItem, MyAdapter.ViewHolder>(mItems),
       IAdapterSelectable<MyItem>
 {

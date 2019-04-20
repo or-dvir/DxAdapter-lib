@@ -13,14 +13,16 @@ import kotlinx.android.synthetic.main.my_item_expandable.view.*
 //this is essentially the same as MyMultiTypeAdapter where one of the types is a header.
 //see notes for item/viewHolder type in MyMultiTypeAdapter class
 class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
-                          override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>? = null)
+                          override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>)
     : DxAdapter<MyItemExpandable, MyAdapterExpandable.ViewHolder>(mItems),
       IAdapterExpandable<MyItemExpandable>,
       IAdapterSelectable<MyItemExpandable>
 {
     override val defaultItemSelectionBehavior = true
     override val triggerClickListenersInSelectionMode = false
-    override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItemExpandable>? = null
+    override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItemExpandable> =
+        { _, _, _ -> /*empty listener - we don't do anything*/ }
+
     //setting this to null means accent color will be used
     override val selectedItemBackgroundColor: Int? = null
     override val onlyOneItemExpanded = false

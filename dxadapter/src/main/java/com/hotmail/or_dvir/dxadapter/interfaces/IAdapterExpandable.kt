@@ -14,7 +14,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
     val onlyOneItemExpanded: Boolean
 
     //expansion listeners
-    var onItemExpandStateChanged: onItemExpandStateChangedListener<ITEM>?
+    var onItemExpandStateChanged: onItemExpandStateChangedListener<ITEM>
 
     fun getAllExpandedItems() =
         mAdapterItems.filter { it is IItemExpandable && it.isExpanded }
@@ -27,7 +27,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
      * NOTE: if [onlyOneItemExpanded] is TRUE, then only the first item in [indices] will be expanded
      */
     fun expandIndices(indices: List<Int>, triggerListener: Boolean = true) =
-        expandOrCollapse(true, indices, triggerListener)
+        expandOrCollapse(true, getItemsForIndices(indices), triggerListener)
     /**
      * expands all the given items.
      *
@@ -41,7 +41,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
     /**
      * convenience function to expand all items.
      *
-     * NOTE: that this function does NOT trigger [onItemExpanded].
+     * NOTE: that this function does NOT trigger [onItemExpandStateChanged].
      *
      * NOTE: if onlyOneItemExpanded is TRUE, only the first item in this adapter
      * will be expanded.
@@ -49,7 +49,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
     fun expandAll() = expand(mAdapterItems, false)
 
     fun collapseIndices(indices: List<Int>, triggerListener: Boolean = true) =
-        expandOrCollapse(false, indices, triggerListener)
+        expandOrCollapse(false, getItemsForIndices(indices), triggerListener)
     fun collapse(index: Int) = collapseIndices(listOf(index))
     fun collapse(items: List<ITEM>, triggerListener: Boolean = true) =
         collapseIndices(getIndicesForItems(items), triggerListener)
@@ -58,12 +58,12 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
     /**
      * convenience function to collapse all items.
      *
-     * note that this function does NOT trigger [onItemCollapsed].
+     * note that this function does NOT trigger [onItemExpandStateChanged].
      */
     fun collapseAll() = collapse(mAdapterItems, false)
 
     private fun expandOrCollapse(shouldExpand: Boolean,
-                                 indices: List<Int>,
+                                 items: List<ITEM>,
                                  triggerListener: Boolean)
     {
 //        //if we are in selection mode and we want default behavior,
@@ -71,36 +71,30 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
 //        if(this is IAdapterSelectable<*> && isInSelectionMode() && defaultItemSelectionBehavior)
 //            return
 
-        val tempIndices =
+        val tempItems =
             when
             {
-                indices.isEmpty() -> null
-                shouldExpand && onlyOneItemExpanded -> listOf(indices[0])
-                else -> indices
+                items.isEmpty() -> null
+                shouldExpand && onlyOneItemExpanded -> listOf(items[0])
+                else -> items
             }
 
-        //todo this is getting too nested... see if you can improve it
-        tempIndices?.forEach { position ->
-            if (isInBounds(position))
+        var tempPosition: Int
+        tempItems?.forEach {
+            //only expand/collapse if not already expanded/collapsed
+            //so we don't trigger unnecessary listeners and ui updates
+            if (it is IItemExpandable && shouldExpand != it.isExpanded)
             {
-                mAdapterItems[position].apply {
+                it.isExpanded = shouldExpand
+                tempPosition = getIndexForItem(it)
 
-                    //only expand/collapse if not already expanded/collapsed
-                    //so we don't trigger unnecessary listeners and ui updates
-                    if(this is IItemExpandable &&
-                        shouldExpand != isExpanded)
-                    {
-                        isExpanded = shouldExpand
+                if (triggerListener)
+                    onItemExpandStateChanged.invoke(tempPosition, it, shouldExpand)
 
-                        if (triggerListener)
-                            onItemExpandStateChanged?.invoke(position, this, shouldExpand)
+                if (shouldExpand)
+                    checkOnlyOneItemExpanded(it)
 
-                        if (shouldExpand)
-                            checkOnlyOneItemExpanded(this)
-
-                        dxNotifyItemChanged(position)
-                    }
-                }
+                dxNotifyItemChanged(tempPosition)
             }
         }
     }
@@ -112,10 +106,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
             val allExceptNew =
                 getAllExpandedItems().toMutableList().apply { remove(newExpandedItem) }
 
-            //list could be long... so prevent a lot of calls to the listener
-            //with the optional variable
-            //todo should this be true or false?!?!?!?
-            collapse(allExceptNew, true)
+            collapse(allExceptNew)
         }
     }
 
@@ -130,10 +121,10 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
         val item = mAdapterItems[position]
 
         if (item is IItemExpandable && item.expandCollapseOnItemClick())
-            expandOrCollapse(!item.isExpanded, listOf(position), true)
+            expandOrCollapse(!item.isExpanded, listOf(item), true)
     }
 
-    fun dxExpandableItemLongClicked(position: Int)
+    fun dxExpandableItemLongClicked()
     {
         //if we just selected our first item and we want default behavior,
         //collapse all items
