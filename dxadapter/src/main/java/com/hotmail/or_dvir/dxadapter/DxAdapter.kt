@@ -7,17 +7,12 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import com.hotmail.or_dvir.dxadapter.interfaces.*
 
 abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
-      Filterable,
       IAdapterBase<ITEM>
 {
-    //todo find a way so that the user does NOT have to extend DxItem
-
     override val mAdapterItems = mItems
 
     //click listeners
@@ -28,42 +23,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
 
     //todo move this to draggable interface or wherever you handle dragging
     internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
-
-    private val privateFilter = object : Filter()
-    {
-        override fun performFiltering(constraint: CharSequence?): FilterResults?
-        {
-            //todo how to add animation to filtering????
-
-            if(this@DxAdapter !is IAdapterFilterable<*>)
-                return null
-
-            val results =
-                if (constraint.isNullOrEmpty())
-                    mAdapterItems
-                else
-                //for SURE this is not null because of the "if" condition above
-                    mdxFilter.invoke(constraint)
-
-            return FilterResults().apply {
-                values = results
-                count = results.size
-            }
-        }
-
-        override fun publishResults(constraint: CharSequence, results: FilterResults?)
-        {
-            results?.apply {
-                //note:
-                //cannot check for generic types in kotlin.
-                //but because dxFilter is defined with the generic type ITEM,
-                //the user will get a compiler error if they return a list of a different type
-                @Suppress("UNCHECKED_CAST")
-                mItems = values as MutableList<ITEM>
-                notifyDataSetChanged()
-            }
-        }
-    }
 
     override fun getItemViewType(position: Int) = mItems[position].getViewType()
     override fun getItemCount(): Int = mItems.size
@@ -107,7 +66,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
 
     //todo make sure every function has good documentation!!!
 
-    override fun dxNotifyDataSetChanged() = notifyDataSetChanged()
+//    override fun dxNotifyDataSetChanged() = notifyDataSetChanged()
     override fun dxNotifyItemChanged(position: Int) = notifyItemChanged(position)
 
     @CallSuper
@@ -196,14 +155,20 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
         return holder
     }
 
-    /**
-     * convenience method instead of calling [getFilter().filter(constraint)].
-     *
-     * Note: if your adapter doesn't implement IAdapterFilterable, this function does nothing
-     */
-    fun filter(constraint: CharSequence) = filter.filter(constraint)
+    override fun setItems(items: MutableList<ITEM>)
+    {
+        mItems = items
+        notifyDataSetChanged()
+    }
 
-    override fun getFilter() = privateFilter
+//    /**
+//     * convenience method instead of calling [getFilter().filter(constraint)].
+//     *
+//     * Note: if your adapter doesn't implement IAdapterFilterable, this function does nothing
+//     */
+//    fun filter(constraint: CharSequence) = filter.filter(constraint)
+//
+//    override fun getFilter() = privateFilter
 
     abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): VH
     @LayoutRes

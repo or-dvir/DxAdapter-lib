@@ -11,11 +11,12 @@ interface IAdapterBase<ITEM: IItemBase>
     fun getIndicesForItems(items: List<ITEM>) = items.map { getIndexForItem(it) }
     fun getIndexForItem(item: ITEM) = mAdapterItems.indexOf(item)
 
+    fun setItems(items: MutableList<ITEM>)
+
     fun getItemsForIndices(indices: List<Int>) = indices.map { getItemForIndex(it) }
     fun getItemForIndex(index: Int) = mAdapterItems[index]
 
     fun dxNotifyItemChanged(position: Int)
-    fun dxNotifyDataSetChanged()
 
     @ColorInt
     fun getThemeAccentColorInt(context: Context): Int

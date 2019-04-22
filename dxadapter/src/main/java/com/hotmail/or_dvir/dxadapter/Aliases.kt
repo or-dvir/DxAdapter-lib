@@ -20,8 +20,10 @@ typealias onItemSelectStateChangedListener<ITEM> =
 typealias onItemExpandStateChangedListener<ITEM> =
             (adapterPosition: Int, item: ITEM, isExpanded: Boolean) -> Unit
 
-
-internal typealias dxFilter<ITEM> = (constraint: CharSequence) -> List<ITEM>
+/**
+ * @return list of items that should REMAIN in the adapter
+ */
+typealias onFilterRequest<ITEM> = (constraint: CharSequence) -> List<ITEM>
 
 internal typealias onItemsMoveListener<ITEM> = (draggedItem: ITEM,
                                                 targetItem: ITEM,

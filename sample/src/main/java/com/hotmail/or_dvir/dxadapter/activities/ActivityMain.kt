@@ -26,6 +26,8 @@ class ActivityMain : AppCompatActivity()
     //todo now that i have separation of features, check in the entire project
     // for nullable variables and see if you can make them non-nullable
 
+    //todo after separating features to interfaces, TEST EVERYTHING AGAIN!!!
+
     //todo when documenting, note that this library was meant for kotlin and was not tested in java
 
     //todo test module with leak canary!!!!!!!

@@ -1,7 +1,6 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -26,12 +25,7 @@ class ActivityFilter : BaseActivity()
             list.add(MyItem(i.toString()))
 
         val filterAdapter = MyAdapter(list,
-                                      onItemSelectionChanged = { _, _, isSelected -> /*do nothing*/ })
-            .apply {
-                dxFilter = { constraint ->
-                    list.filter { it.mText.startsWith(constraint.trim(), true) }
-                }
-            }
+                                      onItemSelectionChanged = { _, _, _ -> /*do nothing*/ })
 
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityFilter, DividerItemDecoration.VERTICAL))
