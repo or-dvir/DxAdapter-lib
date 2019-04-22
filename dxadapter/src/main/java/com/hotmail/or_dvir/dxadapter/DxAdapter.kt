@@ -24,29 +24,26 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
     var onItemClick: onItemClickListener<ITEM>? = null
     var onItemLongClick: onItemLongClickListener<ITEM>? = null
 
-    var dxFilter: dxFilter<ITEM>? = null
-
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
 
+    //todo move this to draggable interface or wherever you handle dragging
     internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
-    private val mOriginalList = mItems
     private val privateFilter = object : Filter()
     {
-        override fun performFiltering(constraint: CharSequence): FilterResults?
+        override fun performFiltering(constraint: CharSequence?): FilterResults?
         {
             //todo how to add animation to filtering????
 
-            //todo exception is thrown as a warning???? colored in yellow!!!
-            if (dxFilter == null)
-                throw UninitializedPropertyAccessException("you must initialize the field \"dxFilter\" before filtering")
+            if(this@DxAdapter !is IAdapterFilterable<*>)
+                return null
 
             val results =
-                if (constraint.isEmpty())
-                    mOriginalList
+                if (constraint.isNullOrEmpty())
+                    mAdapterItems
                 else
                 //for SURE this is not null because of the "if" condition above
-                    dxFilter!!.invoke(constraint)
+                    mdxFilter.invoke(constraint)
 
             return FilterResults().apply {
                 values = results
@@ -54,15 +51,17 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
             }
         }
 
-        override fun publishResults(constraint: CharSequence, results: FilterResults)
+        override fun publishResults(constraint: CharSequence, results: FilterResults?)
         {
-            //note:
-            //cannot check for generic types in kotlin.
-            //but because dxFilter is defined with the generic type ITEM,
-            //the user will get a compiler error if they return a list of a different type
-            @Suppress("UNCHECKED_CAST")
-            mItems = results.values as MutableList<ITEM>
-            notifyDataSetChanged()
+            results?.apply {
+                //note:
+                //cannot check for generic types in kotlin.
+                //but because dxFilter is defined with the generic type ITEM,
+                //the user will get a compiler error if they return a list of a different type
+                @Suppress("UNCHECKED_CAST")
+                mItems = values as MutableList<ITEM>
+                notifyDataSetChanged()
+            }
         }
     }
 
@@ -108,6 +107,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
 
     //todo make sure every function has good documentation!!!
 
+    override fun dxNotifyDataSetChanged() = notifyDataSetChanged()
     override fun dxNotifyItemChanged(position: Int) = notifyItemChanged(position)
 
     @CallSuper
@@ -199,8 +199,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
     /**
      * convenience method instead of calling [getFilter().filter(constraint)].
      *
-     * Note: you MUST initialize [dxFilter] or an exception will be thrown.
-     * @param constraint to get the original list, set this to an empty string
+     * Note: if your adapter doesn't implement IAdapterFilterable, this function does nothing
      */
     fun filter(constraint: CharSequence) = filter.filter(constraint)
 

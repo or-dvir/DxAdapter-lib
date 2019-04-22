@@ -15,6 +15,7 @@ interface IAdapterBase<ITEM: IItemBase>
     fun getItemForIndex(index: Int) = mAdapterItems[index]
 
     fun dxNotifyItemChanged(position: Int)
+    fun dxNotifyDataSetChanged()
 
     @ColorInt
     fun getThemeAccentColorInt(context: Context): Int
