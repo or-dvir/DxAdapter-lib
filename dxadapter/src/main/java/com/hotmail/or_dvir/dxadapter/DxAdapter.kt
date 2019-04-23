@@ -3,10 +3,12 @@ package com.hotmail.or_dvir.dxadapter
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
 import com.hotmail.or_dvir.dxadapter.interfaces.*
 
 abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
@@ -26,6 +28,42 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
 
     override fun getItemViewType(position: Int) = mItems[position].getViewType()
     override fun getItemCount(): Int = mItems.size
+
+    override val mDxFilter = object : Filter()
+    {
+        override fun performFiltering(constraint: CharSequence?): FilterResults?
+        {
+            //todo how to add animation to filtering????
+
+            if(this@DxAdapter !is IAdapterFilterable<*>)
+                return null
+
+            val results =
+                if (constraint.isNullOrEmpty())
+                    mAdapterItems
+                else
+                //for SURE this is not null because of the "if" condition above
+                    onFilterRequest.invoke(constraint)
+
+            return FilterResults().apply {
+                values = results
+                count = results.size
+            }
+        }
+
+        override fun publishResults(constraint: CharSequence, results: FilterResults?)
+        {
+            results?.apply {
+                //note:
+                //cannot check for generic types in kotlin.
+                //but because onFilterRequest is defined with the generic type ITEM,
+                //the user will get a compiler error if they return a list of a different type
+                @Suppress("UNCHECKED_CAST")
+                mItems = values as MutableList<ITEM>
+                notifyDataSetChanged()
+            }
+        }
+    }
 
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
@@ -153,12 +191,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
         }
 
         return holder
-    }
-
-    override fun setItems(items: MutableList<ITEM>)
-    {
-        mItems = items
-        notifyDataSetChanged()
     }
 
 //    /**
