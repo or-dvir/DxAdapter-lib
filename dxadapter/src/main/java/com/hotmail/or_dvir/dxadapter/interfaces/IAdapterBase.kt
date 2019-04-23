@@ -9,7 +9,7 @@ interface IAdapterBase<ITEM: IItemBase>
 {
     val mAdapterItems: List<ITEM>
     val mDxFilter: Filter
-dfdfdfdfdfdf
+
     //todo note that this list could have variables that are -1 (result of indexOf() function)
     fun getIndicesForItems(items: List<ITEM>) = items.map { getIndexForItem(it) }
     fun getIndexForItem(item: ITEM) = mAdapterItems.indexOf(item)
