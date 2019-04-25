@@ -6,6 +6,7 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
@@ -109,7 +110,7 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
 //                    }
 
                     //needed for compiler
-                    else -> ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                    else -> ItemTouchHelper.UP or ItemTouchHelper.DOWN
                 }
 
         val swipeFlags =
@@ -200,6 +201,8 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     {
         if (actionState != ItemTouchHelper.ACTION_STATE_SWIPE)
             return
+
+        Log.i("aaaaa", "on child draw")
 
         //todo should i keep global reference to view???? is it safe in this class??????
         val itemView = viewHolder.itemView
