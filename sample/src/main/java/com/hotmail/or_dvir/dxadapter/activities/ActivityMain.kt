@@ -74,10 +74,6 @@ class ActivityMain : AppCompatActivity()
         for (i in 1..100)
             myListItems.add(MyItem(i.toString()))
 
-        mSampleAdapter.onItemClick = { view, adapterPosition, item ->
-
-        }
-
         mSampleAdapter =
             MyAdapter(myListItems,
                       onItemSelectionChanged = { adapterPosition, item, isSelected ->
