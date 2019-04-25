@@ -10,6 +10,7 @@ import android.util.Log
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
+import java.util.*
 import kotlin.math.roundToInt
 
 class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>/*,
@@ -132,6 +133,7 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
 
         mAdapter.apply {
             onItemMove?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
+            Collections.swap(mItems, dragPos, targetPos)
             notifyItemMoved(dragPos, targetPos)
         }
 
