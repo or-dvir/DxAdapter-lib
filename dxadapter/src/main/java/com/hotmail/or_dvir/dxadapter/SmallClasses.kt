@@ -4,7 +4,6 @@ import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
-import android.support.annotation.IdRes
 import kotlin.math.roundToInt
 
 /**
