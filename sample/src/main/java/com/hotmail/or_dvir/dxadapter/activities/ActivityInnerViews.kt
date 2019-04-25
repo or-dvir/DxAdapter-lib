@@ -1,7 +1,6 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -37,7 +36,7 @@ class ActivityInnerViews : BaseActivity()
             setDragHandleId(R.id.myItemDragHandle)
         }
 
-        rv.apply {
+        rv_scrollListener_selectable_draggable.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityInnerViews, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityInnerViews, RecyclerView.VERTICAL, false)
             adapter = mAdapter

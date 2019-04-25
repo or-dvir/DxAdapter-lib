@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.my_item_image_vertical.view.*
 //for multi-type adapter, the item type and view holder type need to be shared
 //between all supported items of this adapter. i use IItemBase and RecyclerViewHolder
 //for convenience, but it can be any type that the items share
-class MyMultiTypeAdapter(mItems: MutableList<IItemBase>)
+class MyAdapterMultiType(mItems: MutableList<IItemBase>)
     : DxAdapter<IItemBase, RecyclerViewHolder>(mItems)
 {
     override fun bindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)

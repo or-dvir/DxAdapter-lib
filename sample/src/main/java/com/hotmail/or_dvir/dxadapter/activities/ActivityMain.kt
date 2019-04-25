@@ -59,6 +59,9 @@ class ActivityMain : AppCompatActivity()
     // selecting an item, swiping it to the left (deleting) while selected
     // -> action mode still active!!! what adapter thinks about number of selected items????
 
+    //todo BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
+    // dragging seems slow
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -244,7 +247,7 @@ class ActivityMain : AppCompatActivity()
             setDragHandleId(R.id.myItemDragHandle)
         }
 
-        rv.apply {
+        rv_scrollListener_selectable_draggable.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain,
                                                     DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
@@ -276,7 +279,8 @@ class ActivityMain : AppCompatActivity()
                 R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
                 R.id.filterSample -> startActivity<ActivityFilter>()
                 R.id.expandableSample -> startActivity<ActivityExpandable>()
-                R.id.horizontalSample -> startActivity<ActivityHorizontalRv>()
+                //todo not currently supported. this is for future use
+//                R.id.horizontalSample -> startActivity<ActivityHorizontalRv>()
             }
 
             drawer_layout.closeDrawers()

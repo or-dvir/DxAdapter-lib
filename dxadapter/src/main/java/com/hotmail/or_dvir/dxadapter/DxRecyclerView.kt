@@ -13,7 +13,6 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 {
     //todo test these listeners if the adapter changes during runtime!!!!
 
-    //todo get rid of all Pair and Triple and add setter methods. this is less confusing for the user
     /**
      * * [DxItemVisibilityListener.onItemVisible] will trigger immediately as the [DxRecyclerView] loads
      * (assuming the adapter contains at least 1 item).
@@ -37,19 +36,16 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     private var notifiedLastVisible = false
     private var notifiedLastInvisible = false
 
+    //todo add support for other types of layout managers
     private var mLayManLinear: LinearLayoutManager? = null
-    //todo dont forget to add grid and staggered grid layout manager!!!!
 
     override fun setLayoutManager(layout: LayoutManager?)
     {
         super.setLayoutManager(layout)
 
         layout?.let {
-            when(it)
-            {
-                is LinearLayoutManager -> mLayManLinear = it
-                //todo dont forget to add grid and staggered grid layout manager!!!!
-            }
+            if(it is LinearLayoutManager)
+                mLayManLinear = it
         }
     }
 
@@ -78,7 +74,6 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     {
         var visiblePos: Int
 
-        //todo don't forget about grid\staggered grid!!!!!!!
         mLayManLinear?.apply {
             firstItemVisibilityListener?.let {
                 visiblePos = findFirstVisibleItemPosition()

@@ -5,7 +5,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.adapters.MyMultiTypeAdapter
+import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterMultiType
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
@@ -30,9 +30,9 @@ class ActivityMultiType : BaseActivity()
                 list.add(MyItem(i.toString()))
         }
 
-        val multiAdapter = MyMultiTypeAdapter(list)
+        val multiAdapter = MyAdapterMultiType(list)
 
-        rv.apply {
+        rv_scrollListener_selectable_draggable.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMultiType, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMultiType, RecyclerView.VERTICAL, false)
             adapter = multiAdapter

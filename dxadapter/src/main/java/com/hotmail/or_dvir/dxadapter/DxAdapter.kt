@@ -3,7 +3,6 @@ package com.hotmail.or_dvir.dxadapter
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -116,7 +115,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
 
         if(this is IAdapterSelectable<*>)
             dxOnCreateViewHolder(parent, viewType, itemView)
-        //todo do i need rest of the interfaces here!!!!
 
         val holder = createAdapterViewHolder(itemView, parent, viewType)
 
@@ -178,8 +176,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
 
             if(this@DxAdapter is IAdapterExpandable<*>)
                 dxExpandableItemLongClicked()
-
-            //todo dont forget the rest of the interfaces!!!
 
             if (triggerListener)
                 onItemLongClick?.invoke(view, clickedPosition, clickedItem) ?: true

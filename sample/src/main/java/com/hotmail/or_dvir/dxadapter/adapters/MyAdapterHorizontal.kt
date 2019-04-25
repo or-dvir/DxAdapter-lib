@@ -5,12 +5,20 @@ import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.DxAdapter
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
+import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 import kotlinx.android.synthetic.main.my_item_image_vertical.view.*
 
-class MyAdapterHorizontal(mItems: MutableList<MyItemWithImage>):
-    DxAdapter<MyItemWithImage, MyAdapterHorizontal.ViewHolder>(mItems)
+class MyAdapterHorizontal(mItems: MutableList<MyItemWithImage>,
+                          override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItemWithImage>)
+    : DxAdapter<MyItemWithImage, MyAdapterHorizontal.ViewHolder>(mItems),
+      IAdapterSelectable<MyItemWithImage>
 {
+    override val defaultItemSelectionBehavior = true
+    override val triggerClickListenersInSelectionMode = false
+    override val selectedItemBackgroundColor: Int? = null
+
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemWithImage)
     {
         holder.iv.setImageResource(item.imageRes)

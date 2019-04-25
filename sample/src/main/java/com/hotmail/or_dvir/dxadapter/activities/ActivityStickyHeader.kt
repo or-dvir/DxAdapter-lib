@@ -10,7 +10,7 @@ import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
 import com.hotmail.or_dvir.dxadapter.DxStickyHeaderItemDecoration
 import com.hotmail.or_dvir.dxadapter.DxSwipeBackground
 import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.adapters.MyHeaderAdapter
+import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterHeader
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
@@ -38,13 +38,20 @@ class ActivityStickyHeader : BaseActivity()
                 headerCounter++
             }
             else
+
                 list.add(MyItem(i.toString()))
         }
 
+        //todo BUG BUG BUG BUG BUG BUG BUG BUG BUG
+        // cannot swipe pass header!!!
+        // either make entire adapter draggable, or once an item is NOT draggable,
+        // look for the closest draggable item and replace with it
+
         //todo this is for Testing. decide to change this or leave it when done Testing
-        val stickyHeaderAdapter = MyHeaderAdapter(list).apply {
+        val stickyHeaderAdapter = MyAdapterHeader(list).apply {
 //            defaultItemSelectionBehavior = false
         }
+
         //todo this is for Testing. decide to change this or leave it when done Testing
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
             dragOnLongClick = true
@@ -67,7 +74,7 @@ class ActivityStickyHeader : BaseActivity()
             }
         })
 
-        rv.apply {
+        rv_scrollListener_selectable_draggable.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityStickyHeader, DividerItemDecoration.VERTICAL))
             addItemDecoration(DxStickyHeaderItemDecoration(stickyHeaderAdapter))
 

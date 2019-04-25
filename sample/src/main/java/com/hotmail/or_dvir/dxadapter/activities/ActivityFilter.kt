@@ -27,7 +27,7 @@ class ActivityFilter : BaseActivity()
         val filterAdapter = MyAdapter(list,
                                       onItemSelectionChanged = { _, _, _ -> /*do nothing*/ })
 
-        rv.apply {
+        rv_scrollListener_selectable_draggable.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityFilter, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityFilter, RecyclerView.VERTICAL, false)
             adapter = filterAdapter

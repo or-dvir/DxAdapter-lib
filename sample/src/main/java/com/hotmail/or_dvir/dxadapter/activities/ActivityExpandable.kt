@@ -2,12 +2,10 @@ package com.hotmail.or_dvir.dxadapter.activities
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
 import com.hotmail.or_dvir.dxadapter.DxItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.DxSwipeBackground
@@ -15,11 +13,10 @@ import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterExpandable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.activity_filter.*
-import or_dvir.hotmail.com.dxutils.setHomeUpEnabled
 import org.jetbrains.anko.toast
 
 class ActivityExpandable : BaseActivity()
-    {
+{
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -67,7 +64,7 @@ class ActivityExpandable : BaseActivity()
                 }
             }
 
-        rv.apply {
+        rv_scrollListener_selectable_draggable.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityExpandable, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityExpandable, RecyclerView.VERTICAL, false)
             DxItemTouchHelper(itemTouchCallback).attachToRecyclerView(this)

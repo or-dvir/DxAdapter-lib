@@ -11,10 +11,11 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 import kotlin.math.roundToInt
 
-class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>)
+class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>/*,
+                                           private val mLayoutManager: RecyclerView.LayoutManager*/)
     : ItemTouchHelper.Callback()
 {
-    //todo test drag and drop and callbacks with grid layout manager!!!!
+    //todo add support for different types of layout managers (grid/staggered/horizontal)
 
     /**
      * default value: FALSE
@@ -66,12 +67,6 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     var swipeEscapeVelocityMultiplier: Float? = null
 
     /**
-     * if your list is actually a grid, set this value to TRUE.
-     * otherwise, drag-and-drop will not work as expected
-     */
-    var isGridLayoutManager = false
-
-    /**
      * NOTE: this will trigger JUST BEFORE the items are moved
      */
     var onItemMove: onItemsMoveListener<ITEM>? = null
@@ -102,10 +97,19 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
                 when
                 {
                     item !is IItemDraggable -> 0
-                    isGridLayoutManager -> //enable drag in all directions
-                        ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-                    else -> //only enable drag UP and DOWN
-                        ItemTouchHelper.UP or ItemTouchHelper.DOWN
+//                    mLayoutManager is GridLayoutManager -> //enable drag in all directions
+//                        ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+//
+//                    mLayoutManager is LinearLayoutManager ->
+//                    {
+//                        if(mLayoutManager.orientation == LinearLayoutManager.VERTICAL)
+//                            ItemTouchHelper.UP or ItemTouchHelper.DOWN
+//                        else
+//                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+//                    }
+
+                    //needed for compiler
+                    else -> ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
                 }
 
         val swipeFlags =
@@ -115,7 +119,6 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
                 //for sure onItemSwiped is not null because of the "if" above
                 onItemSwiped!!.first
 
-        //todo should i allow swiping when using grid layout??? maybe let the user decide????
         return makeMovementFlags(dragFlags, swipeFlags)
     }
 

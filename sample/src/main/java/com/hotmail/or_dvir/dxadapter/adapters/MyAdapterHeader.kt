@@ -10,9 +10,9 @@ import com.hotmail.or_dvir.dxadapter.models.MyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.my_header.view.*
 
-//this is essentially the same as MyMultiTypeAdapter where one of the types is a header.
-//see notes for item/viewHolder type in MyMultiTypeAdapter class
-class MyHeaderAdapter(private val mItems: MutableList<IItemBase>)
+//this is essentially the same as MyAdapterMultiType where one of the types is a header.
+//see notes for item/viewHolder type in MyAdapterMultiType class
+class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
     : DxAdapter<IItemBase, RecyclerViewHolder>(mItems),
       IDxStickyHeader
 {
@@ -73,7 +73,7 @@ class MyHeaderAdapter(private val mItems: MutableList<IItemBase>)
         {
             R.id.itemType_MyItem -> MyAdapter.ViewHolder(itemView) //using the same adapter for convenience
             R.id.itemType_MyHeader -> ViewHolderHeader(itemView)
-            else -> MyMultiTypeAdapter.DefaultViewHolder(itemView) //just for the compiler. handle this however you see fit
+            else -> MyAdapterMultiType.DefaultViewHolder(itemView) //just for the compiler. handle this however you see fit
         }
     }
 

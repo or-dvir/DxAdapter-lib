@@ -10,8 +10,8 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.my_item_expandable.view.*
 
-//this is essentially the same as MyMultiTypeAdapter where one of the types is a header.
-//see notes for item/viewHolder type in MyMultiTypeAdapter class
+//this is essentially the same as MyAdapterMultiType where one of the types is a header.
+//see notes for item/viewHolder type in MyAdapterMultiType class
 class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
                           override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>)
     : DxAdapter<MyItemExpandable, MyAdapterExpandable.ViewHolder>(mItems),
