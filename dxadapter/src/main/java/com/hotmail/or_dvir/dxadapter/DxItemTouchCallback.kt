@@ -201,68 +201,66 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
                              actionState: Int,
                              isCurrentlyActive: Boolean)
     {
-        if (actionState != ItemTouchHelper.ACTION_STATE_SWIPE)
-            return
-
-        Log.i("aaaaa", "on child draw")
-
-        //todo should i keep global reference to view???? is it safe in this class??????
-        val itemView = viewHolder.itemView
-        mIsSwipingLeft = dx < 0 && dx != 0f
-
-        mSwipeBackgroundForDrawing = when
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
         {
-            //not swiping, or swiping but item is exactly in the middle.
-            //in such cases, we don't draw the background
-            dx == 0f -> null
+            //todo should i keep global reference to view???? is it safe in this class??????
+            val itemView = viewHolder.itemView
+            mIsSwipingLeft = dx < 0 && dx != 0f
 
-            mIsSwipingLeft ->
-                mSwipeBackgroundLeft?.apply {
-                    mBackgroundColorDrawable.setBounds(itemView.right + dx.roundToInt(),
-                                                       itemView.top,
-                                                       itemView.right,
-                                                       itemView.bottom)
-                }
+            mSwipeBackgroundForDrawing = when
+            {
+                //not swiping, or swiping but item is exactly in the middle.
+                //in such cases, we don't draw the background
+                dx == 0f -> null
 
-            //swiping right
-            else ->
-                mSwipeBackgroundRight?.apply {
-                    mBackgroundColorDrawable.setBounds(itemView.left,
-                                                       itemView.top,
-                                                       itemView.left + dx.roundToInt(),
-                                                       itemView.bottom)
-                }
-        }
+                mIsSwipingLeft ->
+                    mSwipeBackgroundLeft?.apply {
+                        mBackgroundColorDrawable.setBounds(itemView.right + dx.roundToInt(),
+                                                           itemView.top,
+                                                           itemView.right,
+                                                           itemView.bottom)
+                    }
 
-        mSwipeBackgroundForDrawing?.apply {
-            //NOTE:
-            //drawing background MUST come BEFORE drawing the mText
-            mBackgroundColorDrawable.let { backDraw ->
-                backDraw.draw(canvas)
+                //swiping right
+                else ->
+                    mSwipeBackgroundRight?.apply {
+                        mBackgroundColorDrawable.setBounds(itemView.left,
+                                                           itemView.top,
+                                                           itemView.left + dx.roundToInt(),
+                                                           itemView.bottom)
+                    }
+            }
 
-                mIconTop = backDraw.bounds.centerY() - mHalfIconHeight
-                mIconBottom = backDraw.bounds.centerY() + mHalfIconHeight
-                mIconLeft = calculateIconLeft(this, mIsSwipingLeft)
-                mIconRight = mIconLeft + (mIcon?.intrinsicWidth ?: 0)
+            mSwipeBackgroundForDrawing?.apply {
+                //NOTE:
+                //drawing background MUST come BEFORE drawing the mText
+                mBackgroundColorDrawable.let { backDraw ->
+                    backDraw.draw(canvas)
 
-                mIcon?.apply {
-                    setBounds(mIconLeft, mIconTop, mIconRight, mIconBottom)
-                    draw(canvas)
-                }
+                    mIconTop = backDraw.bounds.centerY() - mHalfIconHeight
+                    mIconBottom = backDraw.bounds.centerY() + mHalfIconHeight
+                    mIconLeft = calculateIconLeft(this, mIsSwipingLeft)
+                    mIconRight = mIconLeft + (mIcon?.intrinsicWidth ?: 0)
 
-                if(mText.isNotBlank())
-                {
-                    mPaint.getTextBounds(mText, 0, mText.length, mTextRect)
+                    mIcon?.apply {
+                        setBounds(mIconLeft, mIconTop, mIconRight, mIconBottom)
+                        draw(canvas)
+                    }
 
-                    mTextY = backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f)
-                    mTextX =
-                        if(mIsSwipingLeft)
-                            mIconLeft.toFloat() - mPaddingPx - mTextWidth
-                        //swiping right
-                        else
-                            mIconRight.toFloat() + mPaddingPx
+                    if (mText.isNotBlank())
+                    {
+                        mPaint.getTextBounds(mText, 0, mText.length, mTextRect)
 
-                    canvas.drawText(mText, mTextX, mTextY, mPaint)
+                        mTextY = backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f)
+                        mTextX =
+                            if (mIsSwipingLeft)
+                                mIconLeft.toFloat() - mPaddingPx - mTextWidth
+                            //swiping right
+                            else
+                                mIconRight.toFloat() + mPaddingPx
+
+                        canvas.drawText(mText, mTextX, mTextY, mPaint)
+                    }
                 }
             }
         }
