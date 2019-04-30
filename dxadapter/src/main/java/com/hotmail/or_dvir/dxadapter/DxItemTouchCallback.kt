@@ -8,10 +8,16 @@ import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 import java.util.*
 import kotlin.math.roundToInt
 
+/**
+ * a class that handles all dragging and swiping behaviour.
+ * @param ITEM the item type of your adapter
+ * @property mAdapter your adapter
+ */
 class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>)
     : ItemTouchHelper.Callback()
 {
@@ -20,12 +26,10 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     /**
      * default value: FALSE
      *
-     * if TRUE, long-clicking an item will initiate drag-and-drop
+     * if TRUE, long-clicking an item will initiate drag-and-drop.
      *
-     * if FALSE, long-clicking an item will NOT initiate drag-and-drop
-     *
-     * NOTE: be aware that if you enable this feature and long-click is also used to select items,
-     * (for example with [DxAdapter.defaultItemSelectionBehavior]) then long-clicking might not
+     * note that if you enable this feature and long-click is also used to select items,
+     * (for example with [IAdapterSelectable.defaultItemSelectionBehavior]) then long-click might not
      * produce the intended result (selecting an item when actually meant to drag and vice-versa)
      */
     var dragOnLongClick = false
@@ -50,36 +54,36 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     var swipeThreshold: Float? = null
 
     /**
-     * sets a fixed value for the swipe escape velocity.
-     * this value is overridden by [swipeEscapeVelocityMultiplier] (if set).
-     *
      * see [ItemTouchHelper.Callback.getSwipeEscapeVelocity] for more details.
+     *
+     * this value is overridden by [swipeEscapeVelocityMultiplier] (if set).
      */
     var swipeEscapeVelocity: Float? = null
-
     /**
      * sets a value for the swipe escape velocity as a multiplier
      * of the device's default value.
-     * this value overrides [swipeEscapeVelocity]
      *
-     * see [ItemTouchHelper.Callback.getSwipeEscapeVelocity] for details
+     * this value overrides [swipeEscapeVelocity].
+     *
+     *  see [ItemTouchHelper.Callback.getSwipeEscapeVelocity] for more details.
      */
     var swipeEscapeVelocityMultiplier: Float? = null
-
     /**
-     * NOTE: this will trigger JUST BEFORE the items are moved
+     * a listener to be invoked just before the items are moved
      */
     var onItemMove: onItemsMoveListener<ITEM>? = null
-
     /**
-     * @param swipeDirections Int: the direction of allowed swiping. one or more of:
+     * this function enables the swipeable functionality.
+     * note that your items must also implement [IItemSwipeable].
+     *
+     * @param swipeDirections the direction of allowed swiping. one or more of:
      * [LEFT][ItemTouchHelper.LEFT], [RIGHT][ItemTouchHelper.RIGHT],
      * [START][ItemTouchHelper.START], [END][ItemTouchHelper.END].
-     * @param onSwipeListener onItemSwipedListener<ITEM>:
-     *     a callback to invoke when an item is swiped. note that the direction returned here is the same
+     * @param onSwipeListener
+     *     a callback to invoke when an item has been swiped. note that the direction parameter of the listener is the same
      *     as the one provided in [swipeDirections].
      *     for example: if you provided [swipeDirections] with [LEFT][ItemTouchHelper.LEFT] and/or [RIGHT][ItemTouchHelper.RIGHT]
-     *     then that is the direction that the listener will have as parameters
+     *     then that is the direction that the listener will have as its parameter
      *     (and NOT [START][ItemTouchHelper.START] and/or [END][ItemTouchHelper.END])
      */
     fun setItemsSwipeable(swipeDirections: Int,
@@ -97,23 +101,10 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     {
         val item = mAdapter.mItems[holder.adapterPosition]
         val dragFlags =
-                when
-                {
-                    item !is IItemDraggable -> 0
-//                    mLayoutManager is GridLayoutManager -> //enable drag in all directions
-//                        ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-//
-//                    mLayoutManager is LinearLayoutManager ->
-//                    {
-//                        if(mLayoutManager.orientation == LinearLayoutManager.VERTICAL)
-//                            ItemTouchHelper.UP or ItemTouchHelper.DOWN
-//                        else
-//                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-//                    }
-
-                    //needed for compiler
-                    else -> ItemTouchHelper.UP or ItemTouchHelper.DOWN
-                }
+            if (item !is IItemDraggable)
+                0
+            else
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN
 
         val swipeFlags =
             if (item !is IItemSwipeable || onItemSwiped == null)
@@ -142,8 +133,7 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     }
 
     private fun calculateIconLeft(swipeBack: DxSwipeBackground,
-                                  isSwipingLeft: Boolean)
-            : Int
+                                  isSwipingLeft: Boolean): Int
     {
         mDoesBackFit = swipeBack.doesBackgroundFitInSwipeArea()
         var temp: Int
@@ -284,17 +274,15 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
             Pair(handleId, { holder -> itemTouchHelper.startDrag(holder) })
     }
 
-    override fun isLongPressDragEnabled(): Boolean
-    {
-        //todo when documenting, make a note of this!!!
-        return if (mAdapter.dragAndDropWithHandle != null)
-            false
-        else
-            dragOnLongClick
-    }
+    override fun isLongPressDragEnabled() = dragOnLongClick
 
-    override fun getSwipeEscapeVelocity(defaultValue: Float) =
-        swipeEscapeVelocityMultiplier ?: swipeEscapeVelocity ?: super.getSwipeEscapeVelocity(defaultValue)
+    override fun getSwipeEscapeVelocity(defaultValue: Float): Float
+    {
+        return swipeEscapeVelocityMultiplier?.let {
+            swipeEscapeVelocityMultiplier!! * defaultValue
+        }
+            ?: swipeEscapeVelocity ?: super.getSwipeEscapeVelocity(defaultValue)
+    }
 
     override fun getSwipeThreshold(viewHolder: ViewHolder) =
         swipeThreshold ?: super.getSwipeThreshold(viewHolder)

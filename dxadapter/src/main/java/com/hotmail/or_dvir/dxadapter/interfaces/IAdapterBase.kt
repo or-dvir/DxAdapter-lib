@@ -6,7 +6,11 @@ import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.widget.Filter
 
-internal interface IAdapterBase<ITEM: IItemBase>
+/**
+ * an interface containing some shared behaviour to be used by the library.
+ * no need for you to implement this interface yourself
+ */
+interface IAdapterBase<ITEM: IItemBase>
 {
     /**
      * the items held by the adapter
