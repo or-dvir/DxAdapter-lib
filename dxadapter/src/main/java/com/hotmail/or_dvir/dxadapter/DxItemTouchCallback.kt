@@ -6,15 +6,13 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 import java.util.*
 import kotlin.math.roundToInt
 
-class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>/*,
-                                           private val mLayoutManager: RecyclerView.LayoutManager*/)
+class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>)
     : ItemTouchHelper.Callback()
 {
     //todo add support for different types of layout managers (grid/staggered/horizontal)
@@ -203,7 +201,6 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE)
         {
-            //todo should i keep global reference to view???? is it safe in this class??????
             val itemView = viewHolder.itemView
             mIsSwipingLeft = dx < 0 && dx != 0f
 

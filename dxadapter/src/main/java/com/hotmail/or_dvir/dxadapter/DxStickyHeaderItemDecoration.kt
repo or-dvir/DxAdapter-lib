@@ -15,7 +15,7 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
     // make the headers positions CONSTANTS!!!!
     // so that if the list is sorted, the headers remain constant!!!
     // or if you DONT do this, make sure to include that in documentation that headers will be moved if sorted!!!
-    // should headers show up on "filter"?
+    // should headers show up on "filter"? - should probably be left for the user to decide
 
     override fun onDrawOver(c: Canvas, recyclerView: RecyclerView, state: RecyclerView.State)
     {
@@ -87,29 +87,9 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
             recyclerView.getDecoratedBoundsWithMargins(child, viewRect)
             if(viewRect.contains(child.left, contactPoint))
                 return child
-
-//            if (child.bottom > contactPoint)
-//                //This child overlaps the contactPoint
-//                if (child.top <= contactPoint)
-//                    return child
         }
 
         return null
-
-        //original code!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        var child: View
-//
-//        for (i in 0 until recyclerView.childCount)
-//        {
-//            child = recyclerView.getChildAt(i)
-//
-//            if (child.bottom > contactPoint)
-//                if (child.top <= contactPoint)
-//                //This child overlaps the contactPoint
-//                    return child
-//        }
-//
-//        return null
     }
 
     private fun fixLayoutSize(parent: ViewGroup, view: View)

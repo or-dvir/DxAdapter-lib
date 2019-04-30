@@ -37,16 +37,14 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     private var notifiedLastInvisible = false
 
     //todo add support for other types of layout managers
-    private var mLayManLinear: LinearLayoutManager? = null
+    // note that grid layout manager extends linear layout manager.
+    // staggered grid though is separate
+    private var mLayMan: LayoutManager? = null
 
     override fun setLayoutManager(layout: LayoutManager?)
     {
         super.setLayoutManager(layout)
-
-        layout?.let {
-            if(it is LinearLayoutManager)
-                mLayManLinear = it
-        }
+        mLayMan = layout
     }
 
     override fun onAttachedToWindow()
@@ -72,9 +70,13 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
     private fun triggerVisibilityListeners()
     {
-        var visiblePos: Int
+        mLayMan?.apply {
 
-        mLayManLinear?.apply {
+            if (this !is LinearLayoutManager)
+                return@apply
+
+            var visiblePos: Int
+
             firstItemVisibilityListener?.let {
                 visiblePos = findFirstVisibleItemPosition()
 
@@ -114,7 +116,7 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
                 when
                 {
-                    visiblePos == (numItems -1) ->
+                    visiblePos == (numItems - 1) ->
                     {
                         if (!notifiedLastVisible)
                         {

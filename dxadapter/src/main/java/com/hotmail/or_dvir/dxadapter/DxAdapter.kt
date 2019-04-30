@@ -101,9 +101,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
     // what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
     // any other important methods i should override??????
 
-    //todo make sure every function has good documentation!!!
-
-//    override fun dxNotifyDataSetChanged() = notifyDataSetChanged()
     override fun dxNotifyItemChanged(position: Int) = notifyItemChanged(position)
 
     @CallSuper
@@ -188,15 +185,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
 
         return holder
     }
-
-//    /**
-//     * convenience method instead of calling [getFilter().filter(constraint)].
-//     *
-//     * Note: if your adapter doesn't implement IAdapterFilterable, this function does nothing
-//     */
-//    fun filter(constraint: CharSequence) = filter.filter(constraint)
-//
-//    override fun getFilter() = privateFilter
 
     abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): VH
     @LayoutRes

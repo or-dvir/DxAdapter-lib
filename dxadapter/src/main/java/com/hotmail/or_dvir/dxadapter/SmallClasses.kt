@@ -38,7 +38,6 @@ internal enum class DxScrollDirection
     RIGHT
 }
 
-//todo add documentation!!!
 class DxSwipeBackground (internal var mText: String,
                          private val mTextSizePx: Int,
                          internal var mPaddingPx: Int,
@@ -49,7 +48,7 @@ class DxSwipeBackground (internal var mText: String,
     internal val mIconWidth = mIcon?.intrinsicWidth ?: 0
     internal val mHalfIconHeight = (mIcon?.intrinsicHeight ?: 0) / 2
 
-    //todo make text size half the height of the itemView?!?!?!?!?!?!?!?!!?!?
+    //todo make text size half the height of the itemView?????
     internal val mPaint = Paint().apply {
         textAlign = Paint.Align.LEFT
         textSize = mTextSizePx.toFloat()
