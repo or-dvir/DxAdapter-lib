@@ -9,10 +9,10 @@ import android.view.View
  * note that header items are actual items in the adapter!
  * this means you need to be careful with certain actions taken on the adapter.
  *
- * for example: if you filter the adapter with some constraint, it's up to you whether to include
- * header items or not in the filtered results.
+ * for example: if you filter the adapter with some constraint, it's up to you whether or not to include
+ * header items in the filtered results.
  */
-interface IDxStickyHeader
+interface IAdapterStickyHeader
 {
     /**
      * returns the resource id of the header layout
@@ -24,12 +24,13 @@ interface IDxStickyHeader
 
     /**
      * binds data to the STICKY header view (NOT the header item in the adapter).
+     * @param stickyHeader the sticky header view (the one drawn at the top)
      * @param headerAdapterPosition position of the header item IN THE ADAPTER (use this to get data to bind from the adapter).
      */
     fun bindStickyHeader(stickyHeader: View, headerAdapterPosition: Int)
 
     /**
-     * returns whether or not the item [adapterPosition] represents a header
+     * returns whether or not the item at [adapterPosition] represents a header
      */
     fun isHeader(adapterPosition: Int): Boolean
 }

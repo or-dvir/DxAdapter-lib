@@ -6,9 +6,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.hotmail.or_dvir.dxadapter.interfaces.IDxStickyHeader
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterStickyHeader
 
-class DxStickyHeaderItemDecoration(private val mHeaderListener: IDxStickyHeader)
+class DxStickyHeaderItemDecoration(private val mHeaderListener: IAdapterStickyHeader)
     : RecyclerView.ItemDecoration()
 {
     //todo before you do this, consider how this will affect dragging!!!

@@ -7,68 +7,116 @@ import android.view.View
 import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 
+/**
+ * implement this interface if you wish for your adapter to support selection of items.
+ */
 interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
 {
     /**
-     * default value: TRUE
+     * if TRUE, long-clicking an item will select it and any subsequent regular-click on
+     * any other item will select\deselect it.
      *
-     * if TRUE, long-clicking an item will select it and any subsequent regular-click on any item
-     * will select\deselect the clicked item.
-     *
-     * if FALSE, you must manage item selection yourself using [select] and [deselect].
+     * if FALSE, you must manage item selection yourself using the variants of [select] and [deselect]
      *
      * @see [triggerClickListenersInSelectionMode]
      */
     val defaultItemSelectionBehavior: Boolean
-
     /**
      * if TRUE, clicking or long-clicking an item in "selection mode" (at least one item is selected)
      * would also trigger the click listener and long-click listener.
      *
-     * if FALSE, those listeners will NOT be triggered if in "selection mode"
+     * if FALSE, those listeners will NOT be triggered when in "selection mode"
      */
     val triggerClickListenersInSelectionMode: Boolean
-
-    val onItemSelectionChanged: onItemSelectStateChangedListener<ITEM>
-
     /**
+     * a listener for when an item is selected or deselected
+     */
+    val onItemSelectionChanged: onItemSelectStateChangedListener<ITEM>
+    /**
+     * the background color of a selected item.
      * setting this to null will use the app's accent color
      */
     @get:ColorInt
     val selectedItemBackgroundColor: Int?
 
+    /**
+     * returns a list of all currently selected items
+     */
     fun getAllSelectedItems() = mAdapterItems.filter { it is IItemSelectable && it.isSelected }
+    /**
+     * returns the number of currently selected items
+     */
     fun getNumSelectedItems() = getAllSelectedItems().size
+    /**
+     * returns a list of all currently selected indices
+     */
     fun getAllSelectedIndices() = getIndicesForItems(getAllSelectedItems())
-
+    /**
+     * selects all the items in the given [indices]
+     * @param indices the indices to select
+     * @param triggerListener optional parameter to whether or not trigger [onItemSelectStateChangedListener].
+     * defaults to TRUE
+     */
     fun selectIndices(indices: List<Int>, triggerListener: Boolean = true) =
         selectOrDeselect(true, getItemsForIndices(indices), triggerListener)
+    /**
+     * selects the item at the given [index]
+     */
     fun select(index: Int) = selectIndices(listOf(index))
+    /**
+     * selects all the given [items]
+     * @param items the items to select
+     * @param triggerListener optional parameter to whether or not trigger [onItemSelectStateChangedListener].
+     * defaults to TRUE
+     */
     fun select(items: List<ITEM>, triggerListener: Boolean = true) =
         selectIndices(getIndicesForItems(items), triggerListener)
+    /**
+     * selects the given [item]
+     */
     fun select(item: ITEM) = select(listOf(item))
-
     /**
      * convenience function to select all items.
      *
-     * note that this function does NOT trigger [onItemSelectionChanged].
+     * note that this function does NOT trigger [onItemSelectStateChangedListener]
+     * (because the adapter may contain a lot of items and this will cause a lot of calls to the listener).
+     * if you DO wish to trigger the listener, use [select] (List variant) or [selectIndices] and pass all your items/indices.
      */
     fun selectAll() = select(mAdapterItems, false)
-
+    /**
+     * deselects all the items in the given [indices]
+     * @param indices the indices to deselect
+     * @param triggerListener optional parameter to whether or not trigger [onItemSelectStateChangedListener].
+     * defaults to TRUE
+     */
     fun deselectIndices(indices: List<Int>, triggerListener: Boolean = true) =
         selectOrDeselect(false, getItemsForIndices(indices), triggerListener)
+    /**
+     * deselects the item at the given [index]
+     */
     fun deselect(index: Int) = deselectIndices(listOf(index))
+    /**
+     * deselects all the given [items]
+     * @param items the items to deselect
+     * @param triggerListener optional parameter to whether or not trigger [onItemSelectStateChangedListener].
+     * defaults to TRUE
+     */
     fun deselect(items: List<ITEM>, triggerListener: Boolean = true) =
         deselectIndices(getIndicesForItems(items), triggerListener)
+    /**
+     * deselects the given [item]
+     */
     fun deselect(item: ITEM) = deselect(listOf(item))
-
-    fun isInSelectionMode() =
-        mAdapterItems.find { it is IItemSelectable && it.isSelected } != null
-
+    /**
+     * returns whether or not the adapter is currently in "selection mode" (at least one item is selected)
+     */
+    fun isInSelectionMode() = mAdapterItems.find { it is IItemSelectable && it.isSelected } != null
     /**
      * convenience function to deselect all items.
      *
-     * note that this function does NOT trigger [onItemSelectStateChangedListener].
+     * note that this function does NOT trigger [onItemSelectStateChangedListener]
+     * (because the adapter may contain a lot of items and this will cause a lot of calls to the listener).
+     * if you DO wish to trigger the listener, use [deselect] (List variant) or [deselectIndices] and pass all your items/indices.
      */
     fun deselectAll() = deselect(mAdapterItems, false)
 
@@ -92,9 +140,8 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
             }
         }
     }
-
     /**
-     * @return Boolean whether or not we need to trigger long-click listener
+     * used by the library
      */
     fun dxSelectableItemLongClicked(position: Int): Boolean
     {
@@ -109,8 +156,8 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
         else
             true
     }
-
     /**
+     * used by the library.
      * @return Boolean whether or not we need to trigger click listener
      */
     fun dxSelectableItemClicked(position: Int, wasInSelectionModeBefore: Boolean): Boolean
@@ -132,7 +179,9 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
         else
             true
     }
-
+    /**
+     * used by the library
+     */
     fun dxOnCreateViewHolder(parent: ViewGroup,
                              viewType: Int,
                              itemView: View)
