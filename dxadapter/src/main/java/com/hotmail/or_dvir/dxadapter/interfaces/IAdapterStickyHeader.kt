@@ -4,7 +4,7 @@ import android.support.annotation.LayoutRes
 import android.view.View
 
 /**
- * implement this interface if you wish for your adapter to support sticky headers.
+ * implement this interface in your ADAPTER if you wish for it to support sticky headers.
  *
  * note that header items are actual items in the adapter!
  * this means you need to be careful with certain actions taken on the adapter.

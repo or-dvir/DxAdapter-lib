@@ -75,9 +75,12 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
      * @param swipeDirections Int: the direction of allowed swiping. one or more of:
      * [LEFT][ItemTouchHelper.LEFT], [RIGHT][ItemTouchHelper.RIGHT],
      * [START][ItemTouchHelper.START], [END][ItemTouchHelper.END].
-     *
      * @param onSwipeListener onItemSwipedListener<ITEM>:
-     *     a callback to invoke when an item is swiped.
+     *     a callback to invoke when an item is swiped. note that the direction returned here is the same
+     *     as the one provided in [swipeDirections].
+     *     for example: if you provided [swipeDirections] with [LEFT][ItemTouchHelper.LEFT] and/or [RIGHT][ItemTouchHelper.RIGHT]
+     *     then that is the direction that the listener will have as parameters
+     *     (and NOT [START][ItemTouchHelper.START] and/or [END][ItemTouchHelper.END])
      */
     fun setItemsSwipeable(swipeDirections: Int,
                           swipeBackgroundRight: DxSwipeBackground?,

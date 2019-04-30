@@ -4,7 +4,7 @@ import android.widget.Filterable
 import com.hotmail.or_dvir.dxadapter.onFilterRequest
 
 /**
- * implement this interface if you wish for your adapter to support filtering
+ * implement this interface in your ADAPTER if you wish for IT to support filtering
  */
 interface IAdapterFilterable<ITEM: IItemBase>: IAdapterBase<ITEM>, Filterable
 {

@@ -2,10 +2,10 @@ package com.hotmail.or_dvir.dxadapter.interfaces
 
 interface IItemBase
 {
-    i stopped here with documentation
     /**
-     * to prevent bugs, this value should be a constant.
-     * it is recommended to use @IdRes
+     * returns an identifier for this adapter item. this identifier should be unique.
+     *
+     * to prevent bugs, this value should be a constant, and it is recommended to use @IdRes
      */
     fun getViewType(): Int
 }

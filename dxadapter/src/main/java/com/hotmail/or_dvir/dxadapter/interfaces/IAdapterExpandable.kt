@@ -3,7 +3,7 @@ package com.hotmail.or_dvir.dxadapter.interfaces
 import com.hotmail.or_dvir.dxadapter.onItemExpandStateChangedListener
 
 /**
- * implement this interface if you wish for your adapter to support expandable items.
+ * implement this interface in your ADAPTER if you wish for it to support expandable items.
  */
 interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
 {

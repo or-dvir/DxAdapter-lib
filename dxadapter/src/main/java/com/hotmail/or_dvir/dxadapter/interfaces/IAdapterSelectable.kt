@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 
 /**
- * implement this interface if you wish for your adapter to support selection of items.
+ * implement this interface in your ADAPTER if you wish for it to support selection of items.
  */
 interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
 {
