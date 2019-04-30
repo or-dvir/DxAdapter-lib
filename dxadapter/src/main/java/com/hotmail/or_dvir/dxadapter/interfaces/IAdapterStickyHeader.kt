@@ -3,10 +3,19 @@ package com.hotmail.or_dvir.dxadapter.interfaces
 import android.support.annotation.LayoutRes
 import android.view.View
 
+/**
+ * implement this interface if you wish for your adapter to support sticky headers.
+ *
+ * note that header items are actual items in the adapter!
+ * this means you need to be careful with certain actions taken on the adapter.
+ *
+ * for example: if you filter the adapter with some constraint, it's up to you whether to include
+ * header items or not in the filtered results.
+ */
 interface IDxStickyHeader
 {
     /**
-     * @return the resource id of the header layout for the given position
+     * returns the resource id of the header layout
      */
     //todo in order to allow multiple types of headers, add position parameter!!!
     // note that this might require some changes in the adapter!!!
@@ -20,7 +29,7 @@ interface IDxStickyHeader
     fun bindStickyHeader(stickyHeader: View, headerAdapterPosition: Int)
 
     /**
-     * @return whether or not the item [adapterPosition] represents a header
+     * returns whether or not the item [adapterPosition] represents a header
      */
     fun isHeader(adapterPosition: Int): Boolean
 }
