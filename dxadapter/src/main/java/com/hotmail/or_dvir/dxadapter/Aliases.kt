@@ -3,9 +3,10 @@ package com.hotmail.or_dvir.dxadapter
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-
-typealias RecyclerViewHolder = RecyclerView.ViewHolder
-
+/**
+ * a convenience alias instead of typing "[RecyclerView.ViewHolder]" every time
+ */
+typealias DxHolder = RecyclerView.ViewHolder
 /**
  * a listener called when an item is long-clicked
  * @param view the clicked view
@@ -66,7 +67,7 @@ internal typealias onItemSwipedListener<ITEM> = (item: ITEM,
 /**
  * used by the library
  */
-internal typealias startDragListener = (holder: RecyclerViewHolder) -> Unit
+internal typealias startDragListener = (holder: DxHolder) -> Unit
 /**
  * a listener that does not take any parameters and does not return any value
  */

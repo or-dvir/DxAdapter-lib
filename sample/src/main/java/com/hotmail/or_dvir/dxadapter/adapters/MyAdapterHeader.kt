@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.my_header.view.*
 //this is essentially the same as MyAdapterMultiType where one of the types is a header.
 //see notes for item/viewHolder type in MyAdapterMultiType class
 class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
-    : DxAdapter<IItemBase, RecyclerViewHolder>(mItems),
+    : DxAdapter<IItemBase, DxHolder>(mItems),
       IAdapterStickyHeader
 {
     //convenience method so that the binding logic of a header view
@@ -31,7 +31,7 @@ class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
 
     override fun getHeaderLayoutRes() = R.layout.my_header
 
-    override fun bindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
+    override fun bindViewHolder(holder: DxHolder, position: Int, item: IItemBase)
     {
         when (item)
         {
@@ -43,7 +43,7 @@ class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
         }
     }
 
-    override fun unbindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
+    override fun unbindViewHolder(holder: DxHolder, position: Int, item: IItemBase)
     {
         when (item)
         {
@@ -67,7 +67,7 @@ class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
 
     override fun createAdapterViewHolder(itemView: View,
                                          parent: ViewGroup,
-                                         viewType: Int): RecyclerViewHolder
+                                         viewType: Int): DxHolder
     {
         return when (viewType)
         {
@@ -86,7 +86,7 @@ class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
 
-    class ViewHolderHeader(itemView: View): RecyclerViewHolder(itemView)
+    class ViewHolderHeader(itemView: View): DxHolder(itemView)
     {
         val tv: TextView = itemView.tv
     }

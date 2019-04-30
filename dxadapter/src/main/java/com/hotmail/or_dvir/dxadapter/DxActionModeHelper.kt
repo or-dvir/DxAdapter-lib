@@ -10,8 +10,9 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IItemSelectable
 
 /**
  * A helper class that provides default behavior for [ActionMode].
- * * IMPORTANT: in order for this to work as intended, you MUST set [onItemSelectionChanged][DxAdapter.onItemSelectionChanged]
- * in your [DxAdapter] AND inside that listener, you MUST call [updateActionMode]
+ *
+ * * IMPORTANT: this class is intended to work together with [IAdapterSelectable] so make sure your adapter implements it.
+ * also, you MUST call [updateActionMode] inside your [IAdapterSelectable.onItemSelectionChanged]
  *
  * Behavior:
  * * selecting the first item will start ActionMode.
@@ -20,18 +21,26 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IItemSelectable
  * in [onActionItemClicked][ActionMode.Callback.onActionItemClicked] (TRUE was returned)
  * * when ActionMode is finished (for example after pressing the "back" button),
  * all items will be deselected. IMPORTANT: this does NOT trigger the selection
- * listener given to [DxAdapter]
+ * listener given to [DxAdapter]. the reasons are:
+ * 1) preventing the listener to be invoked too many times (a lot of items could be selected).
+ * 2) preventing memory leaks and/or crashes (e.g. you do something UI related in your listener, and this [ActionMode]
+ * was destroyed due to the activity being destroyed).
+ *
+ * @param adapter your adapter
+ * @param titleProvider a function who's return value will be set as the action mode title
+ * @param callback a standard [ActionMode.Callback]
  */
 class DxActionModeHelper<ITEM : IItemBase>(
     private val adapter: DxAdapter<ITEM, *>,
     private val titleProvider: actionModeTitleProvider,
     private val callback: ActionMode.Callback)
 {
-    //todo when documenting add a comment that says this is intended to work with IAdapterSelectable
-    // and will not work as intended otherwise
-
     //make this public in case the user wants access to it (for example to call finish())
+    /**
+     * the underlying [ActionMode]
+     */
     var actionMode: ActionMode? = null
+
     private val mMyCallback = object : ActionMode.Callback
     {
         override fun onActionItemClicked(mode: ActionMode?, menuItem: MenuItem?): Boolean
@@ -78,8 +87,8 @@ class DxActionModeHelper<ITEM : IItemBase>(
      * this function starts/finishes actionMode, and updates its' title using
      * [titleProvider].
      *
-     * it's assumed that this function is called inside [DxAdapter.onItemSelectionChanged].
-     * if it's called from other places, it may cause bugs.
+     * it's assumed that this function is called inside [IAdapterSelectable.onItemSelectionChanged].
+     * do not call this method from anywhere else.
      */
     fun updateActionMode(act: AppCompatActivity)
     {

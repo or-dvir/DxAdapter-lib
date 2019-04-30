@@ -11,7 +11,7 @@ import android.widget.Switch
 import com.hotmail.or_dvir.dxadapter.DxAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithViews
 import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
+import com.hotmail.or_dvir.dxadapter.DxHolder
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
 
 class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
@@ -53,7 +53,7 @@ class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
 
     //made the class inner so i can have easy access to item properties
     //to be used inside the listeners
-    inner class ViewHolder(itemView: View) : RecyclerViewHolder(itemView)
+    inner class ViewHolder(itemView: View) : DxHolder(itemView)
     {
         val switch: Switch = itemView.mySwitch
         val checkBox: CheckBox = itemView.myCheckBox

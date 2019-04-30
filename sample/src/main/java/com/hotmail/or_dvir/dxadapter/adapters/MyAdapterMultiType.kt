@@ -5,19 +5,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.hotmail.or_dvir.dxadapter.DxAdapter
 import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
+import com.hotmail.or_dvir.dxadapter.DxHolder
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
 import kotlinx.android.synthetic.main.my_item_image_vertical.view.*
 
 //for multi-type adapter, the item type and view holder type need to be shared
-//between all supported items of this adapter. i use IItemBase and RecyclerViewHolder
+//between all supported items of this adapter. i use IItemBase and DxHolder
 //for convenience, but it can be any type that the items share
 class MyAdapterMultiType(mItems: MutableList<IItemBase>)
-    : DxAdapter<IItemBase, RecyclerViewHolder>(mItems)
+    : DxAdapter<IItemBase, DxHolder>(mItems)
 {
-    override fun bindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
+    override fun bindViewHolder(holder: DxHolder, position: Int, item: IItemBase)
     {
         when (item)
         {
@@ -29,7 +29,7 @@ class MyAdapterMultiType(mItems: MutableList<IItemBase>)
         }
     }
 
-    override fun unbindViewHolder(holder: RecyclerViewHolder, position: Int, item: IItemBase)
+    override fun unbindViewHolder(holder: DxHolder, position: Int, item: IItemBase)
     {
         when (item)
         {
@@ -53,7 +53,7 @@ class MyAdapterMultiType(mItems: MutableList<IItemBase>)
 
     override fun createAdapterViewHolder(itemView: View,
                                          parent: ViewGroup,
-                                         viewType: Int): RecyclerViewHolder
+                                         viewType: Int): DxHolder
     {
         return when (viewType)
         {
@@ -72,11 +72,11 @@ class MyAdapterMultiType(mItems: MutableList<IItemBase>)
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
 
-    class ViewHolderWithImage(itemView: View): RecyclerViewHolder(itemView)
+    class ViewHolderWithImage(itemView: View): DxHolder(itemView)
     {
         val iv: ImageView = itemView.iv
     }
 
     //only need this for returning a default view holder from createAdapterViewHolder()
-    class DefaultViewHolder(itemView: View): RecyclerViewHolder(itemView)
+    class DefaultViewHolder(itemView: View): DxHolder(itemView)
 }

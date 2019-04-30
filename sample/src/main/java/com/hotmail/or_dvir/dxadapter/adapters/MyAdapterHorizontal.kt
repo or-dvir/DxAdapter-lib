@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.DxAdapter
 import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.RecyclerViewHolder
+import com.hotmail.or_dvir.dxadapter.DxHolder
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
@@ -44,7 +44,7 @@ class MyAdapterHorizontal(mItems: MutableList<MyItemWithImage>,
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
 
-    class ViewHolder(itemView: View): RecyclerViewHolder(itemView)
+    class ViewHolder(itemView: View): DxHolder(itemView)
     {
         val iv = itemView.iv
     }

@@ -10,14 +10,27 @@ import android.view.ViewGroup
 import android.widget.Filter
 import com.hotmail.or_dvir.dxadapter.interfaces.*
 
-abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var mItems: MutableList<ITEM>)
+/**
+ * The main class of this library. your adapter must extend this class and implement the
+ * wanted behaviours ([IAdapterSelectable], [IAdapterExpandable], [IAdapterFilterable], [IAdapterStickyHeader]).
+ *
+ * @param ITEM the type of object this adapter will hold
+ * @param VH the [DxHolder] (RecyclerView.ViewHolder) this adapter will use
+ * @property mItems the items for this adapter
+ */
+abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
       IAdapterBase<ITEM>
 {
     override val mAdapterItems = mItems
 
-    //click listeners
+    /**
+     * a listener to be invoked whenever an item is clicked
+     */
     var onItemClick: onItemClickListener<ITEM>? = null
+    /**
+     * a listener to be invoked whenever an item is long-clicked
+     */
     var onItemLongClick: onItemLongClickListener<ITEM>? = null
 
     //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
@@ -186,9 +199,39 @@ abstract class DxAdapter<ITEM : IItemBase, VH : RecyclerViewHolder>(internal var
         return holder
     }
 
+    /**
+     * wrapper for [onCreateViewHolder][RecyclerView.Adapter.onCreateViewHolder]
+     * with the addition of [itemView].
+     *
+     * use this function only. do NOT override
+     * [onCreateViewHolder][RecyclerView.Adapter.onCreateViewHolder] directly
+     * @param itemView the inflated view returned from [getItemLayoutRes]
+     */
     abstract fun createAdapterViewHolder(itemView: View, parent: ViewGroup, viewType: Int): VH
+    /**
+     * returns the layout resource id for the view to to inflate in [createAdapterViewHolder]
+     * @param parent the same as in [createAdapterViewHolder]
+     * @param viewType the same as in [createAdapterViewHolder]
+     */
     @LayoutRes
     abstract fun getItemLayoutRes(parent: ViewGroup, viewType: Int): Int
+    /**
+     * wrapper for [onBindViewHolder][RecyclerView.Adapter.onBindViewHolder]
+     * with the addition of [item].
+     *
+     * use this function only. do NOT override
+     * [onBindViewHolder][RecyclerView.Adapter.onBindViewHolder] directly
+     * @param item the item at [position]
+     */
     abstract fun bindViewHolder(holder: VH, position: Int, item: ITEM)
+    /**
+     * wrapper for [onViewRecycled][RecyclerView.Adapter.onViewRecycled]
+     * with the addition of [position] and [item].
+     *
+     * use this function only. do NOT override
+     * [onViewRecycled][RecyclerView.Adapter.onViewRecycled] directly
+     * @param position the adapter position being recycled
+     * @param item the item associated with [position]
+     */
     abstract fun unbindViewHolder(holder: VH, position: Int, item: ITEM)
 }

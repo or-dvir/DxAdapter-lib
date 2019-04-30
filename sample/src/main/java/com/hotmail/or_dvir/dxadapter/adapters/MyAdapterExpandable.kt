@@ -66,7 +66,7 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
 
-    inner class ViewHolder(itemView: View): RecyclerViewHolder(itemView)
+    inner class ViewHolder(itemView: View): DxHolder(itemView)
     {
         val tv = itemView.tv
         val iv = itemView.iv

@@ -49,7 +49,7 @@ class MyAdapter(mItems: MutableList<MyItem>,
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
 
-    class ViewHolder(itemView: View): RecyclerViewHolder(itemView)
+    class ViewHolder(itemView: View): DxHolder(itemView)
     {
         val tv: TextView = itemView.tv
     }
