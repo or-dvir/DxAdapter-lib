@@ -5,7 +5,7 @@
     <group android:id="@+id/line1">
         <item
             android:id="@+id/innerViewsSample"
-            android:title="Inner Views Sample"
+            android:title="Inner Views"
             app:showAsAction="never"/>
     </group>
 
@@ -23,19 +23,13 @@
     </group>
     <group android:id="@+id/line4">
         <item
-            android:id="@+id/filterSample"
-            android:title="Filter Sample"
-            app:showAsAction="never"/>
-    </group>
-    <group android:id="@+id/line5">
-        <item
-            android:id="@+id/expandableSample"
-            android:title="Expandable Sample"
+            android:id="@+id/expandableFilterableSample"
+            android:title="Expandable/Filterable Sample"
             app:showAsAction="never"/>
     </group>
 
     <!--todo not currently supported. this is for future use-->
-    <!--<group android:id="@+id/line6">-->
+    <!--<group android:id="@+id/line5">-->
         <!--<item-->
             <!--android:id="@+id/horizontalSample"-->
             <!--android:title="Horizontal Sample"-->

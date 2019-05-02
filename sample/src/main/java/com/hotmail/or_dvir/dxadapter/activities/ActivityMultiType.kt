@@ -22,9 +22,13 @@ class ActivityMultiType : BaseActivity()
         //its shared between all list items
         val list = mutableListOf<IItemBase>()
 
-        //note that even though MyItem implements IItemDraggable and IItemSwipeable,
+        //note that even though MyItem is draggable, swipeable, and selectable,
         //for drag and swipe to actually work we need to also attach ItemTouchHelper with
-        //DxItemTouchCallback to the recycler view (which is already demonstrated in ActivityMain)
+        //DxItemTouchCallback to the recycler view.
+        //and for selection to actually work, our adapter needs to implement IAdapterSelectable.
+        //these features are already demonstrated in other places in this sample app, and therefore
+        //are not necessary here.
+        //this activity is only for demonstrating how to make an adapter support multiple view types
         for(i in 1..100)
         {
             if(i % 5 == 0)

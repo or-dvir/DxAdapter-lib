@@ -228,8 +228,7 @@ class ActivityMain : AppCompatActivity()
                 R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
                 R.id.multiTypeSample -> startActivity<ActivityMultiType>()
                 R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
-                R.id.filterSample -> startActivity<ActivityFilter>()
-                R.id.expandableSample -> startActivity<ActivityExpandableFilterable>()
+                R.id.expandableFilterableSample -> startActivity<ActivityExpandableFilterable>()
                 //todo not currently supported. this is for future use
 //                R.id.horizontalSample -> startActivity<ActivityHorizontalRv>()
             }
@@ -251,11 +250,10 @@ class ActivityMain : AppCompatActivity()
                         openDrawer(GravityCompat.START)
                 }
             }
-            R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
-            R.id.multiTypeSample -> startActivity<ActivityMultiType>()
-            R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
-            R.id.filterSample -> startActivity<ActivityFilter>()
-            R.id.expandableSample -> startActivity<ActivityExpandableFilterable>()
+//            R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
+//            R.id.multiTypeSample -> startActivity<ActivityMultiType>()
+//            R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
+//            R.id.expandableFilterableSample -> startActivity<ActivityExpandableFilterable>()
             else -> super.onOptionsItemSelected(item)
         }
 

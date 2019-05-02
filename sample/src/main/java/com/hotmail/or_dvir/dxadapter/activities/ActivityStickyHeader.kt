@@ -49,9 +49,8 @@ class ActivityStickyHeader : BaseActivity()
         val stickyHeaderAdapter = MyAdapterHeader(list)
 
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
-            dragOnLongClick = true
 
-            //note that MyHeader is does NOT implement IItemSwipeable or IItemSelectable and therefore cannot be swiped
+            //note that MyHeader does NOT implement IItemSwipeable or IItemSelectable and therefore cannot be swiped
             //or selected. this makes sense because MyHeader is meant to divide our list into sections and not be interactable.
 
             val swipeBackgroundLeft = DxSwipeBackground("left swipe",
