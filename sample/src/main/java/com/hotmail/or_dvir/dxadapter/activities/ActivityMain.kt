@@ -53,10 +53,6 @@ class ActivityMain : AppCompatActivity()
     //todo instead of writing what the default value for everything in the sample is,
     // refer them to the documentation - that way it only has to change in one place
 
-    //todo BUG BUG BUG BUG BUG BUG BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // selecting an item, swiping it to the left (deleting) while selected
-    // -> action mode still active!!! what adapter thinks about number of selected items????
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -175,8 +171,11 @@ class ActivityMain : AppCompatActivity()
                         myListItems.removeAt(position)
                         mAdapter.notifyItemRemoved(position)
 
+                        //IMPORTANT! - this line should be called AFTER the item has
+                        //been removed from the adapter.
+                        //explanation:
                         //while DxActionModeHelper and IAdapterSelectable work together,
-                        //they are still separate components. as we may have just removed the last
+                        //they are still separate components. as we may have just removed a
                         //selected item, mActionModeHelper needs to be notified that something has changed
                         //so it may destroy itself if needed, and in this specific case also update the title
                         //(which is the number of selected items).
