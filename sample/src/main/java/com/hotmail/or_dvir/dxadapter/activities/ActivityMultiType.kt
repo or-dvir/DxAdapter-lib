@@ -22,6 +22,9 @@ class ActivityMultiType : BaseActivity()
         //its shared between all list items
         val list = mutableListOf<IItemBase>()
 
+        //note that even though MyItem implements IItemDraggable and IItemSwipeable,
+        //for drag and swipe to actually work we need to also attach ItemTouchHelper with
+        //DxItemTouchCallback to the recycler view (which is already demonstrated in ActivityMain)
         for(i in 1..100)
         {
             if(i % 5 == 0)

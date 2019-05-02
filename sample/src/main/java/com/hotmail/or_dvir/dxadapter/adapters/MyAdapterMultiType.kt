@@ -31,14 +31,8 @@ class MyAdapterMultiType(mItems: MutableList<IItemBase>)
 
     override fun unbindViewHolder(holder: DxHolder, position: Int, item: IItemBase)
     {
-        when (item)
-        {
-            is MyItem ->
-                (holder as MyAdapter.ViewHolder).tv.text = ""
-
-            is MyItemWithImage ->
-                (holder as ViewHolderWithImage).iv.setImageDrawable(null)
-        }
+        if(item is MyItemWithImage)
+            (holder as ViewHolderWithImage).iv.setImageDrawable(null)
     }
 
     override fun getItemLayoutRes(parent: ViewGroup, viewType: Int): Int

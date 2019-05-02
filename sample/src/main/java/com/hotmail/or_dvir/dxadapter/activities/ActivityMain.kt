@@ -187,10 +187,6 @@ class ActivityMain : AppCompatActivity()
                     }
                 }
 
-                //option to initiate drag with long-clicking an item.
-                //IMPORTANT: read documentation
-//                dragOnLongClick = true
-
                 onItemMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
                     Log.i("sample",
                           "about to switch ${draggedItem.mText} (position $draggedPosition) " +

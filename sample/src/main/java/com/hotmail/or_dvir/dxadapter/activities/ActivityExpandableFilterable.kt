@@ -17,7 +17,11 @@ class ActivityExpandableFilterable : BaseActivity()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_expandable)
+        setContentView(R.layout.activity_expandable_filterable)
+
+        //todo bug bug bug bug bug bug bug bug bug
+        // when expanding a filtered list, item does not actually expand and the position is relative
+        // to the FILTERED list
 
         val list = mutableListOf<MyItemExpandable>()
 

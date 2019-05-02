@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.hotmail.or_dvir.dxadapter.*
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterStickyHeader
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
@@ -14,8 +15,14 @@ import kotlinx.android.synthetic.main.my_header.view.*
 //see notes for item/viewHolder type in MyAdapterMultiType class
 class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
     : DxAdapter<IItemBase, DxHolder>(mItems),
-      IAdapterStickyHeader
+      IAdapterStickyHeader,
+      IAdapterSelectable<IItemBase>
 {
+    override val defaultItemSelectionBehavior = true
+    override val triggerClickListenersInSelectionMode = false
+    override val onItemSelectionChanged: onItemSelectStateChangedListener<IItemBase> = { _, _, _ -> /*do nothing*/ }
+    override val selectedItemBackgroundColor: Int? = null
+
     //convenience method so that the binding logic of a header view
     //is done in a single method (removes duplicate code)
     private fun bindHeader(tv: TextView, myHeader: MyHeader)
@@ -45,14 +52,7 @@ class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
 
     override fun unbindViewHolder(holder: DxHolder, position: Int, item: IItemBase)
     {
-        when (item)
-        {
-            is MyItem ->
-                (holder as MyAdapter.ViewHolder).tv.text = ""
-
-            is MyHeader ->
-                (holder as ViewHolderHeader).tv.text = ""
-        }
+        //no operations to stop here
     }
 
     override fun getItemLayoutRes(parent: ViewGroup, viewType: Int): Int

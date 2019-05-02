@@ -76,19 +76,15 @@ class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
             editText.addTextChangedListener(object : TextWatcher
             {
                 override fun afterTextChanged(s: Editable?)
-                {
-                }
+                { /*do nothing*/ }
 
-                //todo figure this out before releasing!!!!!
-                // for some reason this only works when put inside this function
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)
                 {
                     s?.apply { mItems[adapterPosition].mText = toString() }
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
-                {
-                }
+                { /*do nothing*/ }
             })
         }
     }

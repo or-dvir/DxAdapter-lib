@@ -3,6 +3,8 @@ package com.hotmail.or_dvir.dxadapter
 import android.app.Application
 import com.squareup.leakcanary.LeakCanary
 
+//it IS used in the manifest
+@Suppress("unused")
 class MyApplication: Application()
 {
     override fun onCreate()
@@ -17,5 +19,4 @@ class MyApplication: Application()
         LeakCanary.install(this)
         // Normal app init code...
     }
-
 }

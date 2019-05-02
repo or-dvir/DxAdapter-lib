@@ -38,23 +38,21 @@ class ActivityStickyHeader : BaseActivity()
                 headerCounter++
             }
             else
-
                 list.add(MyItem(i.toString()))
         }
 
         //todo BUG BUG BUG BUG BUG BUG BUG BUG BUG
-        // cannot swipe pass header!!!
+        // cannot drag pass header!!!
         // either make entire adapter draggable, or once an item is NOT draggable,
         // look for the closest draggable item and replace with it
 
-        //todo this is for Testing. decide to change this or leave it when done Testing
-        val stickyHeaderAdapter = MyAdapterHeader(list).apply {
-//            defaultItemSelectionBehavior = false
-        }
+        val stickyHeaderAdapter = MyAdapterHeader(list)
 
-        //todo this is for Testing. decide to change this or leave it when done Testing
         mItemTouchHelper = ItemTouchHelper(DxItemTouchCallback(stickyHeaderAdapter).apply {
             dragOnLongClick = true
+
+            //note that MyHeader is does NOT implement IItemSwipeable or IItemSelectable and therefore cannot be swiped
+            //or selected. this makes sense because MyHeader is meant to divide our list into sections and not be interactable.
 
             val swipeBackgroundLeft = DxSwipeBackground("left swipe",
                                                         60,
