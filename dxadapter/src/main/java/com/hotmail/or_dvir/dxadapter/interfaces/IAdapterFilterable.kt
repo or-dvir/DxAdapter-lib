@@ -9,7 +9,7 @@ import com.hotmail.or_dvir.dxadapter.onFilterRequest
 interface IAdapterFilterable<ITEM: IItemBase>: IAdapterBase<ITEM>, Filterable
 {
     /**
-     * called when a filtering the adapter
+     * called when filtering the adapter
      */
     val onFilterRequest: onFilterRequest<ITEM>
     /**

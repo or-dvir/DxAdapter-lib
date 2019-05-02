@@ -74,7 +74,7 @@ class ActivityStickyHeader : BaseActivity()
             }
         })
 
-        rv_scrollListener_selectable_draggable.apply {
+        rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityStickyHeader, DividerItemDecoration.VERTICAL))
             addItemDecoration(DxStickyHeaderItemDecoration(stickyHeaderAdapter))
 

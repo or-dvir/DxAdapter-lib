@@ -19,7 +19,7 @@
             android:text="Scroll Listeners, Selection, Drag:"/>
 
         <com.hotmail.or_dvir.dxadapter.DxRecyclerView
-            android:id="@+id/rv_scrollListener_selectable_draggable"
+            android:id="@+id/rv"
             android:layout_width="match_parent"
             android:nestedScrollingEnabled="false"
             android:layout_height="wrap_content"/>

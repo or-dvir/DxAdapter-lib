@@ -6,25 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterExpandable
-import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterFilterable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.my_item_expandable.view.*
 
-//this is essentially the same as MyAdapterMultiType where one of the types is a header.
-//see notes for item/viewHolder type in MyAdapterMultiType class
-class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
-                          override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>)
-    : DxAdapter<MyItemExpandable, MyAdapterExpandable.ViewHolder>(mItems),
+class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpandable>,
+                                    override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>)
+    : DxAdapter<MyItemExpandable, MyAdapterExpandableFilterable.ViewHolder>(mItems),
       IAdapterExpandable<MyItemExpandable>,
-      IAdapterSelectable<MyItemExpandable>
+      IAdapterFilterable<MyItemExpandable>
 {
-    override val defaultItemSelectionBehavior = true
-    override val triggerClickListenersInSelectionMode = false
-    override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItemExpandable> =
-        { _, _, _ -> /*empty listener - we don't do anything*/ }
+    override val onFilterRequest: onFilterRequest<MyItemExpandable> = { constraint ->
+        mItems.filter { it.mText.startsWith(constraint.trim(), true) }
+    }
 
-    //setting this to null means accent color will be used
-    override val selectedItemBackgroundColor: Int? = null
     override val onlyOneItemExpanded = false
 
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemExpandable)
@@ -43,19 +38,13 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
 
     override fun unbindViewHolder(holder: ViewHolder, position: Int, item: MyItemExpandable)
     {
-        holder.apply {
-            tv.text = ""
-            //note:
-            //do NOT set mText for the edit mText here because it would trigger the mText changed listener
-            cb.isChecked = false
-        }
+        //nothing special to do here
     }
 
     override fun getItemLayoutRes(parent: ViewGroup, viewType: Int) = R.layout.my_item_expandable
     override fun createAdapterViewHolder(itemView: View,
                                          parent: ViewGroup,
-                                         viewType: Int) =
-        ViewHolder(itemView)
+                                         viewType: Int) = ViewHolder(itemView)
 
     /////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////
@@ -76,10 +65,9 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
         init
         {
             //optionally setting iv as expand/collapse handle.
-            //don't forget to set expandAndCollapseOnItemClick to false in your expandable item
+            //don't forget to make expandCollapseOnItemClick() return false in your expandable item
             //(otherwise there is no point to the handle because any click on the item
             //would collapse/expand)
-
 //            iv.setOnItemClick {
 //                if(mItems[adapterPosition].isExpanded)
 //                    collapse(adapterPosition)
@@ -101,12 +89,10 @@ class MyAdapterExpandable(private val mItems: MutableList<MyItemExpandable>,
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)
-                {
-                }
+                { /*do nothing*/ }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
-                {
-                }
+                { /*do nothing*/ }
             })
         }
     }

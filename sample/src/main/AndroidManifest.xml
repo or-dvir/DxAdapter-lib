@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activities.ActivityHorizontalRv">
         </activity>
-        <activity android:name=".activities.ActivityExpandable"/>
+        <activity android:name=".activities.ActivityExpandableFilterable"/>
         <activity android:name=".activities.ActivityFilter"/>
         <activity
             android:name=".activities.ActivityStickyHeader"

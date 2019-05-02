@@ -90,7 +90,7 @@ class ActivityMain : AppCompatActivity()
                           Log.i("sample", "${item.mText} (position $adapterPosition) $txt")
                       })
                 .apply {
-
+                    //todo should i put these listeners in the constructor???
                     onItemClick = { view, position, item ->
                         toast("clicked ${item.mText}. position $position")
                     }
@@ -99,17 +99,6 @@ class ActivityMain : AppCompatActivity()
                         toast("long clicked ${item.mText}. position $position")
                         true
                     }
-
-                    //todo test all of these!!!
-                    //default is accent color (if not provided, primary color is used).
-                    //note: this must be @ColorInt
-//            selectedItemBackgroundColor = resources.getColor(android.R.color.holo_blue_dark)
-
-                    //default is true.
-//            defaultItemSelectionBehavior = false
-
-                    //default is false
-//            triggerClickListenersInSelectionMode = true
                 }
 
         mActionModeHelper =
@@ -145,51 +134,29 @@ class ActivityMain : AppCompatActivity()
         val itemTouchCallback =
             DxItemTouchCallback(mSampleAdapter).apply {
 
-                //in order for the swipe to "count", the user needs to swipe with
-                //a speed of 200 pixels per second (or far enough as defined below).
-                //note that this value is overridden by swipeEscapeVelocityMultiplier (if set)
-//                swipeEscapeVelocity = 200f
+                swipeEscapeVelocity = 200f
+                //option to set escape velocity as a multiplier of the device's default value
+//                swipeEscapeVelocityMultiplier = 1.5f
 
-                //in order for the swipe to "count", the user needs to swipe 1.5 times faster
-                //then the device's default value (or far enough as defined below).
-                //note that this overrides swipeEscapeVelocity (if set)
-                swipeEscapeVelocityMultiplier = 1.5f
-
-                //in order for the swipe to "count", the user needs to swipe away 70% of the item
-                //(or fast enough as defined above)
                 swipeThreshold = 0.7f
 
-
-                //if you don't want text, pass empty string.
-                //if you don't want background color, pass null.
-                //if you don't want icon, pass null
-                //todo if i dont want text, no point in passing text color!!!
                 val backgroundRight = DxSwipeBackground("right swipe",
-                                                        60, //todo before release, change this to SP from dimen!!!
+                                                        60, //recommended to use SP from dimen.xml
                                                         Color.BLACK,
-                                                        30, //todo before release, change this to DP from dimen!!!
+                                                        30, //recommended to use DP from dimen.xml
                                                         Color.RED,
                                                         getDrawable(R.drawable.ic_arrow_right))
 
                 val backgroundLeft = DxSwipeBackground("left swipe",
-                                                       60, //todo before release, change this to SP from dimen!!!
+                                                       60, //recommended to use SP from dimen.xml
                                                        Color.BLACK,
-                                                       30, //todo before release, change this to DP from dimen!!!
+                                                       30, //recommended to use DP from dimen.xml
                                                        Color.CYAN,
                                                        getDrawable(R.drawable.ic_arrow_left))
 
-                //todo when documenting add a note that initializing swipeBackgroundLeft/right
-                // does not automatically mean that swipe is enabled.
-                // the user MUST call setItemsSwipeable() to enable swiping.
-                // maybe i can make it such that swipeBackgroundLeft/right is part of the function?
-                // that way it would be less confusing to the user
-
-                //IMPORTANT NOTE:
-                //the directions you provide in the first parameter
-                //determine the "direction" parameter of the callback.
-                //in the example below, the "direction" parameter of the
-                //callback will ALSO be either ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT.
-                //however if you check for ItemTouchHelper.START in the listener, it will not work
+                //IMPORTANT: read the documentation for this function.
+                //IMPORTANT: note that calling this function is NOT enough to make your items swipiable.
+                //  your items must implement IItemSwipeable.
                 setItemsSwipeable(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                                   backgroundRight,
                                   backgroundLeft)
@@ -197,8 +164,10 @@ class ActivityMain : AppCompatActivity()
 
                     if (direction == ItemTouchHelper.START)
                     {
+                        //this if condition is for explanation purposes:
                         //code will NEVER get here because we did not provide
-                        //ItemTouchHelper.START as a valid swipe direction
+                        //ItemTouchHelper.START as a valid swipe direction.
+                        //START and LEFT are NOT the same, even if your layout is left-to-right
                     }
 
                     //delete item on left swipe
@@ -219,13 +188,8 @@ class ActivityMain : AppCompatActivity()
                 }
 
                 //option to initiate drag with long-clicking an item.
-                //be aware that if long-click also selects items,
-                //results may not be as intended (e.g. meant to long-click but started drag instead)
+                //IMPORTANT: read documentation
 //                dragOnLongClick = true
-
-                //if your list is actually a grid, you need to set this value to TRUE
-                //otherwise drag-and-drop will not work as expected
-//                isGridLayoutManager = true
 
                 onItemMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
                     Log.i("sample",
@@ -239,15 +203,12 @@ class ActivityMain : AppCompatActivity()
         //you must provide DxItemTouchCallback to ItemTouchHelper.
         //don't forget to attach it to your RecyclerView!
         mItemTouchHelper = DxItemTouchHelper(itemTouchCallback).apply {
-            //todo what if i mix items in the adapter, and each has different handle?!
-            // make a method "getHandleId()"???? keep it like this and force the user
-            // so use the same id for all handles????
+            //todo add support for multiple handle ids (for a multi-type adapter)
             setDragHandleId(R.id.myItemDragHandle)
         }
 
-        rv_scrollListener_selectable_draggable.apply {
-            addItemDecoration(DividerItemDecoration(this@ActivityMain,
-                                                    DividerItemDecoration.VERTICAL))
+        rv.apply {
+            addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
             adapter = mSampleAdapter
             mItemTouchHelper.attachToRecyclerView(this)
@@ -272,7 +233,7 @@ class ActivityMain : AppCompatActivity()
                 R.id.multiTypeSample -> startActivity<ActivityMultiType>()
                 R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
                 R.id.filterSample -> startActivity<ActivityFilter>()
-                R.id.expandableSample -> startActivity<ActivityExpandable>()
+                R.id.expandableSample -> startActivity<ActivityExpandableFilterable>()
                 //todo not currently supported. this is for future use
 //                R.id.horizontalSample -> startActivity<ActivityHorizontalRv>()
             }
@@ -298,7 +259,7 @@ class ActivityMain : AppCompatActivity()
             R.id.multiTypeSample -> startActivity<ActivityMultiType>()
             R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
             R.id.filterSample -> startActivity<ActivityFilter>()
-            R.id.expandableSample -> startActivity<ActivityExpandable>()
+            R.id.expandableSample -> startActivity<ActivityExpandableFilterable>()
             else -> super.onOptionsItemSelected(item)
         }
 

@@ -28,15 +28,10 @@ class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
 
     override fun unbindViewHolder(holder: ViewHolder, position: Int, item: MyItemWithViews)
     {
-        holder.apply {
-            switch.isChecked = item.isSwitchOn
-            checkBox.isChecked = item.isBoxChecked
-            editText.setText(item.mText)
-        }
+        //no operations to stop here
     }
 
-    override fun getItemLayoutRes(parent: ViewGroup, viewType: Int) =
-        R.layout.my_item_with_views
+    override fun getItemLayoutRes(parent: ViewGroup, viewType: Int) = R.layout.my_item_with_views
 
     override fun createAdapterViewHolder(itemView: View,
                                          parent: ViewGroup,

@@ -36,7 +36,7 @@ class ActivityInnerViews : BaseActivity()
             setDragHandleId(R.id.myItemDragHandle)
         }
 
-        rv_scrollListener_selectable_draggable.apply {
+        rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityInnerViews, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityInnerViews, RecyclerView.VERTICAL, false)
             adapter = mAdapter
