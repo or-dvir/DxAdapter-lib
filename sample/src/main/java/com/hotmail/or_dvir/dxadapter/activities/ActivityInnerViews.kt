@@ -20,9 +20,6 @@ class ActivityInnerViews : BaseActivity()
 
         val list = mutableListOf<MyItemWithViews>()
 
-        //todo bug bug bug bug bug bug bug bug bug bug bug
-        // scrolling bug with the edit text - does not keep its value
-
         for(i in 1..100)
             list.add(MyItemWithViews())
 

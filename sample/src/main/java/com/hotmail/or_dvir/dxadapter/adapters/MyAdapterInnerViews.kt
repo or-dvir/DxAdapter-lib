@@ -28,7 +28,9 @@ class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
 
     override fun unbindViewHolder(holder: ViewHolder, position: Int, item: MyItemWithViews)
     {
-        //no operations to stop here
+        //if we don't do this here, recycling of the the edit text will not
+        //work properly
+        holder.editText.setText("")
     }
 
     override fun getItemLayoutRes(parent: ViewGroup, viewType: Int) = R.layout.my_item_with_views
@@ -53,7 +55,7 @@ class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
         val switch: Switch = itemView.mySwitch
         val checkBox: CheckBox = itemView.myCheckBox
         val editText: EditText = itemView.myEditText
-        val button: Button = itemView.myButton
+        private val button: Button = itemView.myButton
 
         init
         {

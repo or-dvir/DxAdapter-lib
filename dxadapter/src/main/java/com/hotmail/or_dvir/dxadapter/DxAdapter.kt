@@ -80,7 +80,10 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
     {
-        mItems[position].let { item ->
+        //position parameter may not be accurate
+        val adapterPosition = holder.adapterPosition
+
+        mItems[adapterPosition].let { item ->
             holder.itemView.let {
                 if(item is IItemSelectable)
                     it.isSelected = item.isSelected
@@ -94,7 +97,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
                             View.GONE
                 }
 
-                bindViewHolder(holder, position, item)
+                bindViewHolder(holder, adapterPosition, item)
             }
         }
     }
