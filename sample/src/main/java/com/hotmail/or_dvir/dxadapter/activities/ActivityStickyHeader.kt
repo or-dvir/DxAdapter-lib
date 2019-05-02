@@ -57,11 +57,11 @@ class ActivityStickyHeader : BaseActivity()
             dragOnLongClick = true
 
             val swipeBackgroundLeft = DxSwipeBackground("left swipe",
-                                                    60,
-                                                    30,
-                                                    Color.WHITE,
-                                                    Color.GREEN,
-                                                    null)
+                                                        60,
+                                                        Color.WHITE,
+                                                        30,
+                                                        Color.GREEN,
+                                                        null)
 
             setItemsSwipeable(ItemTouchHelper.LEFT, null, swipeBackgroundLeft)
             { item, position, direction ->

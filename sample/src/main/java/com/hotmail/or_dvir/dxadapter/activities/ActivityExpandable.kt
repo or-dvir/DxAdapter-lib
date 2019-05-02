@@ -50,11 +50,11 @@ class ActivityExpandable : BaseActivity()
             DxItemTouchCallback(expandableAdapter).apply {
 
                 val swipeBackgroundRight = DxSwipeBackground("right swipe",
-                                                         60,
-                                                         30,
-                                                         Color.BLACK,
-                                                         Color.RED,
-                                                         getDrawable(R.drawable.ic_arrow_right))
+                                                             60,
+                                                             Color.BLACK,
+                                                             30,
+                                                             Color.RED,
+                                                             getDrawable(R.drawable.ic_arrow_right))
 
                 setItemsSwipeable(ItemTouchHelper.RIGHT, swipeBackgroundRight, null)
                 { item, position, direction ->

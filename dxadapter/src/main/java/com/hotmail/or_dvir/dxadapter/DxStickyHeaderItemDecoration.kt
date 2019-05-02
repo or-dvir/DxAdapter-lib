@@ -8,7 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterStickyHeader
 
-class DxStickyHeaderItemDecoration(private val mHeaderListener: IAdapterStickyHeader)
+/**
+ * add this [ItemDecoration][RecyclerView.ItemDecoration] to your [RecyclerView] to draw
+ * the sticky header at the top of your list
+ * @param mAdapter your adapter
+ */
+class DxStickyHeaderItemDecoration(private val mAdapter: IAdapterStickyHeader)
     : RecyclerView.ItemDecoration()
 {
     //todo before you do this, consider how this will affect dragging!!!
@@ -32,7 +37,7 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IAdapterStickyHe
 
         val childInContact = getChildInContact(recyclerView, currentHeader.bottom) ?: return
 
-        if (mHeaderListener.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
+        if (mAdapter.isHeader(recyclerView.getChildAdapterPosition(childInContact)))
         {
             moveAndDrawHeader(c,
                               currentHeader,
@@ -45,7 +50,7 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IAdapterStickyHe
     }
 
     private fun getHeaderPositionFromItemPosition(position: Int) =
-        (position downTo 0).firstOrNull { mHeaderListener.isHeader(it) }
+        (position downTo 0).firstOrNull { mAdapter.isHeader(it) }
 
     private fun getHeaderViewForItemPosition(itemPosition: Int, recyclerView: RecyclerView): View?
     {
@@ -57,11 +62,11 @@ class DxStickyHeaderItemDecoration(private val mHeaderListener: IAdapterStickyHe
         // can i make this generic???? like i did with DxAdapter????
         // meaning that the user should implement a viewholder for the header etc...
         val header = LayoutInflater.from(recyclerView.context)
-            .inflate(mHeaderListener.getHeaderLayoutRes(/*headerPosition*/),
+            .inflate(mAdapter.getHeaderLayoutRes(/*headerPosition*/),
                      recyclerView,
                      false)
 
-        mHeaderListener.bindStickyHeader(header, headerPosition)
+        mAdapter.bindStickyHeader(header, headerPosition)
         return header
     }
 

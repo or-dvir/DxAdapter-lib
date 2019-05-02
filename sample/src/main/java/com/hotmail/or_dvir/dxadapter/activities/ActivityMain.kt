@@ -21,8 +21,6 @@ import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
 {
-    //todo fix all documentation after moving everything into interfaces/separate classes
-
     //todo now that i have separation of features, check in the entire project
     // for nullable variables and see if you can make them non-nullable
 
@@ -168,15 +166,15 @@ class ActivityMain : AppCompatActivity()
                 //todo if i dont want text, no point in passing text color!!!
                 val backgroundRight = DxSwipeBackground("right swipe",
                                                         60, //todo before release, change this to SP from dimen!!!
-                                                        30, //todo before release, change this to DP from dimen!!!
                                                         Color.BLACK,
+                                                        30, //todo before release, change this to DP from dimen!!!
                                                         Color.RED,
                                                         getDrawable(R.drawable.ic_arrow_right))
 
                 val backgroundLeft = DxSwipeBackground("left swipe",
                                                        60, //todo before release, change this to SP from dimen!!!
-                                                       30, //todo before release, change this to DP from dimen!!!
                                                        Color.BLACK,
+                                                       30, //todo before release, change this to DP from dimen!!!
                                                        Color.CYAN,
                                                        getDrawable(R.drawable.ic_arrow_left))
 
@@ -254,15 +252,11 @@ class ActivityMain : AppCompatActivity()
             adapter = mSampleAdapter
             mItemTouchHelper.attachToRecyclerView(this)
 
-            firstItemVisibilityListener = DxItemVisibilityListener().apply {
-                onItemVisible = { Log.i("sample", "first item visible") }
-                onItemInvisible = { Log.i("sample", "first item not visible") }
-            }
+            onFirstItemVisible = { Log.i("sample", "first item visible") }
+            onFirstItemInvisible = { Log.i("sample", "first item not visible") }
 
-            lastItemVisibilityListener = DxItemVisibilityListener().apply {
-                onItemVisible = { Log.i("sample", "last item visible") }
-                onItemInvisible = { Log.i("sample", "last item not visible") }
-            }
+            onLastItemVisible = { Log.i("sample", "last item visible") }
+            onLastItemInvisible = { Log.i("sample", "last item not visible") }
 
             onScrollListener = DxScrollListener(50).apply {
                 onScrollDown = { fab.hide() }

@@ -6,11 +6,26 @@ import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
 import kotlin.math.roundToInt
 
+internal enum class DxScrollDirection { UP, DOWN, LEFT, RIGHT }
+
 /**
- * @property sensitivityAll Int speed sensitivity of all the listeners. The larger the number, the faster the
+ * speed sensitivity for all the listeners. The larger the number, the faster the
  * user has to scroll for the listeners to trigger.
  *
  * It's possible to set individual scroll listeners sensitivity using the optional parameters
+ */
+
+/**
+ * a class containing individual scroll directions listeners (up, down, left, right),
+ * with given sensitivities.
+ *
+ * The higher the sensitivity, the faster the user has to scroll for the listeners to trigger.
+ *
+ * @param sensitivityAll convenience parameter to set sensitivity for all directions.
+ * @param sensitivityUp optional sensitivity for scrolling up
+ * @param sensitivityDown optional sensitivity for scrolling down
+ * @param sensitivityLeft optional sensitivity for scrolling left
+ * @param sensitivityRight optional sensitivity for scrolling right
  */
 class DxScrollListener(internal val sensitivityAll: Int,
                        internal val sensitivityUp: Int = sensitivityAll,
@@ -18,30 +33,43 @@ class DxScrollListener(internal val sensitivityAll: Int,
                        internal val sensitivityLeft: Int = sensitivityAll,
                        internal val sensitivityRight: Int = sensitivityAll)
 {
+    /**
+     * a listener to be invoked when the list is scrolled up,
+     * if the amount of scroll exceeds [sensitivityUp]
+     */
     var onScrollUp: emptyListener? = null
+    /**
+     * a listener to be invoked when the list is scrolled down,
+     * if the amount of scroll exceeds [sensitivityDown]
+     */
     var onScrollDown: emptyListener? = null
+    /**
+     * a listener to be invoked when the list is scrolled left,
+     * if the amount of scroll exceeds [sensitivityLeft]
+     */
     var onScrollLeft: emptyListener? = null
+    /**
+     * a listener to be invoked when the list is scrolled right,
+     * if the amount of scroll exceeds [sensitivityRight]
+     */
     var onScrollRight: emptyListener? = null
 }
 
-class DxItemVisibilityListener
-{
-    var onItemVisible: emptyListener? = null
-    var onItemInvisible: emptyListener? = null
-}
-
-internal enum class DxScrollDirection
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-}
-
-class DxSwipeBackground (internal var mText: String,
+/**
+ * a helper class for drawing the "swiped area" of an item being swiped
+ *
+ * @param mText the text to show on the swiped area. should be as short as possible
+ * @param mTextSizePx the size of the text, in pixels
+ * @param mTextColor the color of the text
+ * @param mPaddingPx amount of padding between the edge of the item and the text and/or icon, in pixels.
+ * note that if you have both text AND an icon, this is also the amount of space between them.
+ * @param mBackgroundColor the background color of the swiped area
+ * @param mIcon an optional [Drawable] icon to show on the swiped area
+ */
+class DxSwipeBackground (internal val mText: String,
                          private val mTextSizePx: Int,
-                         internal var mPaddingPx: Int,
                          @ColorInt internal val mTextColor: Int,
+                         internal var mPaddingPx: Int,
                          @ColorInt internal val mBackgroundColor: Int?,
                          internal val mIcon: Drawable?)
 {

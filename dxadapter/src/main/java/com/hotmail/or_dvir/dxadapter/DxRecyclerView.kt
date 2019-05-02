@@ -6,7 +6,9 @@ import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import kotlin.math.abs
 
-i stopped here with the documenttaion
+/**
+ * a wrapper for RecyclerView with scroll listeners and first/last item visibility listeners.
+ */
 class DxRecyclerView @JvmOverloads constructor(context: Context,
                                                attrs: AttributeSet? = null,
                                                defStyle: Int = 0)
@@ -15,21 +17,37 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
     //todo test these listeners if the adapter changes during runtime!!!!
 
     /**
-     * * [DxItemVisibilityListener.onItemVisible] will trigger immediately as the [DxRecyclerView] loads
-     * (assuming the adapter contains at least 1 item).
-     * * if the entire list fits in the screen, [DxItemVisibilityListener.onItemInvisible] will NEVER trigger.
+     * a listener to be invoked when the FIRST item on your list is VISIBLE.
+     *
+     * note that this will trigger immediately (assuming the adapter contains at least 1 item).
      */
-    var firstItemVisibilityListener: DxItemVisibilityListener? = null
-
+    var onFirstItemVisible: emptyListener? = null
     /**
-     * * [DxItemVisibilityListener.onItemInvisible] will trigger immediately as the [DxRecyclerView] loads
-     * (assuming it does NOT fit in the screen).
-     * * if the entire list fits in the screen, [DxItemVisibilityListener.onItemVisible]
-     * will trigger immediately as the [DxRecyclerView] loads,
-     * and [IOnItemVisibilityChanged.onInvisible] will NEVER trigger.
+     * a listener to be invoked when the FIRST item on your list is INVISIBLE.
+     *
+     * note that if the entire list fits in the [DxRecyclerView], this will NEVER trigger.
      */
-    var lastItemVisibilityListener: DxItemVisibilityListener? = null
-
+    var onFirstItemInvisible: emptyListener? = null
+    /**
+     * a listener to be invoked when the LAST item on your list is VISIBLE.
+     *
+     * note that if the entire list fits in the [DxRecyclerView], this will trigger immediately
+     * (assuming the adapter contains at least 1 item).
+     */
+    var onLastItemVisible: emptyListener? = null
+    /**
+     * a listener to be invoked when the LAST item on your list is INVISIBLE.
+     *
+     * note that if the entire list does NOT fit in the [DxRecyclerView], this will trigger immediately
+     * (assuming the adapter contains at least 1 item).
+     *
+     * also note that if the entire list DOES fit in the [DxRecyclerView], this will NEVER trigger.
+     */
+    var onLastItemInvisible: emptyListener? = null
+    /**
+     * a listener to be invoked when this [DxRecyclerView] is scrolled.
+     * see [DxScrollListener] for further details
+     */
     var onScrollListener: DxScrollListener? = null
 
     private var notifiedFirstVisible = false
@@ -48,25 +66,37 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
         mLayMan = layout
     }
 
+    private fun atLeastOneNotNull(vararg objects: Any?) = objects.any { it != null }
+
     override fun onAttachedToWindow()
     {
         super.onAttachedToWindow()
 
-        //no need to waste runtime on ScrollListener if
-        //no callbacks have been set
-        if (firstItemVisibilityListener != null ||
-            lastItemVisibilityListener  != null)
-        {
-            addOnScrollListener(object : OnScrollListener()
+        addOnScrollListener(
+            object : OnScrollListener()
             {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int)
                 {
                     super.onScrolled(recyclerView, dx, dy)
-                    triggerScrollListeners(dx, dy)
-                    triggerVisibilityListeners()
+
+                    onScrollListener?.apply {
+                        when
+                        {
+                            dx > 0 -> invokeScrollListener(dx, DxScrollDirection.RIGHT)
+                            dx < 0 -> invokeScrollListener(dx, DxScrollDirection.LEFT)
+
+                            dy > 0 -> invokeScrollListener(dy, DxScrollDirection.DOWN)
+                            dy < 0 -> invokeScrollListener(dy, DxScrollDirection.UP)
+                        }
+                    }
+
+                    if (atLeastOneNotNull(onFirstItemVisible, onFirstItemInvisible,
+                                          onLastItemVisible, onLastItemInvisible))
+                    {
+                        triggerVisibilityListeners()
+                    }
                 }
             })
-        }
     }
 
     private fun triggerVisibilityListeners()
@@ -78,20 +108,18 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
 
             var visiblePos: Int
 
-            firstItemVisibilityListener?.let {
+            if(atLeastOneNotNull(onFirstItemVisible, onFirstItemInvisible))
+            {
                 visiblePos = findFirstVisibleItemPosition()
-
-                //if no items, we can immediately return
-                if (visiblePos == NO_POSITION)
-                    return@let
 
                 when
                 {
+                    visiblePos == NO_POSITION -> { /*do nothing*/ }
                     visiblePos == 0 ->
                     {
                         if (!notifiedFirstVisible)
                         {
-                            it.onItemVisible?.invoke()
+                            onFirstItemVisible?.invoke()
                             notifiedFirstVisible = true
                             notifiedFirstInvisible = false
                         }
@@ -100,28 +128,26 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                     //if we get here, firstPos is NOT 0
                     !notifiedFirstInvisible ->
                     {
-                        it.onItemInvisible?.invoke()
+                        onFirstItemInvisible?.invoke()
                         notifiedFirstVisible = false
                         notifiedFirstInvisible = true
                     }
                 }
             }
 
-            lastItemVisibilityListener?.let {
+            if(atLeastOneNotNull(onLastItemVisible, onLastItemInvisible))
+            {
                 visiblePos = findLastVisibleItemPosition()
                 val numItems = adapter?.itemCount
 
-                //if no items or no adapter is attached, we can immediately return
-                if (visiblePos == NO_POSITION || numItems == null)
-                    return@let
-
                 when
                 {
+                    visiblePos == NO_POSITION || numItems == null -> { /*do nothing*/ }
                     visiblePos == (numItems - 1) ->
                     {
                         if (!notifiedLastVisible)
                         {
-                            it.onItemVisible?.invoke()
+                            onLastItemVisible?.invoke()
                             notifiedLastVisible = true
                             notifiedLastInvisible = false
                         }
@@ -130,24 +156,12 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                     //if we get here, lastPos is NOT (numItems -1)
                     !notifiedLastInvisible ->
                     {
-                        it.onItemInvisible?.invoke()
+                        onLastItemInvisible?.invoke()
                         notifiedLastVisible = false
                         notifiedLastInvisible = true
                     }
                 }
             }
-        }
-    }
-
-    private fun triggerScrollListeners(dx: Int, dy: Int)
-    {
-        when
-        {
-            dx > 0 -> invokeScrollListener(dx, DxScrollDirection.RIGHT)
-            dx < 0 -> invokeScrollListener(dx, DxScrollDirection.LEFT)
-
-            dy > 0 -> invokeScrollListener(dy, DxScrollDirection.DOWN)
-            dy < 0 -> invokeScrollListener(dy, DxScrollDirection.UP)
         }
     }
 

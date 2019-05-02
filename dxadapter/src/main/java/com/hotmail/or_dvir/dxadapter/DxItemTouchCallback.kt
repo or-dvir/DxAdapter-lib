@@ -16,7 +16,7 @@ import kotlin.math.roundToInt
 /**
  * a class that handles all dragging and swiping behaviour.
  * @param ITEM the item type of your adapter
- * @property mAdapter your adapter
+ * @param mAdapter your adapter
  */
 class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM, *>)
     : ItemTouchHelper.Callback()
@@ -79,6 +79,8 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
      * @param swipeDirections the direction of allowed swiping. one or more of:
      * [LEFT][ItemTouchHelper.LEFT], [RIGHT][ItemTouchHelper.RIGHT],
      * [START][ItemTouchHelper.START], [END][ItemTouchHelper.END].
+     * @param swipeBackgroundRight the background for swiping right
+     * @param swipeBackgroundLeft the background for swiping left
      * @param onSwipeListener
      *     a callback to invoke when an item has been swiped. note that the direction parameter of the listener is the same
      *     as the one provided in [swipeDirections].

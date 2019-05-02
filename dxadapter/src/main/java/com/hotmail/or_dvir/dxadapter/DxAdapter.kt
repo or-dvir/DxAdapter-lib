@@ -16,7 +16,7 @@ import com.hotmail.or_dvir.dxadapter.interfaces.*
  *
  * @param ITEM the type of object this adapter will hold
  * @param VH the [DxHolder] (RecyclerView.ViewHolder) this adapter will use
- * @property mItems the items for this adapter
+ * @param mItems the items for this adapter
  */
 abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: MutableList<ITEM>)
     : RecyclerView.Adapter<VH>(),
