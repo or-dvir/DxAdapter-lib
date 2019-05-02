@@ -44,7 +44,7 @@ class ActivityMain : AppCompatActivity()
 
     //todo consider switching swiping logic to layout behind the item...
 
-    private lateinit var mSampleAdapter: MyAdapter
+    private lateinit var mAdapter: MyAdapter
     private lateinit var mItemTouchHelper: ItemTouchHelper
     private lateinit var mActionModeHelper: DxActionModeHelper<MyItem>
 
@@ -56,9 +56,6 @@ class ActivityMain : AppCompatActivity()
     //todo BUG BUG BUG BUG BUG BUG BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // selecting an item, swiping it to the left (deleting) while selected
     // -> action mode still active!!! what adapter thinks about number of selected items????
-
-    //todo BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
-    // dragging seems slow
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -75,7 +72,7 @@ class ActivityMain : AppCompatActivity()
         for (i in 1..100)
             myListItems.add(MyItem(i.toString()))
 
-        mSampleAdapter =
+        mAdapter =
             MyAdapter(myListItems,
                       onItemSelectionChanged = { adapterPosition, item, isSelected ->
                           //MUST be called in order for DxActionMode to function as intended
@@ -91,6 +88,7 @@ class ActivityMain : AppCompatActivity()
                       })
                 .apply {
                     //todo should i put these listeners in the constructor???
+                    // its weird that some listeners are in constructor and some are out of it
                     onItemClick = { view, position, item ->
                         toast("clicked ${item.mText}. position $position")
                     }
@@ -102,8 +100,8 @@ class ActivityMain : AppCompatActivity()
                 }
 
         mActionModeHelper =
-            DxActionModeHelper(mSampleAdapter,
-                               { "${mSampleAdapter.getNumSelectedItems()}" },
+            DxActionModeHelper(mAdapter,
+                               { "${mAdapter.getNumSelectedItems()}" },
                                object : ActionMode.Callback
                                {
                                    override fun onActionItemClicked(mode: ActionMode?,
@@ -132,9 +130,10 @@ class ActivityMain : AppCompatActivity()
                                })
 
         val itemTouchCallback =
-            DxItemTouchCallback(mSampleAdapter).apply {
+            DxItemTouchCallback(mAdapter).apply {
 
                 swipeEscapeVelocity = 200f
+
                 //option to set escape velocity as a multiplier of the device's default value
 //                swipeEscapeVelocityMultiplier = 1.5f
 
@@ -174,7 +173,19 @@ class ActivityMain : AppCompatActivity()
                     if (direction == ItemTouchHelper.LEFT)
                     {
                         myListItems.removeAt(position)
-                        mSampleAdapter.notifyItemRemoved(position)
+                        mAdapter.notifyItemRemoved(position)
+
+                        //while DxActionModeHelper and IAdapterSelectable work together,
+                        //they are still separate components. as we may have just removed the last
+                        //selected item, mActionModeHelper needs to be notified that something has changed
+                        //so it may destroy itself if needed, and in this specific case also update the title
+                        //(which is the number of selected items).
+                        //in this specific case, another approach would be to deselect the item before removing it,
+                        //thus triggering the selection state listener which already calls updateActionMode.
+                        //however that approach may not be right for you if other things are happening inside
+                        //the selection state listener
+                        mActionModeHelper.updateActionMode(this@ActivityMain)
+
                         toast("removed ${item.mText} (position $position)")
                     }
 
@@ -183,7 +194,7 @@ class ActivityMain : AppCompatActivity()
                     {
                         item.mText = "new name ${position + 1}"
                         //don't forget to restore the item, or you will be left with empty space
-                        mSampleAdapter.notifyItemChanged(position)
+                        mAdapter.notifyItemChanged(position)
                     }
                 }
 
@@ -206,7 +217,7 @@ class ActivityMain : AppCompatActivity()
         rv.apply {
             addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
-            adapter = mSampleAdapter
+            adapter = mAdapter
             mItemTouchHelper.attachToRecyclerView(this)
 
             onFirstItemVisible = { Log.i("sample", "first item visible") }
@@ -240,23 +251,18 @@ class ActivityMain : AppCompatActivity()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean
     {
-        when (item.itemId)
+        if(item.itemId == android.R.id.home)
         {
-            android.R.id.home -> {
-                drawer_layout.apply {
-                    if(isDrawerOpen(GravityCompat.START))
-                        closeDrawers()
-                    else
-                        openDrawer(GravityCompat.START)
-                }
+            drawer_layout.apply {
+                if(isDrawerOpen(GravityCompat.START))
+                    closeDrawers()
+                else
+                    openDrawer(GravityCompat.START)
             }
-//            R.id.innerViewsSample -> startActivity<ActivityInnerViews>()
-//            R.id.multiTypeSample -> startActivity<ActivityMultiType>()
-//            R.id.stickyHeaderSample -> startActivity<ActivityStickyHeader>()
-//            R.id.expandableFilterableSample -> startActivity<ActivityExpandableFilterable>()
-            else -> super.onOptionsItemSelected(item)
+
+            return true
         }
 
-        return true
+        return super.onOptionsItemSelected(item)
     }
 }
