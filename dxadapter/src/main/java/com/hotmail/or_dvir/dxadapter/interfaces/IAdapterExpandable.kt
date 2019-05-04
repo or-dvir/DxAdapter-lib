@@ -30,12 +30,6 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
      * returns a list of indices for all currently expanded items
      */
     fun getAllExpandedIndices() = getIndicesForItems(getAllExpandedItems())
-
-
-    /**
-     *
-     */
-
     /**
      * expands all the items at the given [indices].
      *

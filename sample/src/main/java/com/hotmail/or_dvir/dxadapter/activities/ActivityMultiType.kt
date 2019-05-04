@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
+import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterMultiType
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase

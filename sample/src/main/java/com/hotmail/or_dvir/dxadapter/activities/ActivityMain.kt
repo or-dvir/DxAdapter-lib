@@ -21,37 +21,13 @@ import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
 {
-    //todo now that i have separation of features, check in the entire project
-    // for nullable variables and see if you can make them non-nullable
-
-    //todo after separating features to interfaces, TEST EVERYTHING AGAIN!!!
-
     //todo when documenting, note that this library was meant for kotlin and was not tested in java
-
-    //todo test module with leak canary!!!!!!!
-
-    //todo when documenting, add note about SimpleViewHolder - because the way kotlin treats generics,
-
-    //todo make sure that for every object in this library (DxAdapter, DxActionModeHelper, DxItemTouchCallback etc...)
-    // you have included ALL POSSIBLE OPTIONS in this sample
-
-    //todo have different activities for different features? if you put all in 1 activity it might confuse the user
-
-    //todo check all documentations (including comments in code!!!) to make sure its accurate
-    // for example, click listeners are not needed anymore for default selection behavior
-
-    //todo test the code WITHOUT default click behavior!!!
-
+    //todo test the code WITHOUT default selection behavior!!!
     //todo consider switching swiping logic to layout behind the item...
 
     private lateinit var mAdapter: MyAdapter
     private lateinit var mItemTouchHelper: ItemTouchHelper
     private lateinit var mActionModeHelper: DxActionModeHelper<MyItem>
-
-    //todo ripple effect is being overridden when applying stateListDrawable to our item
-
-    //todo instead of writing what the default value for everything in the sample is,
-    // refer them to the documentation - that way it only has to change in one place
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -81,19 +57,14 @@ class ActivityMain : AppCompatActivity()
                                   "deselected"
 
                           Log.i("sample", "${item.mText} (position $adapterPosition) $txt")
+                      },
+                      onItemClick = { view, position, item ->
+                          toast("clicked ${item.mText}. position $position")
+                      },
+                      onItemLongClick = { view, position, item ->
+                          toast("long clicked ${item.mText}. position $position")
+                          true
                       })
-                .apply {
-                    //todo should i put these listeners in the constructor???
-                    // its weird that some listeners are in constructor and some are out of it
-                    onItemClick = { view, position, item ->
-                        toast("clicked ${item.mText}. position $position")
-                    }
-
-                    onItemLongClick = { view, position, item ->
-                        toast("long clicked ${item.mText}. position $position")
-                        true
-                    }
-                }
 
         mActionModeHelper =
             DxActionModeHelper(mAdapter,

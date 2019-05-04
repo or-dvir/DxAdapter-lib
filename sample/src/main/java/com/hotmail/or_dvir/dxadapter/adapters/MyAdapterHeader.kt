@@ -18,6 +18,8 @@ class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
       IAdapterStickyHeader,
       IAdapterSelectable<IItemBase>
 {
+    override val onItemClick: onItemClickListener<IItemBase>? = null
+    override val onItemLongClick: onItemLongClickListener<IItemBase>? = null
     override val defaultItemSelectionBehavior = true
     override val triggerClickListenersInSelectionMode = false
     override val onItemSelectionChanged: onItemSelectStateChangedListener<IItemBase> = { _, _, _ -> /*do nothing*/ }

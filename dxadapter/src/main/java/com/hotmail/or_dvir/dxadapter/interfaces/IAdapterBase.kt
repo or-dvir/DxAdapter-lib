@@ -5,9 +5,11 @@ import android.support.annotation.ColorInt
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.widget.Filter
+import com.hotmail.or_dvir.dxadapter.onItemClickListener
+import com.hotmail.or_dvir.dxadapter.onItemLongClickListener
 
 /**
- * an interface containing some shared behaviour to be used by the library.
+ * an interface containing some shared behaviour for all adapters to be used by the library.
  * no need for you to implement this interface yourself
  */
 interface IAdapterBase<ITEM: IItemBase>
@@ -20,6 +22,14 @@ interface IAdapterBase<ITEM: IItemBase>
      * the filter used by the adapter, if it implements [IAdapterFilterable]
      */
     val mDxFilter: Filter
+    /**
+     * a listener to be invoked whenever an item is clicked
+     */
+    val onItemClick: onItemClickListener<ITEM>?
+    /**
+     * a listener to be invoked whenever an item is long-clicked
+     */
+    val onItemLongClick: onItemLongClickListener<ITEM>?
 
     /**
      * returns a list of indices for the given [items].

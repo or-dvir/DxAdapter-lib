@@ -8,15 +8,16 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Switch
-import com.hotmail.or_dvir.dxadapter.DxAdapter
+import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithViews
-import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.DxHolder
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
 
 class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
     : DxAdapter<MyItemWithViews, MyAdapterInnerViews.ViewHolder>(mItems)
 {
+    override val onItemClick: onItemClickListener<MyItemWithViews>? = null
+    override val onItemLongClick: onItemLongClickListener<MyItemWithViews>? = null
+
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemWithViews)
     {
         holder.apply {

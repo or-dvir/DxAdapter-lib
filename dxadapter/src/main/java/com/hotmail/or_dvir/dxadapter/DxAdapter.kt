@@ -24,17 +24,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
 {
     override val mAdapterItems = mItems
 
-    /**
-     * a listener to be invoked whenever an item is clicked
-     */
-    var onItemClick: onItemClickListener<ITEM>? = null
-    /**
-     * a listener to be invoked whenever an item is long-clicked
-     */
-    var onItemLongClick: onItemLongClickListener<ITEM>? = null
-
-    //todo WHAT ABOUT CARDS?! REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
-
     //todo move this to draggable interface or wherever you handle dragging
     internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
@@ -43,6 +32,10 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
 
     override val mDxFilter = object : Filter()
     {
+        //so we don't have to create a new object every time
+        //performFiltering is called
+        private val mResults = FilterResults()
+
         override fun performFiltering(constraint: CharSequence?): FilterResults?
         {
             //todo how to add animation to filtering????
@@ -54,10 +47,9 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
                 if (constraint.isNullOrEmpty())
                     mAdapterItems
                 else
-                //for SURE this is not null because of the "if" condition above
                     onFilterRequest.invoke(constraint)
 
-            return FilterResults().apply {
+            return mResults.apply {
                 values = results
                 count = results.size
             }
@@ -115,7 +107,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
 
     //todo what about onBindViewHolder(VH holder, int position, List<Object> payloads)??!?!?!?!?!?!?!?!?
     // what about onFailedToRecycleView (VH holder)?!?!?!?!?!?!?!?!?!?!?!?!?!?!?!
-    // any other important methods i should override??????
+    // any other methods i should override??????
 
     override fun dxNotifyItemChanged(position: Int) = notifyItemChanged(position)
 
@@ -168,10 +160,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
 
             if (this@DxAdapter is IAdapterExpandable<*>)
                 dxExpandableItemClicked(clickedPosition, selectionBefore)
-
-            //todo when documenting this library, notice the order of the calls
-            // first selection listener or first click listener????
-            // example: if first selection, then click listener is AFTER the item has been selected/deselected
         }
 
         itemView.setOnLongClickListener { view ->
@@ -194,9 +182,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
                 onItemLongClick?.invoke(view, clickedPosition, clickedItem) ?: true
             else
                 true
-
-            //todo when documenting this library, notice the order of the calls
-            // first selection listener or first long-click listener????
         }
 
         return holder

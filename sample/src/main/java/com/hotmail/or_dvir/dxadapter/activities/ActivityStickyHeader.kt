@@ -32,7 +32,7 @@ class ActivityStickyHeader : BaseActivity()
 
         for(i in 1..100)
         {
-            if(i % 5 == 0)
+            if (i % 5 == 0)
             {
                 list.add(MyHeader("Header $headerCounter"))
                 headerCounter++
@@ -40,11 +40,6 @@ class ActivityStickyHeader : BaseActivity()
             else
                 list.add(MyItem(i.toString()))
         }
-
-        //todo BUG BUG BUG BUG BUG BUG BUG BUG BUG
-        // cannot drag pass header!!!
-        // either make entire adapter draggable, or once an item is NOT draggable,
-        // look for the closest draggable item and replace with it
 
         val stickyHeaderAdapter = MyAdapterHeader(list)
 

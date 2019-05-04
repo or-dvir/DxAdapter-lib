@@ -16,12 +16,6 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterStickyHeader
 class DxStickyHeaderItemDecoration(private val mAdapter: IAdapterStickyHeader)
     : RecyclerView.ItemDecoration()
 {
-    //todo before you do this, consider how this will affect dragging!!!
-    // make the headers positions CONSTANTS!!!!
-    // so that if the list is sorted, the headers remain constant!!!
-    // or if you DONT do this, make sure to include that in documentation that headers will be moved if sorted!!!
-    // should headers show up on "filter"? - should probably be left for the user to decide
-
     override fun onDrawOver(c: Canvas, recyclerView: RecyclerView, state: RecyclerView.State)
     {
         super.onDrawOver(c, recyclerView, state)
@@ -58,9 +52,6 @@ class DxStickyHeaderItemDecoration(private val mAdapter: IAdapterStickyHeader)
 
         //todo how can i improve this??? do not inflate every time!!!!
 
-        //todo is this really needed or it's enough the way it is???????
-        // can i make this generic???? like i did with DxAdapter????
-        // meaning that the user should implement a viewholder for the header etc...
         val header = LayoutInflater.from(recyclerView.context)
             .inflate(mAdapter.getHeaderLayoutRes(/*headerPosition*/),
                      recyclerView,

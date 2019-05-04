@@ -11,13 +11,16 @@ import android.view.View
  *
  * for example: if you filter the adapter with some constraint, it's up to you whether or not to include
  * header items in the filtered results.
+ *
+ * another example: sorting your adapter items will also affect headers.
  */
 interface IAdapterStickyHeader
 {
     /**
      * returns the resource id of the header layout
      */
-    //todo in order to allow multiple types of headers, add position parameter!!!
+    //todo add support for multiple types of headers- in order to do this you need to
+    // add position parameter!!!
     // note that this might require some changes in the adapter!!!
     @LayoutRes
     fun getHeaderLayoutRes(/*headerPosition: Int*/): Int

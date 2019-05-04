@@ -3,9 +3,7 @@ package com.hotmail.or_dvir.dxadapter.adapters
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.hotmail.or_dvir.dxadapter.DxAdapter
-import com.hotmail.or_dvir.dxadapter.R
-import com.hotmail.or_dvir.dxadapter.DxHolder
+import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import com.hotmail.or_dvir.dxadapter.models.MyItemWithImage
@@ -17,6 +15,9 @@ import kotlinx.android.synthetic.main.my_item_image_vertical.view.*
 class MyAdapterMultiType(mItems: MutableList<IItemBase>)
     : DxAdapter<IItemBase, DxHolder>(mItems)
 {
+    override val onItemClick: onItemClickListener<IItemBase>? = null
+    override val onItemLongClick: onItemLongClickListener<IItemBase>? = null
+
     override fun bindViewHolder(holder: DxHolder, position: Int, item: IItemBase)
     {
         when (item)

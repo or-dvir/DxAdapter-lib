@@ -14,18 +14,20 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
                                                defStyle: Int = 0)
     : RecyclerView(context, attrs, defStyle)
 {
-    //todo test these listeners if the adapter changes during runtime!!!!
-
     /**
      * a listener to be invoked when the FIRST item on your list is VISIBLE.
      *
      * note that this will trigger immediately (assuming the adapter contains at least 1 item).
+     *
+     * also note that this will NOT trigger when filtering.
      */
     var onFirstItemVisible: emptyListener? = null
     /**
      * a listener to be invoked when the FIRST item on your list is INVISIBLE.
      *
      * note that if the entire list fits in the [DxRecyclerView], this will NEVER trigger.
+     *
+     * also note that this will NOT trigger when filtering.
      */
     var onFirstItemInvisible: emptyListener? = null
     /**
@@ -33,15 +35,19 @@ class DxRecyclerView @JvmOverloads constructor(context: Context,
      *
      * note that if the entire list fits in the [DxRecyclerView], this will trigger immediately
      * (assuming the adapter contains at least 1 item).
+     *
+     * also note that this will NOT trigger when filtering.
      */
     var onLastItemVisible: emptyListener? = null
     /**
      * a listener to be invoked when the LAST item on your list is INVISIBLE.
      *
-     * note that if the entire list does NOT fit in the [DxRecyclerView], this will trigger immediately
+     * * note that if the entire list does NOT fit in the [DxRecyclerView], this will trigger immediately
      * (assuming the adapter contains at least 1 item).
      *
-     * also note that if the entire list DOES fit in the [DxRecyclerView], this will NEVER trigger.
+     * * note that if the entire list DOES fit in the [DxRecyclerView], this will NEVER trigger.
+     *
+     * * note that this will NOT trigger when filtering.
      */
     var onLastItemInvisible: emptyListener? = null
     /**

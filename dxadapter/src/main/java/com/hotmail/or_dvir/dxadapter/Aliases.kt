@@ -14,14 +14,14 @@ typealias DxHolder = RecyclerView.ViewHolder
  * @param item the clicked item
  * @return true if the callback consumed the long click, false otherwise
  */
-internal typealias onItemLongClickListener<ITEM> = (view: View, adapterPosition: Int, item: ITEM) -> Boolean
+typealias onItemLongClickListener<ITEM> = (view: View, adapterPosition: Int, item: ITEM) -> Boolean
 /**
  * a listener called when an item is clicked
  * @param view the clicked view
  * @param adapterPosition the adapter position of the clicked item
  * @param item the clicked item
  */
-internal typealias onItemClickListener<ITEM> = (view: View, adapterPosition: Int, item: ITEM) -> Unit
+typealias onItemClickListener<ITEM> = (view: View, adapterPosition: Int, item: ITEM) -> Unit
 /**
  * a listener called when the selected state of an item has changed
  * @param adapterPosition the adapter position of the item

@@ -10,7 +10,9 @@ import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.my_item.view.*
 
 class MyAdapter(mItems: MutableList<MyItem>,
-                override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItem>)
+                override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItem>,
+                override var onItemClick: onItemClickListener<MyItem>?,
+                override var onItemLongClick: onItemLongClickListener<MyItem>?)
     : DxAdapter<MyItem, MyAdapter.ViewHolder>(mItems),
       IAdapterSelectable<MyItem>,
       IAdapterFilterable<MyItem>

@@ -12,12 +12,17 @@ import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
  */
 interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
 {
+    //todo add support for selecting cards. REMEMBER THAT YOU NEED TO SELECT THE FOREGROUND!!! (SEE Televizia project!!!)
+
     /**
      * if TRUE, long-clicking an item will select it and any subsequent regular-click on
      * any other item will select\deselect it.
      *
      * if FALSE, you must manage item selection yourself using the variants of [select] and [deselect]
      *
+     * note that when TRUE, when an item is selected, its background will be overridden.
+     * if you have a custom background you should set this value to FALSE but then you must
+     * handle selection behaviour by yourself (using [select] and [deselect] variants of this interface)
      * @see [triggerClickListenersInSelectionMode]
      */
     val defaultItemSelectionBehavior: Boolean
@@ -162,10 +167,6 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
      */
     fun dxSelectableItemClicked(position: Int, wasInSelectionModeBefore: Boolean): Boolean
     {
-        //todo when documenting this library, notice the order of the calls
-        // first selection listener or first click listener????
-        // example: if first selection, then click listener is AFTER the item has been selected/deselected
-
         val item = mAdapterItems[position]
 
         //reverse selection state only if the item is selectable (could be multi-type adapter!),
@@ -190,10 +191,6 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
         //this is to prevent overriding users' custom background (if set)
         if(defaultItemSelectionBehavior)
         {
-            //todo when documenting, mention that the background will be overridden when item is "selected",
-            // meaning that it will change the background to the selected color.
-            // if user has custom selection background that is NOT a color, he should NOT use defaultItemSelectionBehavior
-            // but then must handle other things by himself.
             StateListDrawable().apply {
                 //selected
                 addState(intArrayOf(android.R.attr.state_selected),

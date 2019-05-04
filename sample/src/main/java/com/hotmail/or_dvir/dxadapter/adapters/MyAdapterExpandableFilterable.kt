@@ -16,6 +16,9 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
       IAdapterExpandable<MyItemExpandable>,
       IAdapterFilterable<MyItemExpandable>
 {
+    override var onItemClick: onItemClickListener<MyItemExpandable>? = null
+    override var onItemLongClick: onItemLongClickListener<MyItemExpandable>? = null
+
     override val onFilterRequest: onFilterRequest<MyItemExpandable> = { constraint ->
         mItems.filter { it.mText.startsWith(constraint.trim(), true) }
     }
