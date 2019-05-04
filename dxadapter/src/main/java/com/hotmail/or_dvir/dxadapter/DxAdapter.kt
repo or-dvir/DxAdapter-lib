@@ -22,14 +22,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
     : RecyclerView.Adapter<VH>(),
       IAdapterBase<ITEM>
 {
-    /**
-     * returns the filtered list of items. if the adapter is not currently filtered,
-     * this returns the original list
-     */
-    //this function exists just so its more clear for the user
-    fun getFilteredItems() = getAdapterItems()
-    override fun getAdapterItems() = mItems
-//    override val mAdapterItems = mItems
+    override fun getDxAdapterItems() = mItems
     private val mOriginalList = mItems
 
     //todo move this to draggable interface or wherever you handle dragging

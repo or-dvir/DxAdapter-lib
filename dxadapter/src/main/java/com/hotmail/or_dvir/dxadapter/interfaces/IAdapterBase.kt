@@ -15,9 +15,11 @@ import com.hotmail.or_dvir.dxadapter.onItemLongClickListener
 interface IAdapterBase<ITEM: IItemBase>
 {
     /**
-     * the items held by the adapter
+     * returns the list of items CURRENTLY held by this adapter. note that the list is NOT
+     * necessarily the original list passed to the adapter (for example: if the
+     * adapter is filtered, the filtered list will be returned).
      */
-    fun getAdapterItems(): List<ITEM>
+    fun getDxAdapterItems(): List<ITEM>
 //    val mAdapterItems: List<ITEM>
     /**
      * the filter used by the adapter, if it implements [IAdapterFilterable]
@@ -41,7 +43,7 @@ interface IAdapterBase<ITEM: IItemBase>
     /**
      * returns the index of the given [item]
      */
-    fun getIndexForItem(item: ITEM) = getAdapterItems().indexOf(item)
+    fun getIndexForItem(item: ITEM) = getDxAdapterItems().indexOf(item)
 //    fun getIndexForItem(item: ITEM) = mAdapterItems.indexOf(item)
     /**
      * returns a list of [ITEM] at the given [indices]
@@ -50,7 +52,7 @@ interface IAdapterBase<ITEM: IItemBase>
     /**
      * returns the [ITEM] at the given [index]
      */
-    fun getItemForIndex(index: Int) = getAdapterItems()[index]
+    fun getItemForIndex(index: Int) = getDxAdapterItems()[index]
 //    fun getItemForIndex(index: Int) = mAdapterItems[index]
     /**
      * wrapper for [RecyclerView.Adapter.notifyItemChanged]

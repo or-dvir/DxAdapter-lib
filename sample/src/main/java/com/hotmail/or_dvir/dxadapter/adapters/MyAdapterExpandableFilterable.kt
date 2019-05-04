@@ -2,13 +2,11 @@ package com.hotmail.or_dvir.dxadapter.adapters
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterExpandable
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterFilterable
-import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.my_item_expandable.view.*
 
@@ -19,11 +17,6 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
       IAdapterFilterable<MyItemExpandable>
 {
     override var onItemClick: onItemClickListener<MyItemExpandable>? = null
-//    override var onItemClick: onItemClickListener<MyItemExpandable> =
-//    { view, adapterPosition, item ->
-//        mItems.removeAt(adapterPosition)
-//        notifyItemRemoved(adapterPosition)
-//    }
     override var onItemLongClick: onItemLongClickListener<MyItemExpandable>? = null
 
     override val onFilterRequest: onFilterRequest<MyItemExpandable> = { constraint ->
@@ -74,6 +67,46 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
 
         init
         {
+            //IMPORTANT:
+            //note that this adapter might be filtered, and therefore when using
+            //"adapterPosition", it represents the FILTERED list.
+
+            et.addTextChangedListener(object : TextWatcher
+            {
+                override fun afterTextChanged(s: Editable?)
+                {
+                    s?.apply {
+
+                        //IMPORTANT:
+                        //since this adapter might be filtered, we must perform this operation
+                        //on BOTH the filtered list (obtained from getDxAdapterItems()) AND
+                        //the original list passe to this adapter (mItems).
+
+                        //getDxAdapterItems() gets us the FILTERED list.
+                        //as mentioned above, adapterPosition is the position for the FILTERED list,
+                        //so its safe to use together here.
+                        val filteredItem = getDxAdapterItems()[adapterPosition]
+                        filteredItem.mSubText = toString()
+
+                        //get the same item in the original list, and perform the same action.
+                        val originalItemIndex = mItems.indexOf(filteredItem)
+                        mItems[originalItemIndex].mSubText = toString()
+                    }
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)
+                { /*do nothing*/ }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
+                { /*do nothing*/ }
+            })
+
+            //NOTE:
+            //not using onCheckedChanged because it is being triggered also when the item gets out of view
+            cb.setOnClickListener {
+                mItems[adapterPosition].isDone = cb.isChecked
+            }
+
             //optionally setting iv as expand/collapse handle.
             //don't forget to make expandCollapseOnItemClick() return false in your expandable item
             //(otherwise there is no point to the handle because any click on the item
@@ -84,34 +117,6 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
 //                else
 //                    expand(adapterPosition)
 //            }
-
-            //NOTE:
-            //not using onCheckedChanged because it is being triggered also when the item gets out of view
-            cb.setOnClickListener {
-                mItems[adapterPosition].isDone = cb.isChecked
-            }
-
-            et.addTextChangedListener(object : TextWatcher
-            {
-                override fun afterTextChanged(s: Editable?)
-                {
-                    //////////////////////////////////////////////////////
-                    if(adapterPosition == 0)
-                    {
-                        Log.i("aaaaa", "filtered items: ${System.identityHashCode(getFilteredItems()[adapterPosition])}")
-                        Log.i("aaaaa", "temp: ${System.identityHashCode(mItems[adapterPosition])}")
-                    }
-                    s?.apply { getFilteredItems()[adapterPosition].mSubText = toString() }
-                    //////////////////////////////////////////////////////
-//                    s?.apply { mItems[adapterPosition].mSubText = toString() }
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)
-                { /*do nothing*/ }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
-                { /*do nothing*/ }
-            })
         }
     }
 }

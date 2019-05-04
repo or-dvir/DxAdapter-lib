@@ -47,7 +47,7 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
     /**
      * returns a list of all currently selected items
      */
-    fun getAllSelectedItems() = getAdapterItems().filter { it is IItemSelectable && it.isSelected }
+    fun getAllSelectedItems() = getDxAdapterItems().filter { it is IItemSelectable && it.isSelected }
 //    fun getAllSelectedItems() = mAdapterItems.filter { it is IItemSelectable && it.isSelected }
     /**
      * returns the number of currently selected items
@@ -88,7 +88,7 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
      * (because the adapter may contain a lot of items and this will cause a lot of calls to the listener).
      * if you DO wish to trigger the listener, use [select] (List variant) or [selectIndices] and pass all your items/indices.
      */
-    fun selectAll() = select(getAdapterItems(), false)
+    fun selectAll() = select(getDxAdapterItems(), false)
 //    fun selectAll() = select(mAdapterItems, false)
     /**
      * deselects all the items in the given [indices]
@@ -117,7 +117,7 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
     /**
      * returns whether or not the adapter is currently in "selection mode" (at least one item is selected)
      */
-    fun isInSelectionMode() = getAdapterItems().find { it is IItemSelectable && it.isSelected } != null
+    fun isInSelectionMode() = getDxAdapterItems().find { it is IItemSelectable && it.isSelected } != null
 //    fun isInSelectionMode() = mAdapterItems.find { it is IItemSelectable && it.isSelected } != null
     /**
      * convenience function to deselect all items.
@@ -126,7 +126,7 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
      * (because the adapter may contain a lot of items and this will cause a lot of calls to the listener).
      * if you DO wish to trigger the listener, use [deselect] (List variant) or [deselectIndices] and pass all your items/indices.
      */
-    fun deselectAll() = deselect(getAdapterItems(), false)
+    fun deselectAll() = deselect(getDxAdapterItems(), false)
 //    fun deselectAll() = deselect(mAdapterItems, false)
 
     private fun selectOrDeselect(shouldSelect: Boolean,
@@ -171,7 +171,7 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
      */
     fun dxSelectableItemClicked(position: Int, wasInSelectionModeBefore: Boolean): Boolean
     {
-        val item = getAdapterItems()[position]
+        val item = getDxAdapterItems()[position]
 //        val item = mAdapterItems[position]
 
         //reverse selection state only if the item is selectable (could be multi-type adapter!),

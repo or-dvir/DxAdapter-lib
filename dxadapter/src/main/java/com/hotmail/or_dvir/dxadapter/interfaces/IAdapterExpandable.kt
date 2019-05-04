@@ -21,7 +21,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
     /**
      * return a list of all currently expanded items
      */
-    fun getAllExpandedItems() = getAdapterItems().filter { it is IItemExpandable && it.isExpanded }
+    fun getAllExpandedItems() = getDxAdapterItems().filter { it is IItemExpandable && it.isExpanded }
 //    fun getAllExpandedItems() = mAdapterItems.filter { it is IItemExpandable && it.isExpanded }
     /**
      * returns the number of currently expanded items
@@ -69,7 +69,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
      * note that if [onlyOneItemExpanded] is TRUE, only the first item in this adapter
      * will be expanded.
      */
-    fun expandAll() = expand(getAdapterItems(), false)
+    fun expandAll() = expand(getDxAdapterItems(), false)
 //    fun expandAll() = expand(mAdapterItems, false)
     /**
      * collapses all the items in the given [indices].
@@ -104,7 +104,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
      * (because the adapter may contain a lot of items and this will cause a lot of calls to the listener).
      * if you DO wish to trigger the listener, use [collapse] (List variant) or [collapseIndices] and pass all your items/indices.
      */
-    fun collapseAll() = collapse(getAdapterItems(), false)
+    fun collapseAll() = collapse(getDxAdapterItems(), false)
 //    fun collapseAll() = collapse(mAdapterItems, false)
 
     private fun expandOrCollapse(shouldExpand: Boolean,
@@ -165,7 +165,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
         if(this is IAdapterSelectable<*> && defaultItemSelectionBehavior && wasInSelectionModeBefore)
             return
 
-        val item = getAdapterItems()[position]
+        val item = getDxAdapterItems()[position]
 //        val item = mAdapterItems[position]
 
         if (item is IItemExpandable && item.expandCollapseOnItemClick())
