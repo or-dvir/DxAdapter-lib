@@ -2,6 +2,7 @@ package com.hotmail.or_dvir.dxadapter.models
 
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemExpandable
+import com.hotmail.or_dvir.dxadapter.interfaces.IItemSelectable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 
 class MyItemExpandable(var mText: String,

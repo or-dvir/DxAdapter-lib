@@ -2,11 +2,13 @@ package com.hotmail.or_dvir.dxadapter.adapters
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterExpandable
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterFilterable
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItemExpandable
 import kotlinx.android.synthetic.main.my_item_expandable.view.*
 
@@ -17,6 +19,11 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
       IAdapterFilterable<MyItemExpandable>
 {
     override var onItemClick: onItemClickListener<MyItemExpandable>? = null
+//    override var onItemClick: onItemClickListener<MyItemExpandable> =
+//    { view, adapterPosition, item ->
+//        mItems.removeAt(adapterPosition)
+//        notifyItemRemoved(adapterPosition)
+//    }
     override var onItemLongClick: onItemLongClickListener<MyItemExpandable>? = null
 
     override val onFilterRequest: onFilterRequest<MyItemExpandable> = { constraint ->
@@ -88,7 +95,15 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
             {
                 override fun afterTextChanged(s: Editable?)
                 {
-                    s?.apply { mItems[adapterPosition].mSubText = toString() }
+                    //////////////////////////////////////////////////////
+                    if(adapterPosition == 0)
+                    {
+                        Log.i("aaaaa", "filtered items: ${System.identityHashCode(getFilteredItems()[adapterPosition])}")
+                        Log.i("aaaaa", "temp: ${System.identityHashCode(mItems[adapterPosition])}")
+                    }
+                    s?.apply { getFilteredItems()[adapterPosition].mSubText = toString() }
+                    //////////////////////////////////////////////////////
+//                    s?.apply { mItems[adapterPosition].mSubText = toString() }
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)

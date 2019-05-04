@@ -17,7 +17,8 @@ interface IAdapterBase<ITEM: IItemBase>
     /**
      * the items held by the adapter
      */
-    val mAdapterItems: List<ITEM>
+    fun getAdapterItems(): List<ITEM>
+//    val mAdapterItems: List<ITEM>
     /**
      * the filter used by the adapter, if it implements [IAdapterFilterable]
      */
@@ -40,7 +41,8 @@ interface IAdapterBase<ITEM: IItemBase>
     /**
      * returns the index of the given [item]
      */
-    fun getIndexForItem(item: ITEM) = mAdapterItems.indexOf(item)
+    fun getIndexForItem(item: ITEM) = getAdapterItems().indexOf(item)
+//    fun getIndexForItem(item: ITEM) = mAdapterItems.indexOf(item)
     /**
      * returns a list of [ITEM] at the given [indices]
      */
@@ -48,7 +50,8 @@ interface IAdapterBase<ITEM: IItemBase>
     /**
      * returns the [ITEM] at the given [index]
      */
-    fun getItemForIndex(index: Int) = mAdapterItems[index]
+    fun getItemForIndex(index: Int) = getAdapterItems()[index]
+//    fun getItemForIndex(index: Int) = mAdapterItems[index]
     /**
      * wrapper for [RecyclerView.Adapter.notifyItemChanged]
      */

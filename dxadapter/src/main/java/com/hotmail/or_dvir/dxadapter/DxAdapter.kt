@@ -22,7 +22,15 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
     : RecyclerView.Adapter<VH>(),
       IAdapterBase<ITEM>
 {
-    override val mAdapterItems = mItems
+    /**
+     * returns the filtered list of items. if the adapter is not currently filtered,
+     * this returns the original list
+     */
+    //this function exists just so its more clear for the user
+    fun getFilteredItems() = getAdapterItems()
+    override fun getAdapterItems() = mItems
+//    override val mAdapterItems = mItems
+    private val mOriginalList = mItems
 
     //todo move this to draggable interface or wherever you handle dragging
     internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
@@ -45,7 +53,8 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
 
             val results =
                 if (constraint.isNullOrEmpty())
-                    mAdapterItems
+                    mOriginalList
+//                    mAdapterItems
                 else
                     onFilterRequest.invoke(constraint)
 
@@ -144,7 +153,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
             val clickedItem = mItems[clickedPosition]
 
             //handle selection
-
             var selectionBefore = false
             var triggerListener = true
             if(this@DxAdapter is IAdapterSelectable<*>)
@@ -153,13 +161,13 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
                 triggerListener = dxSelectableItemClicked(clickedPosition, selectionBefore)
             }
 
-            if(triggerListener)
-                onItemClick?.invoke(view, clickedPosition, clickedItem)
-
             //handle expand/collapse
-
             if (this@DxAdapter is IAdapterExpandable<*>)
                 dxExpandableItemClicked(clickedPosition, selectionBefore)
+
+            //handle click listener
+            if(triggerListener)
+                onItemClick?.invoke(view, clickedPosition, clickedItem)
         }
 
         itemView.setOnLongClickListener { view ->
