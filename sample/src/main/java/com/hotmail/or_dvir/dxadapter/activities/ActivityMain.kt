@@ -21,8 +21,6 @@ import org.jetbrains.anko.toast
 
 class ActivityMain : AppCompatActivity()
 {
-    //todo when documenting, note that this library was meant for kotlin and was not tested in java
-    //todo test the code WITHOUT default selection behavior!!!
     //todo consider switching swiping logic to layout behind the item...
 
     private lateinit var mAdapter: MyAdapter
