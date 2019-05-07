@@ -36,7 +36,7 @@ in future releases:
 * No selection of cards.
 * Only support 1 type of sticky header.
 
-# Usage:
+# Usage
 in your build.gradle file:
 
 	repositories {
@@ -90,7 +90,7 @@ There are several reasons for this:
   where the items are selectable and swipeable, but the headers are not.
   * By using interfaces your items are free to extend other classes.
   
-* **Why are some interfaces empty? Whats the point?**
+* **Why are some interfaces empty? Whats the point?**<br>
 This is so that the usage of features is consistent and preparing for 
 adding future features and behaviors. (While I admit this is pointless 
 for now, my OCD is making me :grinning:)
