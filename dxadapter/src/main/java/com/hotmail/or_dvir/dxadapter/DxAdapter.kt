@@ -22,7 +22,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
     : RecyclerView.Adapter<VH>(),
       IAdapterBase<ITEM>
 {
-    
     override fun getDxAdapterItems() = mItems
     private val mOriginalList = mItems
 
