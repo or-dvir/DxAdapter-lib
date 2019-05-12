@@ -9,11 +9,11 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.models.MyItem
 import kotlinx.android.synthetic.main.my_item.view.*
 
-class MyAdapter(mItems: MutableList<MyItem>,
+class MyAdapter(private val mItems: MutableList<MyItem>,
                 override val onItemSelectionChanged: onItemSelectStateChangedListener<MyItem>,
                 override var onItemClick: onItemClickListener<MyItem>?,
                 override var onItemLongClick: onItemLongClickListener<MyItem>?)
-    : DxAdapter<MyItem, MyAdapter.ViewHolder>(mItems),
+    : DxAdapter<MyItem, MyAdapter.ViewHolder>(),
       IAdapterSelectable<MyItem>,
       IAdapterFilterable<MyItem>
 {
@@ -25,6 +25,8 @@ class MyAdapter(mItems: MutableList<MyItem>,
     override val triggerClickListenersInSelectionMode = false
     //setting this to null means accent color will be used
     override val selectedItemBackgroundColor: Int? = null
+
+    override fun getOriginalAdapterItems() = mItems
 
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItem)
     {

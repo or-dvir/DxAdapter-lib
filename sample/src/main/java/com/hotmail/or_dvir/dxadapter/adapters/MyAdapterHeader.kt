@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.my_header.view.*
 //this is essentially the same as MyAdapterMultiType where one of the types is a header.
 //see notes for item/viewHolder type in MyAdapterMultiType class
 class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
-    : DxAdapter<IItemBase, DxHolder>(mItems),
+    : DxAdapter<IItemBase, DxHolder>(),
       IAdapterStickyHeader,
       IAdapterSelectable<IItemBase>
 {
@@ -24,6 +24,8 @@ class MyAdapterHeader(private val mItems: MutableList<IItemBase>)
     override val triggerClickListenersInSelectionMode = false
     override val onItemSelectionChanged: onItemSelectStateChangedListener<IItemBase> = { _, _, _ -> /*do nothing*/ }
     override val selectedItemBackgroundColor: Int? = null
+
+    override fun getOriginalAdapterItems() = mItems
 
     //convenience method so that the binding logic of a header view
     //is done in a single method (removes duplicate code)

@@ -11,7 +11,7 @@ import com.hotmail.or_dvir.dxadapter.onFilterRequest
  * list (returned by [onFilterRequest]) until the filter is removed.
  * because of this, when the adapter is filtered, any action you wish to perform on an item MUST
  * be performed on BOTH the original list (the one you passed to the adapter) AND the filtered list
- * (obtained with [getDxAdapterItems]).
+ * (obtained with [getFilteredAdapterItems]).
  *
  * IMPORTANT:
  * when performing an action on filtered lists, if possible, AVOID using index/position as the item

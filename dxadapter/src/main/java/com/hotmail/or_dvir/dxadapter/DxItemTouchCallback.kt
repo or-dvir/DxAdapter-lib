@@ -101,7 +101,7 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
 
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
     {
-        val item = mAdapter.mItems[holder.adapterPosition]
+        val item = mAdapter.getFilteredAdapterItems()[holder.adapterPosition]
         val dragFlags =
             if (item !is IItemDraggable)
                 0
@@ -126,8 +126,9 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
         val targetPos = target.adapterPosition
 
         mAdapter.apply {
-            onItemMove?.invoke(mItems[dragPos], mItems[targetPos], dragPos, targetPos)
-            Collections.swap(mItems, dragPos, targetPos)
+            val filteredItems = getFilteredAdapterItems()
+            onItemMove?.invoke(filteredItems[dragPos], filteredItems[targetPos], dragPos, targetPos)
+            Collections.swap(filteredItems, dragPos, targetPos)
             notifyItemMoved(dragPos, targetPos)
         }
 
@@ -264,7 +265,7 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     {
         mAdapter.apply {
             holder.adapterPosition.let {
-                onItemSwiped?.second?.invoke(mItems[it], it, direction)
+                onItemSwiped?.second?.invoke(getFilteredAdapterItems()[it], it, direction)
             }
         }
     }

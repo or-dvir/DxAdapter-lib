@@ -16,20 +16,28 @@ import com.hotmail.or_dvir.dxadapter.interfaces.*
  *
  * @param ITEM the type of object this adapter will hold
  * @param VH the [DxHolder] (RecyclerView.ViewHolder) this adapter will use
- * @param mItems the items for this adapter
  */
-abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: MutableList<ITEM>)
+abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>/*(internal var mItems: MutableList<ITEM>)*/
     : RecyclerView.Adapter<VH>(),
       IAdapterBase<ITEM>
 {
-    override fun getDxAdapterItems() = mItems
-    private val mOriginalList = mItems
+    private var mIsFiltered = false
+
+    //initialization needed for compiler - only the get function actually matters
+    private var mFilteredItems = mutableListOf<ITEM>()
+    get()
+    {
+        return if (mIsFiltered)
+            field
+        else
+            getOriginalAdapterItems()
+    }
+
+//    private val mOriginalList = mItems
 
     //todo move this to draggable interface or wherever you handle dragging
     internal var dragAndDropWithHandle: Pair<Int, startDragListener>? = null
 
-    override fun getItemViewType(position: Int) = mItems[position].getViewType()
-    override fun getItemCount(): Int = mItems.size
 
     override val mDxFilter = object : Filter()
     {
@@ -41,15 +49,25 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
         {
             //todo how to add animation to filtering????
 
+            //NOTE:
+            //no need to set mIsFiltered here because if the adapter is not IAdapterFilterable,
+            //mIsFiltered will ALWAYS be false
             if(this@DxAdapter !is IAdapterFilterable<*>)
                 return null
 
             val results =
                 if (constraint.isNullOrEmpty())
-                    mOriginalList
+                {
+                    mIsFiltered = false
+                    getOriginalAdapterItems()
+//                    mOriginalList
 //                    mAdapterItems
+                }
                 else
+                {
+                    mIsFiltered = true
                     onFilterRequest.invoke(constraint)
+                }
 
             return mResults.apply {
                 values = results
@@ -65,11 +83,15 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
                 //but because onFilterRequest is defined with the generic type ITEM,
                 //the user will get a compiler error if they return a list of a different type
                 @Suppress("UNCHECKED_CAST")
-                mItems = values as MutableList<ITEM>
+                mFilteredItems = values as MutableList<ITEM>
                 notifyDataSetChanged()
             }
         }
     }
+
+    override fun getFilteredAdapterItems() = mFilteredItems
+    override fun getItemCount(): Int = mFilteredItems.size
+    override fun getItemViewType(position: Int) = mFilteredItems[position].getViewType()
 
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int)
@@ -77,7 +99,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
         //position parameter may not be accurate
         val adapterPosition = holder.adapterPosition
 
-        mItems[adapterPosition].let { item ->
+        mFilteredItems[adapterPosition].let { item ->
             holder.itemView.let {
                 if(item is IItemSelectable)
                     it.isSelected = item.isSelected
@@ -103,7 +125,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
 
         holder.adapterPosition.let {
             if (it != RecyclerView.NO_POSITION)
-                unbindViewHolder(holder, it, mItems[it])
+                unbindViewHolder(holder, it, mFilteredItems[it])
         }
     }
 
@@ -143,7 +165,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
         itemView.setOnClickListener { view ->
 
             val clickedPosition = holder.adapterPosition
-            val clickedItem = mItems[clickedPosition]
+            val clickedItem = mFilteredItems[clickedPosition]
 
             //handle selection
             var selectionBefore = false
@@ -165,7 +187,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>(internal var mItems: M
 
         itemView.setOnLongClickListener { view ->
             val clickedPosition = holder.adapterPosition
-            val clickedItem = mItems[clickedPosition]
+            val clickedItem = mFilteredItems[clickedPosition]
 
             //WARNING:
             //do NOT save the state of isInSelectionMode() into a variable here

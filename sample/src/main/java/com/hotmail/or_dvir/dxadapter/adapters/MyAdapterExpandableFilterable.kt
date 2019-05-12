@@ -12,18 +12,18 @@ import kotlinx.android.synthetic.main.my_item_expandable.view.*
 
 class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpandable>,
                                     override var onItemExpandStateChanged: onItemExpandStateChangedListener<MyItemExpandable>)
-    : DxAdapter<MyItemExpandable, MyAdapterExpandableFilterable.ViewHolder>(mItems),
+    : DxAdapter<MyItemExpandable, MyAdapterExpandableFilterable.ViewHolder>(),
       IAdapterExpandable<MyItemExpandable>,
       IAdapterFilterable<MyItemExpandable>
 {
     override var onItemClick: onItemClickListener<MyItemExpandable>? = null
     override var onItemLongClick: onItemLongClickListener<MyItemExpandable>? = null
-
+    override val onlyOneItemExpanded = false
     override val onFilterRequest: onFilterRequest<MyItemExpandable> = { constraint ->
         mItems.filter { it.mText.startsWith(constraint.trim(), true) }
     }
 
-    override val onlyOneItemExpanded = false
+    override fun getOriginalAdapterItems() = mItems
 
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemExpandable)
     {
@@ -79,13 +79,13 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
 
                         //IMPORTANT:
                         //since this adapter might be filtered, we must perform this operation
-                        //on BOTH the filtered list (obtained from getDxAdapterItems()) AND
-                        //the original list passe to this adapter (mItems).
+                        //on BOTH the filtered list (obtained from getFilteredAdapterItems()) AND
+                        //the original list passed to this adapter (mItems).
 
-                        //getDxAdapterItems() gets us the FILTERED list.
+                        //getFilteredAdapterItems() gets us the FILTERED list.
                         //as mentioned above, adapterPosition is the position for the FILTERED list,
                         //so its safe to use together here.
-                        val filteredItem = getDxAdapterItems()[adapterPosition]
+                        val filteredItem = getFilteredAdapterItems()[adapterPosition]
                         filteredItem.mSubText = toString()
 
                         //get the same item in the original list, and perform the same action.
@@ -104,7 +104,14 @@ class MyAdapterExpandableFilterable(private val mItems: MutableList<MyItemExpand
             //NOTE:
             //not using onCheckedChanged because it is being triggered also when the item gets out of view
             cb.setOnClickListener {
-                mItems[adapterPosition].isDone = cb.isChecked
+
+                //performing this action on BOTH the original and filtered list,
+                //as explained in afterTextChanged() above
+                val filteredItem = getFilteredAdapterItems()[adapterPosition]
+                filteredItem.isDone = cb.isChecked
+
+                val originalItemIndex = mItems.indexOf(filteredItem)
+                mItems[originalItemIndex].isDone = cb.isChecked
             }
 
             //optionally setting iv as expand/collapse handle.

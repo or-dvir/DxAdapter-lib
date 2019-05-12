@@ -69,7 +69,7 @@ class DxActionModeHelper<ITEM : IItemBase>(
                 (adapter as IAdapterSelectable<*>).apply {
                     getAllSelectedIndices().forEach {
                         //all indices here must be IItemSelectable
-                        (getDxAdapterItems()[it] as IItemSelectable).isSelected = false
+                        (getFilteredAdapterItems()[it] as IItemSelectable).isSelected = false
 //                        (mAdapterItems[it] as IItemSelectable).isSelected = false
                         dxNotifyItemChanged(it)
                     }

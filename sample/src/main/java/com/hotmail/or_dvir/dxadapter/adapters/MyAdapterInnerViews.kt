@@ -13,10 +13,12 @@ import com.hotmail.or_dvir.dxadapter.models.MyItemWithViews
 import kotlinx.android.synthetic.main.my_item_with_views.view.*
 
 class MyAdapterInnerViews(val mItems: MutableList<MyItemWithViews>)
-    : DxAdapter<MyItemWithViews, MyAdapterInnerViews.ViewHolder>(mItems)
+    : DxAdapter<MyItemWithViews, MyAdapterInnerViews.ViewHolder>()
 {
     override val onItemClick: onItemClickListener<MyItemWithViews>? = null
     override val onItemLongClick: onItemLongClickListener<MyItemWithViews>? = null
+
+    override fun getOriginalAdapterItems() = mItems
 
     override fun bindViewHolder(holder: ViewHolder, position: Int, item: MyItemWithViews)
     {
