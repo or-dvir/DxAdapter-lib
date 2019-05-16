@@ -1,19 +1,18 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
+import android.support.annotation.DrawableRes
 import kotlin.math.roundToInt
 
-internal enum class DxScrollDirection { UP, DOWN, LEFT, RIGHT }
 
-/**
- * speed sensitivity for all the listeners. The larger the number, the faster the
- * user has to scroll for the listeners to trigger.
- *
- * It's possible to set individual scroll listeners sensitivity using the optional parameters
- */
+internal enum class DxScrollDirection { UP, DOWN, LEFT, RIGHT }
 
 /**
  * a class containing individual scroll directions listeners (up, down, left, right),
@@ -56,6 +55,41 @@ class DxScrollListener(internal val sensitivityAll: Int,
 }
 
 /**
+ * convenience class to be used with [DxSwipeBackground].
+ *
+ * note that the provided icon will be scaled according to [desiredHeightPx] while
+ * maintaining aspect ratio. it is therefore recommended that [iconRes] will be large
+ * rather than small because scaling down is preferable to scaling up
+ * (scaling up can reduce image quality).
+ *
+ * @param iconRes the resources id of the icon to be drawn when swiping an item
+ * @param desiredHeightPx the desired height of the icon, in pixels (recommended to use
+ * DP from dimens.xml)
+ */
+class DxSwipeIcon(context: Context,
+                  @DrawableRes val iconRes: Int,
+                  private val desiredHeightPx: Int)
+{
+    internal val mIconDrawable: Drawable
+
+    init
+    {
+        context.apply {
+            val bitmap = BitmapFactory.decodeResource(resources, iconRes)
+            val ratio = bitmap.width.toFloat() / bitmap.height
+            val scaledWidth = (desiredHeightPx * ratio).toInt()
+
+            val bitmapResized = Bitmap.createScaledBitmap(bitmap,
+                                                          scaledWidth,
+                                                          desiredHeightPx,
+                                                          true)
+
+            mIconDrawable = BitmapDrawable(resources, bitmapResized)
+        }
+    }
+}
+
+/**
  * a helper class for drawing the "swiped area" of an item being swiped
  *
  * @param mText the text to show on the swiped area. should be as short as possible
@@ -64,17 +98,21 @@ class DxScrollListener(internal val sensitivityAll: Int,
  * @param mPaddingPx amount of padding between the edge of the item and the text and/or icon, in pixels.
  * note that if you have both text AND an icon, this is also the amount of space between them.
  * @param mBackgroundColor the background color of the swiped area
- * @param mIcon an optional [Drawable] icon to show on the swiped area
+ * @param mDxIcon an optional icon to show on the swiped area
  */
 class DxSwipeBackground (internal val mText: String,
                          private val mTextSizePx: Int,
                          @ColorInt internal val mTextColor: Int,
                          internal var mPaddingPx: Int,
                          @ColorInt internal val mBackgroundColor: Int?,
-                         internal val mIcon: Drawable?)
+                         internal val mDxIcon: DxSwipeIcon?)
 {
-    internal val mIconWidth = mIcon?.intrinsicWidth ?: 0
-    internal val mHalfIconHeight = (mIcon?.intrinsicHeight ?: 0) / 2
+
+    //todo make text and icon parameters into their own classes???
+    // it will make the constructor smaller and i could still use annotations like @ColorInt
+
+    internal val mIconWidth = mDxIcon?.mIconDrawable?.intrinsicWidth ?: 0
+    internal val mHalfIconHeight = (mDxIcon?.mIconDrawable?.intrinsicHeight ?: 0) / 2
 
     //todo make text size half the height of the itemView?????
     internal val mPaint = Paint().apply {
@@ -85,9 +123,7 @@ class DxSwipeBackground (internal val mText: String,
 
     internal var mBackgroundColorDrawable =
         mBackgroundColor?.let { ColorDrawable(it) } ?: ColorDrawable()
-
     internal var mTextWidth = mPaint.measureText(mText.trim()).roundToInt()
-
     private var mTotalWidthToFit = 0
 
     init
@@ -103,13 +139,13 @@ class DxSwipeBackground (internal val mText: String,
         }
 
         //adding icon width
-        if(mIcon != null)
+        if(mDxIcon != null)
         {
             if(atLeastOne)
                 both = true
 
             atLeastOne = true
-            mTotalWidthToFit += mIcon.intrinsicWidth
+            mTotalWidthToFit += mIconWidth
         }
 
         //adding padding on left AND right,

@@ -6,9 +6,9 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
+import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
-import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 import java.util.*
 import kotlin.math.roundToInt
@@ -233,9 +233,9 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
                     mIconTop = backDraw.bounds.centerY() - mHalfIconHeight
                     mIconBottom = backDraw.bounds.centerY() + mHalfIconHeight
                     mIconLeft = calculateIconLeft(this, mIsSwipingLeft)
-                    mIconRight = mIconLeft + (mIcon?.intrinsicWidth ?: 0)
+                    mIconRight = mIconLeft + mIconWidth
 
-                    mIcon?.apply {
+                    mDxIcon?.mIconDrawable?.apply {
                         setBounds(mIconLeft, mIconTop, mIconRight, mIconBottom)
                         draw(canvas)
                     }
