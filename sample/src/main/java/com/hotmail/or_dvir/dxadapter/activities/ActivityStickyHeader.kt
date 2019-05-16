@@ -6,10 +6,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
-import com.hotmail.or_dvir.dxadapter.DxStickyHeaderItemDecoration
-import com.hotmail.or_dvir.dxadapter.DxSwipeBackground
-import com.hotmail.or_dvir.dxadapter.R
+import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterHeader
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.models.MyHeader
@@ -48,11 +45,11 @@ class ActivityStickyHeader : BaseActivity()
             //note that MyHeader does NOT implement IItemSwipeable or IItemSelectable and therefore cannot be swiped
             //or selected. this makes sense because MyHeader is meant to divide our list into sections and not be interactable.
 
-            val swipeBackgroundLeft = DxSwipeBackground("left swipe",
-                                                        60,
-                                                        Color.WHITE,
-                                                        30,
+            val swipeBackgroundLeft = DxSwipeBackground(30,
                                                         Color.GREEN,
+                                                        DxSwipeText("left swipe",
+                                                                    60f,
+                                                                    Color.WHITE),
                                                         null)
 
             setItemsSwipeable(ItemTouchHelper.LEFT, null, swipeBackgroundLeft)

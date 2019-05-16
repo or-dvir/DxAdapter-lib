@@ -147,9 +147,9 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
                 {
                     mDoesBackFit && isSwipingLeft ->
                     {
-                        temp = bounds.right - mIconWidth
-                        if(mIconWidth > 0)
-                            temp -= mPaddingPx
+                        temp = bounds.right - mIconWidthPx
+                        if(mIconWidthPx > 0)
+                            temp -= paddingPx
                         temp
                     }
 
@@ -157,29 +157,29 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
                     mDoesBackFit ->
                     {
                         temp = bounds.left
-                        if(mIconWidth > 0)
-                            temp += mPaddingPx
+                        if(mIconWidthPx > 0)
+                            temp += paddingPx
                         temp
                     }
 
                     //mDoesBackFit is FALSE
                     isSwipingLeft ->
                     {
-                        temp = bounds.left + mPaddingPx
-                        if (mTextWidth > 0)
-                            temp += mTextWidth + mPaddingPx
+                        temp = bounds.left + paddingPx
+                        if (mTextWidthPx > 0)
+                            temp += mTextWidthPx + paddingPx
                         temp
                     }
                     //swiping right
                     else ->
                     {
-                        temp = bounds.right - mPaddingPx - mIconWidth
+                        temp = bounds.right - paddingPx - mIconWidthPx
                         //NOTE:
                         //do NOT do "temp -= <expression>" here because the order of
                         //operations is slightly different and with certain values it will
                         //cause bugs
-                        if (mTextWidth > 0)
-                            temp = temp - mTextWidth - mPaddingPx
+                        if (mTextWidthPx > 0)
+                            temp = temp - mTextWidthPx - paddingPx
                         temp
                     }
                 }
@@ -233,26 +233,25 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
                     mIconTop = backDraw.bounds.centerY() - mHalfIconHeight
                     mIconBottom = backDraw.bounds.centerY() + mHalfIconHeight
                     mIconLeft = calculateIconLeft(this, mIsSwipingLeft)
-                    mIconRight = mIconLeft + mIconWidth
+                    mIconRight = mIconLeft + mIconWidthPx
 
-                    mDxIcon?.mIconDrawable?.apply {
+                    dxIcon?.mIconDrawable?.apply {
                         setBounds(mIconLeft, mIconTop, mIconRight, mIconBottom)
                         draw(canvas)
                     }
 
-                    if (mText.isNotBlank())
-                    {
-                        mPaint.getTextBounds(mText, 0, mText.length, mTextRect)
+                    dxText?.apply {
+                        mPaint.getTextBounds(text, 0, text.length, mTextRect)
 
                         mTextY = backDraw.bounds.exactCenterY() + (mTextRect.height() / 4f)
                         mTextX =
                             if (mIsSwipingLeft)
-                                mIconLeft.toFloat() - mPaddingPx - mTextWidth
+                                mIconLeft.toFloat() - paddingPx - mTextWidthPx
                             //swiping right
                             else
-                                mIconRight.toFloat() + mPaddingPx
+                                mIconRight.toFloat() + paddingPx
 
-                        canvas.drawText(mText, mTextX, mTextY, mPaint)
+                        canvas.drawText(text, mTextX, mTextY, mPaint)
                     }
                 }
             }

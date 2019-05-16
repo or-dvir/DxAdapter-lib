@@ -104,33 +104,27 @@ class ActivityMain : AppCompatActivity()
 
                 swipeThreshold = 0.7f
 
-                //note:
-                //for the text size its recommended to use DP (not SP) from dimens.xml
-                //so it will look similar on different screens.
-                //use DP and not SP because it is assumed that your list items are sized
-                //using DP and therefore the text size should be on the same scale.
-                //if you use SP for text, then the text size setting on the users' device
-                //could ruin the proportions of your list items and the text size.
-                //IMPORTANT: read documentation for DxSwipeIcon
-                val backgroundRight = DxSwipeBackground("right swipe",
-                                                        60, //recommended to use DP from dimen.xml
-                                                        Color.BLACK,
-                                                        30, //recommended to use DP from dimen.xml
+
+                //IMPORTANT: read documentation for DxSwipeIcon and DxSwipeText
+                val backgroundRight = DxSwipeBackground(30,
                                                         Color.RED,
+                                                        DxSwipeText("right swipe",
+                                                                    60f,
+                                                                    Color.BLACK),
                                                         DxSwipeIcon(this@ActivityMain,
                                                                     R.drawable.ic_arrow_right,
-                                                                    300)) //recommended to use DP from dimen.xml
+                                                                    96))
 
-                val backgroundLeft = DxSwipeBackground("left swipe",
-                                                       60, //recommended to use DP from dimen.xml
-                                                       Color.BLACK,
-                                                       30, //recommended to use DP from dimen.xml
+                val backgroundLeft = DxSwipeBackground(30,
                                                        Color.CYAN,
+                                                       DxSwipeText("left swipe",
+                                                                   60f,
+                                                                   Color.BLACK),
                                                        null)
 
                 //IMPORTANT: read the documentation for this function.
                 //IMPORTANT: note that calling this function is NOT enough to make your items swipiable.
-                //  your items must implement IItemSwipeable.
+                // your items must implement IItemSwipeable.
                 setItemsSwipeable(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                                   backgroundRight,
                                   backgroundLeft)
