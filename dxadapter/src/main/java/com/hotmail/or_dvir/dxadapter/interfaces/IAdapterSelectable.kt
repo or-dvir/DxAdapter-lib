@@ -192,18 +192,20 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
                              viewType: Int,
                              itemView: View)
     {
+        change documentation that says background is overriden
+        remove  this - do not override the background of the view
         //only change the background if user chose default behavior.
         //this is to prevent overriding users' custom background (if set)
-        if(defaultItemSelectionBehavior)
-        {
-            StateListDrawable().apply {
-                //selected
-                addState(intArrayOf(android.R.attr.state_selected),
-                         ColorDrawable(selectedItemBackgroundColor ?: getThemeAccentColorInt(parent.context)))
-                //not selected
-                addState(intArrayOf(-android.R.attr.state_selected), itemView.background)
-                itemView.background = this
-            }
-        }
+//        if(defaultItemSelectionBehavior)
+//        {
+//            StateListDrawable().apply {
+//                //selected
+//                addState(intArrayOf(android.R.attr.state_selected),
+//                         ColorDrawable(selectedItemBackgroundColor ?: getThemeAccentColorInt(parent.context)))
+//                //not selected
+//                addState(intArrayOf(-android.R.attr.state_selected), itemView.background)
+//                itemView.background = this
+//            }
+//        }
     }
 }

@@ -6,7 +6,23 @@ import android.view.View
 /**
  * a convenience alias instead of typing "[RecyclerView.ViewHolder]" every time
  */
-typealias DxHolder = RecyclerView.ViewHolder
+//typealias DxHolder = RecyclerView.ViewHolder
+remove comment before making new release
+open class DxHolder(itemView: View): RecyclerView.ViewHolder(itemView)
+{
+    val originalBackground = itemView.background
+}
+
+
+
+
+
+
+
+
+
+
+
 /**
  * a listener called when an item is long-clicked
  * @param view the clicked view

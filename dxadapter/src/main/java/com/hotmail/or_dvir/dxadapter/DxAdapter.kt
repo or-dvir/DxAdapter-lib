@@ -1,5 +1,7 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
@@ -101,8 +103,22 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>/*(internal var mItems:
 
         mFilteredItems[adapterPosition].let { item ->
             holder.itemView.let {
+
+                //////////////////////////////////////////////////
                 if(item is IItemSelectable)
-                    it.isSelected = item.isSelected
+                {
+                    move this so it does not create a ColorDrawable object every time
+                    consider the color from what the user set.
+                    consider if "default item selection behavior"
+                    if(item.isSelected)
+                        it.background = ColorDrawable(Color.RED)
+                    else
+                        it.background = holder.originalBackground
+                }
+                //////////////////////////////////////////////////
+
+//                if(item is IItemSelectable)
+//                    it.isSelected = item.isSelected
 
                 if (item is IItemExpandable)
                 {
