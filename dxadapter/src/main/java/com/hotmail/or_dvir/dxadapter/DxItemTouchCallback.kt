@@ -1,7 +1,6 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.ColorInt
