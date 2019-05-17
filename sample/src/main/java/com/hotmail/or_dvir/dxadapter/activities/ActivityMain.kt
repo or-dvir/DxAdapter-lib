@@ -97,13 +97,11 @@ class ActivityMain : AppCompatActivity()
         val itemTouchCallback =
             DxItemTouchCallback(mAdapter).apply {
 
+                dragBackgroundColor = Color.LTGRAY
                 swipeEscapeVelocity = 200f
-
                 //option to set escape velocity as a multiplier of the device's default value
 //                swipeEscapeVelocityMultiplier = 1.5f
-
                 swipeThreshold = 0.7f
-
 
                 //IMPORTANT: read documentation for DxSwipeIcon and DxSwipeText
                 val backgroundRight = DxSwipeBackground(30,

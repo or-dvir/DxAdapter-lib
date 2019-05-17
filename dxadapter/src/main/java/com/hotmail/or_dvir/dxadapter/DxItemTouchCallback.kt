@@ -1,7 +1,10 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
+import android.support.annotation.ColorInt
 import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
@@ -23,17 +26,6 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
 {
     //todo add support for different types of layout managers (grid/staggered/horizontal)
 
-    /**
-     * default value: FALSE
-     *
-     * if TRUE, long-clicking an item will initiate drag-and-drop.
-     *
-     * note that if you enable this feature and long-click is also used to select items,
-     * (for example with [IAdapterSelectable.defaultItemSelectionBehavior]) then long-click might not
-     * produce the intended result (selecting an item when actually meant to drag and vice-versa)
-     */
-    var dragOnLongClick = false
-
     private val mTextRect = Rect()
     private var mDoesBackFit = false
     private var mIconTop = 0
@@ -49,10 +41,24 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     private var onItemSwiped: Pair<Int, onItemSwipedListener<ITEM>>? = null
 
     /**
+     * default value: FALSE
+     *
+     * if TRUE, long-clicking an item will initiate drag-and-drop.
+     *
+     * note that if you enable this feature and long-click is also used to select items,
+     * (for example with [IAdapterSelectable.defaultItemSelectionBehavior]) then long-click might not
+     * produce the intended result (selecting an item when actually meant to drag and vice-versa)
+     */
+    var dragOnLongClick = false
+    /**
+     * set a background color to highlight a dragged item
+     */
+    @field:ColorInt
+    var dragBackgroundColor: Int? = null
+    /**
      * see [ItemTouchHelper.Callback.getSwipeThreshold] for details
      */
     var swipeThreshold: Float? = null
-
     /**
      * see [ItemTouchHelper.Callback.getSwipeEscapeVelocity] for more details.
      *
@@ -290,4 +296,25 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
         swipeThreshold ?: super.getSwipeThreshold(viewHolder)
 
     override fun isItemViewSwipeEnabled() = onItemSwiped?.first != null
+
+
+    override fun onSelectedChanged(viewHolder: ViewHolder?, actionState: Int)
+    {
+        dragBackgroundColor?.apply {
+            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder is DxHolder)
+                viewHolder.itemView.background = ColorDrawable(dragBackgroundColor!!)
+        }
+
+        super.onSelectedChanged(viewHolder, actionState)
+    }
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder)
+    {
+        super.clearView(recyclerView, viewHolder)
+
+        dragBackgroundColor?.apply {
+            if (viewHolder is DxHolder)
+                viewHolder.apply { itemView.background = originalBackground }
+        }
+    }
 }
