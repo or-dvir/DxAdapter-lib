@@ -1,5 +1,7 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
+import android.view.View
+import com.hotmail.or_dvir.dxadapter.DxHolder
 import com.hotmail.or_dvir.dxadapter.onItemExpandStateChangedListener
 
 /**
@@ -155,7 +157,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
         }
     }
     /**
-     * used by the library
+     * used by the library. do not override
      */
     fun dxExpandableItemClicked(position: Int, wasInSelectionModeBefore: Boolean)
     {
@@ -172,7 +174,7 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
             expandOrCollapse(!item.isExpanded, listOf(item), true)
     }
     /**
-     * used by the library
+     * used by the library. do not override
      */
     fun dxExpandableItemLongClicked()
     {
@@ -180,5 +182,19 @@ interface IAdapterExpandable<ITEM: IItemBase>: IAdapterBase<ITEM>
         //collapse all items
         if (this is IAdapterSelectable<*> && defaultItemSelectionBehavior && getNumSelectedItems() == 1)
             collapseAll()
+    }
+    /**
+     * used by the library. do not override
+     */
+    fun dxOnBindViewHolder(item: IItemBase, position: Int, holder: DxHolder)
+    {
+        if(item is IItemExpandable)
+        {
+            holder.itemView.findViewById<View>(item.getExpandableViewId()).visibility =
+                if (item.isExpanded)
+                    View.VISIBLE
+                else
+                    View.GONE
+        }
     }
 }

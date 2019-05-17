@@ -1,6 +1,5 @@
 package com.hotmail.or_dvir.dxadapter
 
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
@@ -23,6 +22,7 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>/*(internal var mItems:
     : RecyclerView.Adapter<VH>(),
       IAdapterBase<ITEM>
 {
+    private val mBackgroundColorDrawable = ColorDrawable()
     private var mIsFiltered = false
 
     //initialization needed for compiler - only the get function actually matters
@@ -102,35 +102,13 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>/*(internal var mItems:
         val adapterPosition = holder.adapterPosition
 
         mFilteredItems[adapterPosition].let { item ->
-            holder.itemView.let {
+                if(this is IAdapterSelectable<*>)
+                    dxOnBindViewHolder(item, adapterPosition, holder, mBackgroundColorDrawable)
 
-                //////////////////////////////////////////////////
-                if(item is IItemSelectable)
-                {
-                    move this so it does not create a ColorDrawable object every time
-                    consider the color from what the user set.
-                    consider if "default item selection behavior"
-                    if(item.isSelected)
-                        it.background = ColorDrawable(Color.RED)
-                    else
-                        it.background = holder.originalBackground
-                }
-                //////////////////////////////////////////////////
-
-//                if(item is IItemSelectable)
-//                    it.isSelected = item.isSelected
-
-                if (item is IItemExpandable)
-                {
-                    it.findViewById<View>(item.getExpandableViewId()).visibility =
-                        if (item.isExpanded)
-                            View.VISIBLE
-                        else
-                            View.GONE
-                }
+                if(this is IAdapterExpandable<*>)
+                    dxOnBindViewHolder(item, adapterPosition, holder)
 
                 bindViewHolder(holder, adapterPosition, item)
-            }
         }
     }
 
@@ -157,9 +135,6 @@ abstract class DxAdapter<ITEM : IItemBase, VH : DxHolder>/*(internal var mItems:
         val itemView = LayoutInflater
                 .from(parent.context)
                 .inflate(getItemLayoutRes(parent, viewType), parent, false)
-
-        if(this is IAdapterSelectable<*>)
-            dxOnCreateViewHolder(parent, viewType, itemView)
 
         val holder = createAdapterViewHolder(itemView, parent, viewType)
 

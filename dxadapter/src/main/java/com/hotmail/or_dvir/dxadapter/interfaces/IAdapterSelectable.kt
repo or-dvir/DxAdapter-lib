@@ -1,10 +1,8 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.StateListDrawable
 import android.support.annotation.ColorInt
-import android.view.View
-import android.view.ViewGroup
+import com.hotmail.or_dvir.dxadapter.DxHolder
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 
 /**
@@ -20,9 +18,6 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
      *
      * if FALSE, you must manage item selection yourself using the variants of [select] and [deselect]
      *
-     * note that when TRUE, when an item is selected, its background will be overridden.
-     * if you have a custom background you should set this value to FALSE but then you must
-     * handle selection behaviour by yourself (using [select] and [deselect] variants of this interface)
      * @see [triggerClickListenersInSelectionMode]
      */
     val defaultItemSelectionBehavior: Boolean
@@ -150,7 +145,7 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
         }
     }
     /**
-     * used by the library
+     * used by the library. do not override
      */
     fun dxSelectableItemLongClicked(position: Int): Boolean
     {
@@ -166,7 +161,7 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
             true
     }
     /**
-     * used by the library.
+     * used by the library. do not override.
      * @return Boolean whether or not we need to trigger click listener
      */
     fun dxSelectableItemClicked(position: Int, wasInSelectionModeBefore: Boolean): Boolean
@@ -186,26 +181,21 @@ interface IAdapterSelectable<ITEM: IItemBase>: IAdapterBase<ITEM>
             true
     }
     /**
-     * used by the library
+     * used by the library. do not override
      */
-    fun dxOnCreateViewHolder(parent: ViewGroup,
-                             viewType: Int,
-                             itemView: View)
+    fun dxOnBindViewHolder(item: IItemBase, position: Int, holder: DxHolder, colorDraw: ColorDrawable)
     {
-        change documentation that says background is overriden
-        remove  this - do not override the background of the view
-        //only change the background if user chose default behavior.
-        //this is to prevent overriding users' custom background (if set)
-//        if(defaultItemSelectionBehavior)
-//        {
-//            StateListDrawable().apply {
-//                //selected
-//                addState(intArrayOf(android.R.attr.state_selected),
-//                         ColorDrawable(selectedItemBackgroundColor ?: getThemeAccentColorInt(parent.context)))
-//                //not selected
-//                addState(intArrayOf(-android.R.attr.state_selected), itemView.background)
-//                itemView.background = this
-//            }
-//        }
+        if(item is IItemSelectable && defaultItemSelectionBehavior)
+        {
+            holder.itemView.let {
+                it.background =
+                    if (item.isSelected)
+                        colorDraw.apply {
+                            color = selectedItemBackgroundColor ?: getThemeAccentColorInt(it.context)
+                        }
+                    else
+                        holder.originalBackground
+            }
+        }
     }
 }

@@ -1,28 +1,13 @@
 package com.hotmail.or_dvir.dxadapter
 
+import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-/**
- * a convenience alias instead of typing "[RecyclerView.ViewHolder]" every time
- */
-//typealias DxHolder = RecyclerView.ViewHolder
-remove comment before making new release
 open class DxHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 {
-    val originalBackground = itemView.background
+    internal val originalBackground: Drawable? = itemView.background
 }
-
-
-
-
-
-
-
-
-
-
-
 /**
  * a listener called when an item is long-clicked
  * @param view the clicked view
@@ -81,7 +66,7 @@ internal typealias onItemSwipedListener<ITEM> = (item: ITEM,
                                                  adapterPosition: Int,
                                                  direction: Int) -> Unit
 /**
- * used by the library
+ * used by the library.
  */
 internal typealias startDragListener = (holder: DxHolder) -> Unit
 /**
