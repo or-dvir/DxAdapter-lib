@@ -35,8 +35,8 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
     private var mTextY = 0f
     private var mIsSwipingLeft = false
     private var mSwipeBackgroundForDrawing: DxSwipeBackground? = null
-    private var mSwipeBackgroundLeft: DxSwipeBackground? = null
-    private var mSwipeBackgroundRight: DxSwipeBackground? = null
+//    private var mSwipeBackgroundLeft: DxSwipeBackground? = null
+//    private var mSwipeBackgroundRight: DxSwipeBackground? = null
     private var onItemSwiped: Pair<Int, onItemSwipedListener<ITEM>>? = null
 
     /**
@@ -103,6 +103,20 @@ class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<ITEM,
         mSwipeBackgroundLeft = swipeBackgroundLeft
         mSwipeBackgroundRight = swipeBackgroundRight
     }
+
+
+
+    open fun getSwipeBackgroundLeft(): DxSwipeBackground? = null
+    open fun getSwipeBackgroundRight(): DxSwipeBackground? = null
+
+
+
+
+
+
+
+
+
 
     override fun getMovementFlags(recycler: RecyclerView, holder: ViewHolder): Int
     {
