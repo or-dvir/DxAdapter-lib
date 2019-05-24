@@ -45,14 +45,14 @@ class ActivityStickyHeader : BaseActivity()
             //note that MyHeader does NOT implement IItemSwipeable or IItemSelectable and therefore cannot be swiped
             //or selected. this makes sense because MyHeader is meant to divide our list into sections and not be interactable.
 
-            val swipeBackgroundLeft = DxSwipeBackground(30,
-                                                        Color.GREEN,
-                                                        DxSwipeText("left swipe",
-                                                                    60f,
-                                                                    Color.WHITE),
-                                                        null)
+            swipeBackgroundLeft = DxSwipeBackground(30,
+                                                    Color.GREEN,
+                                                    DxSwipeText("left swipe",
+                                                                60f,
+                                                                Color.WHITE),
+                                                    null)
 
-            setItemsSwipeable(ItemTouchHelper.LEFT, null, swipeBackgroundLeft)
+            enableSwiping(ItemTouchHelper.LEFT)
             { item, position, direction ->
 
                 if (direction == ItemTouchHelper.LEFT)

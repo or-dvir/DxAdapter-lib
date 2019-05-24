@@ -60,9 +60,9 @@ internal typealias onItemsMoveListener<ITEM> = (draggedItem: ITEM,
  * @param item the item that was swiped
  * @param adapterPosition the position of the item that was swiped
  * @param direction the direction of the swipe.
- * see [DxItemTouchCallback.setItemsSwipeable] for further explanation about this parameter
+ * see [DxItemTouchCallback.enableSwiping] for further explanation about this parameter
  */
-internal typealias onItemSwipedListener<ITEM> = (item: ITEM,
+typealias onItemSwipedListener<ITEM> = (item: ITEM,
                                                  adapterPosition: Int,
                                                  direction: Int) -> Unit
 /**

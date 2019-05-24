@@ -94,53 +94,71 @@ class ActivityMain : AppCompatActivity()
                                    }
                                })
 
+        //using MyItemTouchCallback to demonstrate how to get a different background
+        //for different item states.
+        //can also simply use DxItemTouchCallback if the background is always the same
         val itemTouchCallback =
-            DxItemTouchCallback(mAdapter).apply {
+            MyItemTouchCallback(this, mAdapter).apply {
+//            DxItemTouchCallback(mAdapter).apply {
 
                 dragBackgroundColor = Color.LTGRAY
                 swipeEscapeVelocity = 200f
+
                 //option to set escape velocity as a multiplier of the device's default value
 //                swipeEscapeVelocityMultiplier = 1.5f
+
                 swipeThreshold = 0.7f
 
+                onItemMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
+                    Log.i("sample",
+                          "about to switch ${draggedItem.mText} (position $draggedPosition) " +
+                                  "with ${targetItem.mText} (position $targetPosition)"
+                    )
+                }
+
                 //IMPORTANT: read documentation for DxSwipeIcon and DxSwipeText
-                val backgroundRight = DxSwipeBackground(30,
-                                                        Color.RED,
-                                                        DxSwipeText("right swipe",
+
+
+//                bug bug bug bug bug bug bugbug bug bug bug bug bug bugbug bug bug bug bug bug bug
+//                swiping left crashes the app
+
+                //left swipe background is constant. so just set it here.
+                //could also set it in MyItemTouchCallback()... whatever is more convenient for you
+                swipeBackgroundLeft = DxSwipeBackground(30,
+                                                        Color.CYAN,
+                                                        DxSwipeText("left swipe",
                                                                     60f,
                                                                     Color.BLACK),
-                                                        DxSwipeIcon(this@ActivityMain,
-                                                                    R.drawable.ic_arrow_right,
-                                                                    96))
+                                                        null)
 
-                val backgroundLeft = DxSwipeBackground(30,
-                                                       Color.CYAN,
-                                                       DxSwipeText("left swipe",
-                                                                   60f,
-                                                                   Color.BLACK),
-                                                       null)
+                //note that this line will be useless and ignored because
+                //we are overriding getSwipeBackgroundRight() in MyItemTouchCallback()
+                swipeBackgroundRight = DxSwipeBackground(30,
+                                                        Color.GREEN,
+                                                        DxSwipeText("this is useless",
+                                                                    60f,
+                                                                    Color.BLACK),
+                                                        null)
 
                 //IMPORTANT: read the documentation for this function.
-                //IMPORTANT: note that calling this function is NOT enough to make your items swipiable.
+                //IMPORTANT: note that calling this function is NOT ENOUGH to make your items swipiable.
                 // your items must implement IItemSwipeable.
-                setItemsSwipeable(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-                                  backgroundRight,
-                                  backgroundLeft)
-                { item, position, direction ->
+                enableSwiping(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+                { item, adapterPosition, direction ->
 
                     if (direction == ItemTouchHelper.START)
                     {
                         //this if condition is for explanation purposes:
                         //code will NEVER get here because we did not provide
                         //ItemTouchHelper.START as a valid swipe direction.
-                        //START and LEFT are NOT the same, even if your layout is left-to-right
+                        //even if your layout is left-to-right. START and LEFT are NOT the same
                     }
 
                     //delete item on left swipe
                     if (direction == ItemTouchHelper.LEFT)
                     {
-                        myListItems.removeAt(position)
-                        mAdapter.notifyItemRemoved(position)
+                        myListItems.removeAt(adapterPosition)
+                        mAdapter.notifyItemRemoved(adapterPosition)
 
                         //IMPORTANT! - this line should be called AFTER the item has
                         //been removed from the adapter.
@@ -156,23 +174,17 @@ class ActivityMain : AppCompatActivity()
                         //the selection state listener
                         mActionModeHelper.updateActionMode(this@ActivityMain)
 
-                        toast("removed ${item.mText} (position $position)")
+                        toast("removed ${item.mText} (position $adapterPosition)")
                     }
 
                     //rename item on right swipe:
                     else if (direction == ItemTouchHelper.RIGHT)
                     {
-                        item.mText = "new name ${position + 1}"
+                        item.mText = "new name ${adapterPosition + 1}"
                         //don't forget to restore the item, or you will be left with empty space
-                        mAdapter.notifyItemChanged(position)
+                        mAdapter.notifyItemChanged(adapterPosition)
                     }
-                }
 
-                onItemMove = { draggedItem, targetItem, draggedPosition, targetPosition ->
-                    Log.i("sample",
-                          "about to switch ${draggedItem.mText} (position $draggedPosition) " +
-                                  "with ${targetItem.mText} (position $targetPosition)"
-                    )
                 }
             }
 
