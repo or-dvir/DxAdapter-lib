@@ -118,10 +118,6 @@ class ActivityMain : AppCompatActivity()
 
                 //IMPORTANT: read documentation for DxSwipeIcon and DxSwipeText
 
-
-//                bug bug bug bug bug bug bugbug bug bug bug bug bug bugbug bug bug bug bug bug bug
-//                swiping left crashes the app
-
                 //left swipe background is constant. so just set it here.
                 //could also set it in MyItemTouchCallback()... whatever is more convenient for you
                 swipeBackgroundLeft = DxSwipeBackground(30,
