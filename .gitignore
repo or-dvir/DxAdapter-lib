@@ -57,11 +57,5 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
-.idea/codeStyles/Project.xml
-.idea/markdown-navigator.xml
-.idea/codeStyles/Project.xml
-.idea/markdown-navigator/profiles_settings.xml
-.idea/codeStyles/Project.xml
+.idea/*
 gradle/wrapper/gradle-wrapper.properties
-.idea/codeStyles/Project.xml
-.idea/vcs.xml
