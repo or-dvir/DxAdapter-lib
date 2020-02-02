@@ -1,6 +1,7 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
-import android.support.annotation.IdRes
+import androidx.annotation.IdRes
+
 
 /**
  * implement this interface in your ITEM if you wish for it to be expandable

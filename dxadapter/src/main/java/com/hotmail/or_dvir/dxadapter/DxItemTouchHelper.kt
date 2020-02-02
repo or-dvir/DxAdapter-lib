@@ -1,7 +1,7 @@
 package com.hotmail.or_dvir.dxadapter
 
-import android.support.annotation.IdRes
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.annotation.IdRes
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 
 /**

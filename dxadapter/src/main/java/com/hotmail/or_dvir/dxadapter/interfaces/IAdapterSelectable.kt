@@ -1,7 +1,7 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
 import android.graphics.drawable.ColorDrawable
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 import com.hotmail.or_dvir.dxadapter.DxHolder
 import com.hotmail.or_dvir.dxadapter.onItemSelectStateChangedListener
 

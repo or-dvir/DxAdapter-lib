@@ -1,7 +1,7 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
-import android.support.annotation.LayoutRes
 import android.view.View
+import androidx.annotation.LayoutRes
 
 /**
  * implement this interface in your ADAPTER if you wish for it to support sticky headers.

@@ -3,11 +3,11 @@ package com.hotmail.or_dvir.dxadapter
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
-import android.support.annotation.ColorInt
-import android.support.annotation.IdRes
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ViewHolder
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.annotation.ColorInt
+import androidx.annotation.IdRes
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.hotmail.or_dvir.dxadapter.interfaces.IAdapterSelectable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
@@ -305,7 +305,7 @@ open class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<
     }
 
     internal fun setDragHandle(@IdRes handleId: Int,
-                             itemTouchHelper: ItemTouchHelper)
+                               itemTouchHelper: ItemTouchHelper)
     {
         mAdapter.dragAndDropWithHandle =
             Pair(handleId, { holder -> itemTouchHelper.startDrag(holder) })

@@ -1,8 +1,8 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 open class DxHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 {

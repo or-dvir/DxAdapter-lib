@@ -1,10 +1,9 @@
 package com.hotmail.or_dvir.dxadapter.interfaces
 
 import android.content.Context
-import android.support.annotation.ColorInt
-import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.widget.Filter
+import androidx.annotation.ColorInt
 import com.hotmail.or_dvir.dxadapter.onItemClickListener
 import com.hotmail.or_dvir.dxadapter.onItemLongClickListener
 

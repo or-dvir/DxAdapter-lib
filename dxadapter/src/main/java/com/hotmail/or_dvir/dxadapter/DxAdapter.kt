@@ -1,14 +1,14 @@
 package com.hotmail.or_dvir.dxadapter
 
 import android.graphics.drawable.ColorDrawable
-import android.support.annotation.CallSuper
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
+import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 import com.hotmail.or_dvir.dxadapter.interfaces.*
 
 /**
