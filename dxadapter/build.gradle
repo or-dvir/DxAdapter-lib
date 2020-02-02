@@ -4,15 +4,15 @@ apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.or-dvir'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -31,8 +31,8 @@ repositories {
 
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    compileOnly 'com.android.support:appcompat-v7:28.0.0'
+    compileOnly "androidx.appcompat:appcompat:1.1.0"
 
     //recycler view
-    compileOnly 'com.android.support:recyclerview-v7:28.0.0'
+    compileOnly "androidx.recyclerview:recyclerview:1.1.0"
 }

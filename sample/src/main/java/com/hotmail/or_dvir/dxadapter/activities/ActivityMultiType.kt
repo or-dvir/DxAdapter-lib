@@ -1,10 +1,10 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.DxItemTouchCallback
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterMultiType
@@ -42,8 +42,13 @@ class ActivityMultiType : BaseActivity()
         val multiAdapter = MyAdapterMultiType(list)
 
         rv.apply {
-            addItemDecoration(DividerItemDecoration(this@ActivityMultiType, DividerItemDecoration.VERTICAL))
-            layoutManager = LinearLayoutManager(this@ActivityMultiType, RecyclerView.VERTICAL, false)
+            addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(
+                this@ActivityMultiType,
+                androidx.recyclerview.widget.DividerItemDecoration.VERTICAL))
+            layoutManager = androidx.recyclerview.widget
+                .LinearLayoutManager(this@ActivityMultiType,
+                                     androidx.recyclerview.widget.RecyclerView.VERTICAL,
+                                     false)
             adapter = multiAdapter
         }
     }

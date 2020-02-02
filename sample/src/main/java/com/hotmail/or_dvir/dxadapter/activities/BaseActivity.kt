@@ -1,7 +1,7 @@
 package com.hotmail.or_dvir.dxadapter.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import or_dvir.hotmail.com.dxutils.setHomeUpEnabled
 

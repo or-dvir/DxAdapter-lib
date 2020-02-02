@@ -1,6 +1,6 @@
 package com.hotmail.or_dvir.dxadapter.models
 
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import com.hotmail.or_dvir.dxadapter.R
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable

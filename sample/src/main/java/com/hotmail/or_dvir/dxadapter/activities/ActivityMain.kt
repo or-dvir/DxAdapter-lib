@@ -2,13 +2,13 @@ package com.hotmail.or_dvir.dxadapter.activities
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.view.ActionMode
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.core.view.GravityCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -193,8 +193,13 @@ class ActivityMain : AppCompatActivity()
         }
 
         rv.apply {
-            addItemDecoration(DividerItemDecoration(this@ActivityMain, DividerItemDecoration.VERTICAL))
-            layoutManager = LinearLayoutManager(this@ActivityMain, RecyclerView.VERTICAL, false)
+            addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(
+                this@ActivityMain,
+                androidx.recyclerview.widget.DividerItemDecoration.VERTICAL))
+            layoutManager = androidx.recyclerview.widget
+                .LinearLayoutManager(this@ActivityMain,
+                                     androidx.recyclerview.widget.RecyclerView.VERTICAL,
+                                     false)
             adapter = mAdapter
             mItemTouchHelper.attachToRecyclerView(this)
 

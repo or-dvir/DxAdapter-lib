@@ -2,10 +2,10 @@ package com.hotmail.or_dvir.dxadapter.activities
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapterHeader
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
@@ -64,11 +64,16 @@ class ActivityStickyHeader : BaseActivity()
         })
 
         rv.apply {
-            addItemDecoration(DividerItemDecoration(this@ActivityStickyHeader, DividerItemDecoration.VERTICAL))
+            addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(
+                this@ActivityStickyHeader,
+                androidx.recyclerview.widget.DividerItemDecoration.VERTICAL))
             addItemDecoration(DxStickyHeaderItemDecoration(stickyHeaderAdapter))
 
             mItemTouchHelper.attachToRecyclerView(this)
-            layoutManager = LinearLayoutManager(this@ActivityStickyHeader, RecyclerView.VERTICAL, false)
+            layoutManager = androidx.recyclerview.widget
+                .LinearLayoutManager(this@ActivityStickyHeader,
+                                     androidx.recyclerview.widget.RecyclerView.VERTICAL,
+                                     false)
             adapter = stickyHeaderAdapter
         }
     }
