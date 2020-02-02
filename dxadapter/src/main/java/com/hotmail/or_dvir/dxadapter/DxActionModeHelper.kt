@@ -1,7 +1,5 @@
 package com.hotmail.or_dvir.dxadapter
 
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
