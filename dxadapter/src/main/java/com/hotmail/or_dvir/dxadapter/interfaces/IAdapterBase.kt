@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.TypedValue
 import android.widget.Filter
 import androidx.annotation.ColorInt
+import androidx.recyclerview.widget.RecyclerView
 import com.hotmail.or_dvir.dxadapter.onItemClickListener
 import com.hotmail.or_dvir.dxadapter.onItemLongClickListener
 
