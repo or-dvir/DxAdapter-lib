@@ -2,16 +2,23 @@ package com.hotmail.or_dvir.dxadapter
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 
 
-internal enum class DxScrollDirection { UP, DOWN, LEFT, RIGHT }
+internal enum class DxScrollDirection
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}
 
 /**
  * a class containing individual scroll directions listeners (up, down, left, right),
@@ -65,7 +72,7 @@ class DxScrollListener(internal val sensitivityAll: Int,
  * @param desiredHeightPx the desired height of the icon, in pixels (recommended to use
  * DP from dimens.xml)
  */
-class DxSwipeIcon(context: Context,
+class DxSwipeIcon(val context: Context,
                   @DrawableRes val iconRes: Int,
                   private val desiredHeightPx: Int)
 {
@@ -74,7 +81,7 @@ class DxSwipeIcon(context: Context,
     init
     {
         context.apply {
-            val bitmap = BitmapFactory.decodeResource(resources, iconRes)
+            val bitmap = getBitmap(iconRes)
             val ratio = bitmap.width.toFloat() / bitmap.height
             val scaledWidth = (desiredHeightPx * ratio).toInt()
 
@@ -85,6 +92,31 @@ class DxSwipeIcon(context: Context,
 
             mIconDrawable = BitmapDrawable(resources, bitmapResized)
         }
+    }
+
+    private fun getBitmap(drawableId: Int): Bitmap
+    {
+        ContextCompat.getDrawable(context, drawableId)?.apply {
+            val bitmap =
+                Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            setBounds(0, 0, canvas.width, canvas.height)
+            draw(canvas)
+
+            return bitmap
+        }
+
+        throw NullPointerException("could not create bitmap (bitmap was null)")
+
+//        val drawable = ContextCompat.getDrawable(context, drawableId)
+//        val bitmap =
+//            Bitmap.createBitmap(drawable?.intrinsicWidth,
+//                                drawable?.intrinsicHeight,
+//                                Bitmap.Config.ARGB_8888)
+//        val canvas = Canvas(bitmap)
+//        drawable?.setBounds(0, 0, canvas.width, canvas.height)
+//        drawable?.draw(canvas)
+//        return bitmap
     }
 }
 
@@ -126,13 +158,13 @@ class DxSwipeText(internal val text: String,
  * @param backgroundColor the background color of the swiped area
  * @param dxIcon an optional icon to show on the swiped area
  */
-class DxSwipeBackground (/*internal val mText: String,
+class DxSwipeBackground(/*internal val mText: String,
                          private val mTextSizePx: Int,
                          @ColorInt internal val mTextColor: Int,*/
-                         internal var paddingPx: Int,
-                         @ColorInt internal val backgroundColor: Int?,
-                         internal val dxText: DxSwipeText?,
-                         internal val dxIcon: DxSwipeIcon?)
+    internal var paddingPx: Int,
+    @ColorInt internal val backgroundColor: Int?,
+    internal val dxText: DxSwipeText?,
+    internal val dxIcon: DxSwipeIcon?)
 {
     internal val mIconWidthPx = dxIcon?.mIconDrawable?.intrinsicWidth ?: 0
     internal val mTextWidthPx = dxText?.let { it.mPaint.measureText(it.text.trim()).toInt() } ?: 0
@@ -152,7 +184,7 @@ class DxSwipeBackground (/*internal val mText: String,
     init
     {
         //if at least one of item/text, add padding on both sides
-        if(dxText != null || dxIcon != null)
+        if (dxText != null || dxIcon != null)
             mTotalWidthToFitPx += (2 * paddingPx)
         //if none of text/icon, set paddingPx to 0 so calculations
         //using this variable will not be affected
@@ -160,7 +192,7 @@ class DxSwipeBackground (/*internal val mText: String,
             paddingPx = 0
 
         //if both icon and text, add padding between them
-        if(dxText != null && dxIcon != null)
+        if (dxText != null && dxIcon != null)
             mTotalWidthToFitPx += paddingPx
     }
 
