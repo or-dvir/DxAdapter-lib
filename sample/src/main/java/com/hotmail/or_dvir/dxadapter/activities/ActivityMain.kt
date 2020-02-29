@@ -39,7 +39,7 @@ class ActivityMain : AppCompatActivity()
 
         val myListItems = mutableListOf<MyItem>()
 
-        for (i in 1..100)
+        for (i in 0..99)
             myListItems.add(MyItem(i.toString()))
 
         mAdapter =
