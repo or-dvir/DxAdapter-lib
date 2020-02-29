@@ -13,6 +13,7 @@ import com.hotmail.or_dvir.dxadapter.interfaces.IItemBase
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemDraggable
 import com.hotmail.or_dvir.dxadapter.interfaces.IItemSwipeable
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 /**
@@ -160,14 +161,33 @@ open class DxItemTouchCallback<ITEM: IItemBase>(private val mAdapter: DxAdapter<
                         dragged: ViewHolder,
                         target: ViewHolder): Boolean
     {
-        val dragPos = dragged.adapterPosition
-        val targetPos = target.adapterPosition
+        val draggedPosition = dragged.adapterPosition
+        val targetPosition = target.adapterPosition
 
         mAdapter.apply {
             val filteredItems = getFilteredAdapterItems()
-            onItemMove?.invoke(filteredItems[dragPos], filteredItems[targetPos], dragPos, targetPos)
-            Collections.swap(filteredItems, dragPos, targetPos)
-            notifyItemMoved(dragPos, targetPos)
+            val draggedItem = filteredItems[draggedPosition]
+            onItemMove?.invoke(draggedItem, filteredItems[targetPosition], draggedPosition, targetPosition)
+
+            //if the user drags an item out of the bounds of the screen, some positions might be skipped
+            //when swapping (for example immediately swapping between index 20 and 0 while skipping
+            //indices 1-19). in this case instead of swapping the items, we remove the dragged item and
+            //add it at the target index so the user intended order of the list is maintained.
+            //(i.e. the user did not mean to switch between items 20 and 0, but meant to drag
+            //item 20 all the way to the start fo the list)
+            if((draggedPosition - targetPosition).absoluteValue > 1)
+            {
+                filteredItems.apply {
+                    removeAt(draggedPosition)
+                    add(targetPosition, draggedItem)
+                }
+            }
+            else
+            {
+                Collections.swap(filteredItems, draggedPosition, targetPosition)
+            }
+
+            notifyItemMoved(draggedPosition, targetPosition)
         }
 
         return true
