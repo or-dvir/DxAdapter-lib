@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DxAdapter-lib.iml" filepath="$PROJECT_DIR$/DxAdapter-lib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/dxadapter/dxadapter.iml" filepath="$PROJECT_DIR$/dxadapter/dxadapter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DxAdapter-lib.iml" filepath="$PROJECT_DIR$/DxAdapter-lib.iml" group="DxAdapter-lib" />
+      <module fileurl="file://$PROJECT_DIR$/dxadapter/dxadapter.iml" filepath="$PROJECT_DIR$/dxadapter/dxadapter.iml" group="DxAdapter-lib/dxadapter" />
+      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" group="DxAdapter-lib/sample" />
     </modules>
   </component>
 </project>
