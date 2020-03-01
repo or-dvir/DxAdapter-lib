@@ -2,16 +2,14 @@ package com.hotmail.or_dvir.dxadapter.activities
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.core.view.GravityCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ActionMode
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
+import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.hotmail.or_dvir.dxadapter.*
 import com.hotmail.or_dvir.dxadapter.adapters.MyAdapter
 import com.hotmail.or_dvir.dxadapter.models.MyItem
@@ -39,8 +37,10 @@ class ActivityMain : AppCompatActivity()
 
         val myListItems = mutableListOf<MyItem>()
 
-        for (i in 1..100)
+        for (i in 0..99)
+        {
             myListItems.add(MyItem(i.toString()))
+        }
 
         mAdapter =
             MyAdapter(myListItems,
@@ -99,7 +99,7 @@ class ActivityMain : AppCompatActivity()
         //can also simply use DxItemTouchCallback if the background is always the same
         val itemTouchCallback =
             MyItemTouchCallback(this, mAdapter).apply {
-//            DxItemTouchCallback(mAdapter).apply {
+                //            DxItemTouchCallback(mAdapter).apply {
 
                 dragBackgroundColor = Color.LTGRAY
                 swipeEscapeVelocity = 200f
@@ -130,11 +130,11 @@ class ActivityMain : AppCompatActivity()
                 //note that this line will be useless and ignored because
                 //we are overriding getSwipeBackgroundRight() in MyItemTouchCallback()
                 swipeBackgroundRight = DxSwipeBackground(30,
-                                                        Color.GREEN,
-                                                        DxSwipeText("this is useless",
-                                                                    60f,
-                                                                    Color.BLACK),
-                                                        null)
+                                                         Color.GREEN,
+                                                         DxSwipeText("this is useless",
+                                                                     60f,
+                                                                     Color.BLACK),
+                                                         null)
 
                 //IMPORTANT: read the documentation for this function.
                 //IMPORTANT: note that calling this function is NOT ENOUGH to make your items swipiable.
@@ -233,10 +233,10 @@ class ActivityMain : AppCompatActivity()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean
     {
-        if(item.itemId == android.R.id.home)
+        if (item.itemId == android.R.id.home)
         {
             drawer_layout.apply {
-                if(isDrawerOpen(GravityCompat.START))
+                if (isDrawerOpen(GravityCompat.START))
                     closeDrawers()
                 else
                     openDrawer(GravityCompat.START)
