@@ -180,7 +180,6 @@ class ActivityMain : AppCompatActivity()
                         //don't forget to restore the item, or you will be left with empty space
                         mAdapter.notifyItemChanged(adapterPosition)
                     }
-
                 }
             }
 
