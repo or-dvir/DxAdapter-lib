@@ -102,6 +102,7 @@ class ActivityMain : AppCompatActivity()
                 //            DxItemTouchCallback(mAdapter).apply {
 
                 dragBackgroundColor = Color.LTGRAY
+                dragBackgroundColor = Color.LTGRAY
                 swipeEscapeVelocity = 200f
 
                 //option to set escape velocity as a multiplier of the device's default value
