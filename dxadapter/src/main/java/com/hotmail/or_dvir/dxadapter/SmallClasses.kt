@@ -11,7 +11,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 
-
 internal enum class DxScrollDirection
 {
     UP,
