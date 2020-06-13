@@ -1,3 +1,11 @@
+# DEPRECATED
+This repository is now deprecated and no longer maintained.
+
+It has been replaced by [DxAdapterV2](https://github.com/or-dvir/DxAdapterV2).
+
+In case you're still using this library, I am keeping the original
+description below:
+
 # DxAdapter
 This is a `RecyclerView.Adapter` library with all sorts of built-in 
 features. I made this library because I notices I am using the same 
